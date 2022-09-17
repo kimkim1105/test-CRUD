@@ -1,16 +1,22 @@
 package com.example.demospring.model;
 
-public class StudentDTO {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class TypeAction {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
     private String status;
 
-    public StudentDTO() {
+    public TypeAction() {
     }
 
-    public StudentDTO(Long id, String name, String status) {
+    public TypeAction(Long id, String status) {
         this.id = id;
-        this.name = name;
         this.status = status;
     }
 
@@ -20,14 +26,6 @@ public class StudentDTO {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getStatus() {

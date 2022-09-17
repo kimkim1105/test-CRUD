@@ -1,32 +1,30 @@
 package com.example.demospring.model;
 
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
 
 @Entity
-@Table(name = "books")
 public class Book {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String active;
+    @NotNull
+    @Column(unique = true)
+    private String code;
+    @NotNull
     private boolean status;
+    @NotNull
+    private String name;
+    @NotNull
+    private String author;
+    @ManyToOne
+    @NotNull
+    private BookCategory category;
+
 
     public Book() {
-    }
-
-    public Book(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public String getActive() {
-        return active;
-    }
-
-    public void setActive(String active) {
-        this.active = active;
     }
 
     public boolean isStatus() {
@@ -35,6 +33,30 @@ public class Book {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public BookCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(BookCategory category) {
+        this.category = category;
     }
 
     public Long getId() {
