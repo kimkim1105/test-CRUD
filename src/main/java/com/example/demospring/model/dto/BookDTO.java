@@ -8,8 +8,17 @@ public class BookDTO {
     private String name;
     private String author;
     private BookCategory category;
+    private Integer inStock;
 
     public BookDTO() {
+    }
+
+    public Integer getInStock() {
+        return inStock;
+    }
+
+    public void setInStock(Integer inStock) {
+        this.inStock = inStock;
     }
 
     public BookDTO(String name, String author, BookCategory category) {

@@ -28,7 +28,7 @@
 <th:block th:replace="share/header :: header"></th:block>
 <div class="container" th:fragment="content">
     <div>
-        <h1 style="text-align: center; margin: 0">Manage Book Information</h1>
+        <h1 style="text-align: center; margin: 0">Manage Order Information</h1>
     </div>
     <hr>
     <span style="color: red; margin-top:5px" id="validate"></span>
@@ -41,30 +41,29 @@
             </form>
 
             <thead>
-            <th colspan="3">Book Information</th>
+            <th colspan="3">Order Information</th>
             <th>
-                <button type="button" id="add-book" class="btn btn-success" >Add new book</button>
+                <button type="button" id="add-order" class="btn btn-success" >Add new order</button>
             </th>
             </thead>
             <thead>
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">Code</th>
-                <th scope="col">Name</th>
-                <th scope="col">Author</th>
-                <th scope="col">Category</th>
-                            <th scope="col">Quantity</th>
+                <th scope="col">Person Code</th>
+                <th scope="col">Person Name</th>
+<!--                <th scope="col">Book Quantity</th>-->
+                <th scope="col">Date on</th>
+                <th scope="col">Date off</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each ="b, s : ${books}" th:onclick="'showDetail('+${b.id}+')'">
+            <tr th:each ="b, s : ${orders}" th:onclick="'showDetail('+${b.id}+')'">
                 <td th:utext="${s.index +1}"></td>
-                <td th:utext="${b.code}"></td>
-                <td th:utext="${b.name}"></td>
-                <td th:utext="${b.author}"></td>
-                <td th:utext="${b.category.category}"></td>
-                <td th:utext="${b.inStock}"></td>
-<!--                            <td><a class="btn btn-primary">Quick act</a></td>-->
+                <td th:utext="${b.person.code}"></td>
+                <td th:utext="${b.person.name}"></td>
+                <td th:utext="${b.dateOn}"></td>
+                <td th:utext="${b.dateOff}"></td>
+                <!--                            <td><a class="btn btn-primary">Quick act</a></td>-->
 
                 <!--            <td><a th:href="@{/books/findById/(id=${book.id})}" class="btn btn-danger" id="deleteButton">Delete</a></td>-->
             </tr>
@@ -72,19 +71,19 @@
         </table>
         <div>
             <ul class="nav nav-pills">
-                <li class="nav-item" th:each="i:${#numbers.sequence(0,books.totalPages-1)}">
-                    <a th:href="@{'/books'(page=${i})}" th:text="${i+1}" class="nav-link" th:classappend="${books.number}==${i}?'active':''"></a>
+                <li class="nav-item" th:each="i:${#numbers.sequence(0,orders.totalPages-1)}">
+                    <a th:href="@{'/books'(page=${i})}" th:text="${i+1}" class="nav-link" th:classappend="${orders.number}==${i}?'active':''"></a>
                 </li>
             </ul>
         </div>
     </div>
 </div>
 <!-- show Modal -->
-<div class="modal fade" id="showBookModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="showOrderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="showBookModalLabel">Add new book confirm</h5>
+                <h5 class="modal-title" id="showOrderModalLabel">Add new book confirm</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -176,11 +175,12 @@
     }
     $(document).ready(function (){
         //show form add book
-        $('#add-book').on('click',function (event){
+        $('#add-order').on('click',function (event){
             // event.preventDefault();
             let str = '<div class=login d-flex align-items-center py-5>\n '+
                 ' <div class=container>\n' +
                 '   <div class="row">\n' +
+                '<div className="col-md">'+
                 '    <div class="col-md-9 col-lg-8 mx-auto pl-5 pr-5">\n' +
                 '       <h3 class="login-heading mb-4">Add new book</h3>\n'+
                 '<i style="color: black">Pls fill the form, have <i style="color: red">* </i>is required</i>'+
@@ -223,6 +223,7 @@
                 '         <a data-toggle="modal" id="function-btn-book" data-target="#showBookModal" onclick="checkBookInput()" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Add new</a>\n' +
                 '         <a onclick="reload()" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Back</a>\n' +
                 '       </form>\n' +
+                '     </div>\n' +
                 '     </div>\n' +
                 '   </div>\n' +
                 '  </div>\n' +
@@ -289,7 +290,7 @@
                 $('#function-btn-book').attr("data-target","");
                 $('#function-btn-book').attr("data-toggle","");
             }
-            
+
         }
         if (author==""||author==null){
             $('#check-add-book-author').html("Book author cannot blank");

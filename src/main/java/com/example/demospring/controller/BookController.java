@@ -61,6 +61,11 @@ public class BookController {
         book.setAuthor(bookDTO.getAuthor());
         Optional<BookCategory> bookCategoryOptional = iBookCategoryService.findById(bookDTO.getCategory().getId());
         book.setCategory(bookCategoryOptional.get());
+        if (bookDTO.getInStock()>0){
+            book.setInStock(bookDTO.getInStock());
+        }else {
+            book.setInStock(0);
+        }
 //        Optional<Book> bookOptional = iBookService.getLastestBook();
 //        StringBuffer bookCode = new StringBuffer();
 //        Long lastId = bookOptional.get().getId();

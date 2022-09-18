@@ -22,9 +22,18 @@ public class Book {
     @ManyToOne
     @NotNull
     private BookCategory category;
+    private Integer inStock;
 
 
     public Book() {
+    }
+
+    public Integer getInStock() {
+        return inStock;
+    }
+
+    public void setInStock(Integer inStock) {
+        this.inStock = inStock;
     }
 
     public boolean isStatus() {
