@@ -86,13 +86,21 @@ public class BookController {
     }
     @PutMapping
     public ResponseEntity<?> editBook(@RequestBody Book book){
-        if (iBookService.findBookByName(book.getName()).isPresent()){
-            return new ResponseEntity<>("bookname existed, pls try again",HttpStatus.OK);
-        }
-        if (iBookService.findBookByCode(book.getCode()).isPresent()){
-            return new ResponseEntity<>("code existed, pls try again",HttpStatus.OK);
-        }
         Book bookOptional = iBookService.findById(book.getId()).get();
+        if (bookOptional.getName().equals(book.getName())){
+            bookOptional.setName(book.getName());
+        }else {
+            if (iBookService.findBookByName(book.getName()).isPresent()){
+                return new ResponseEntity<>("bookname existed, pls try again",HttpStatus.OK);
+            }
+        }
+        if (bookOptional.getCode().equals(book.getCode())){
+            bookOptional.setCode(book.getCode());
+        }else {
+            if (iBookService.findBookByCode(book.getCode()).isPresent()){
+                return new ResponseEntity<>("code existed, pls try again",HttpStatus.OK);
+            }
+        }
         bookOptional.setName(book.getName());
         bookOptional.setStatus(true);
         bookOptional.setCode(book.getCode());

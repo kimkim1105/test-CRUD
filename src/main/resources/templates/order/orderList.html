@@ -382,7 +382,7 @@
                         '            <td>'+items.name+'</td>\n'+
                         '            <td>'+items.author+'</td>\n' +
                         '            <td>'+items.category.category+'</td>\n' +
-                        '            <td>'+items.quantity+'</td>\n' +
+                        '            <td>'+items.inStock+'</td>\n' +
                         '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-primary">Edit</a></td>-->\n' +
                         '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-danger" id="deleteButton">Delete</a></td>-->\n' +
                         '        </tr>\n'
@@ -477,6 +477,7 @@
                 '            <th scope="col">Name</th>\n' +
                 '            <th scope="col">Author</th>\n' +
                 '            <th scope="col">Category</th>\n' +
+                '                 <th scope="col">Quantity</th>'+
                 '        </tr>\n' +
                 '        </thead>\n'
             $.each(getBookList, function (index, items){
@@ -487,6 +488,7 @@
                     '            <td>'+items.name+'</td>\n'+
                     '            <td>'+items.author+'</td>\n' +
                     '            <td>'+items.category.category+'</td>\n' +
+                    '            <td>'+items.inStock+'</td>\n' +
                     '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-primary">Edit</a></td>-->\n' +
                     '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-danger" id="deleteButton">Delete</a></td>-->\n' +
                     '        </tr>\n'

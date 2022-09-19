@@ -96,9 +96,11 @@ public class PersonController {
     @PutMapping
     public ResponseEntity<?> editPerson(@RequestBody Person person){
         Person personOptional = iPersonService.findById(person.getId()).get();
-        if (!personOptional.getPhone().equals(person.getPhone())){
+        if (personOptional.getPhone().equals(person.getPhone())){
+            personOptional.setPhone(person.getPhone());
+        }else {
             if (iPersonService.findPersonByPhone(person.getPhone()).isPresent()){
-                return new ResponseEntity<>("phone existed, pls try again",HttpStatus.OK);
+                return new ResponseEntity<>("existed", HttpStatus.OK);
             }
         }
         personOptional.setName(person.getName());

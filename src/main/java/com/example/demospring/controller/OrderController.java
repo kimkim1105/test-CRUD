@@ -41,6 +41,13 @@ public class OrderController {
     public ResponseEntity<?> getOrderList(){
         return new ResponseEntity<>(iOrderService.findAll(),HttpStatus.OK);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getOrderById(@PathVariable Long id){
+        if (iOrderService.findById(id).isPresent()){
+            return new ResponseEntity<>(iOrderService.findById(id).get(),HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Not found",HttpStatus.NOT_FOUND);
+    }
     @PostMapping
     public ResponseEntity<?> addNewOrder(@RequestBody OrderDTO orderDTO){
         Order order = new Order();
@@ -66,5 +73,26 @@ public class OrderController {
         order.setDateOn(LocalDate.now());
         order.setStatus(true);
         return new ResponseEntity<>(iOrderService.save(order), HttpStatus.OK);
+    }
+    @PutMapping
+    public ResponseEntity<?> returnBook(@RequestBody Order order){
+        Order orderOptional = iOrderService.findById(order.getId()).get();
+        if (orderOptional.getDateOff()!=null){
+            return new ResponseEntity<>("order completed", HttpStatus.OK);
+        }
+        Person person = iPersonService.findById(orderOptional.getPerson().getId()).get();
+        person.setTypeAction(false);
+        iPersonService.save(person);
+        Iterator<Book> bookIterator = order.getBook().iterator();
+        while (bookIterator.hasNext()){
+            Book book = iBookService.findById(bookIterator.next().getId()).get();
+            book.setInStock(book.getInStock()+1);
+            iBookService.save(book);
+        }
+        orderOptional.setBook(order.getBook());
+        orderOptional.setPerson(order.getPerson());
+        orderOptional.setDateOff(LocalDate.now());
+        orderOptional.setStatus(true);
+        return new ResponseEntity<>(iOrderService.save(orderOptional), HttpStatus.OK);
     }
 }

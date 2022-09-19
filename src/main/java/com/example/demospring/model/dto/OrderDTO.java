@@ -3,7 +3,6 @@ package com.example.demospring.model.dto;
 import com.example.demospring.model.Book;
 import com.example.demospring.model.Person;
 
-import javax.persistence.ManyToOne;
 import java.util.Collection;
 
 public class OrderDTO {

@@ -233,31 +233,101 @@
 
     function checkName(){
         let name = $('#add-book-name').val();
+        let id = $('#add-book-id').val();
         let href = "http://localhost:8080/books/name/"+name
-        $.get(href,function (data,status){
-            if (data=="existed"){
-                checkBookName = false
-                $('#check-add-book-name').html("Book name existed,Pls try again")
+            if (id){
+                $.ajax({
+                    async: false,
+                    url: "http://localhost:8080/books/"+id,
+                    type: 'GET',
+                    success: function (data) {
+                        if (data.name==name){
+                            checkBookName = true;
+                        }else {
+                            $.ajax({
+                                async: false,
+                                url: href,
+                                type: 'GET',
+                                success: function (data) {
+                                    if (data=="existed"){
+                                        checkBookName = false
+                                        $('#check-add-book-name').html("Book name existed,Pls try again")
+                                    }
+                                    else {
+                                        $('#check-add-book-name').html("")
+                                        checkBookName = true
+                                    }
+                                }
+                            })
+                        }
+                    }
+                })
+            }else {
+                $.ajax({
+                    async: false,
+                    url: href,
+                    type: 'GET',
+                    success: function (data) {
+                        if (data=="existed"){
+                            checkBookName = false
+                            $('#check-add-book-name').html("Book name existed,Pls try again")
+                        }
+                        else {
+                            $('#check-add-book-name').html("")
+                            checkBookName = true
+                        }
+                    }
+                })
             }
-            else {
-                $('#check-add-book-name').html("")
-                checkBookName = true
-            }
-        })
     }
     function checkCode(){
+        let id = $('#add-book-id').val();
         let code = $('#add-book-code').val();
-        let href = "http://localhost:8080/books/code/"+code
-        $.get(href,function (data,status){
-            if (data=="existed"){
-                checkBookCode = false
-                $('#check-add-book-code').html("Book code existed,Pls try again")
-            }
-            else {
-                $('#check-add-book-code').html("")
-                checkBookCode = true
-            }
-        })
+        let href = "http://localhost:8080/books/code/"+code;
+        if (id){
+            $.ajax({
+                async: false,
+                url: "http://localhost:8080/books/"+id,
+                type: 'GET',
+                success: function (data) {
+                    if (data.code==code){
+                        checkBookCode = true;
+                    }else {
+                        $.ajax({
+                            async: false,
+                            url: href,
+                            type: 'GET',
+                            success: function (data) {
+                                if (data=="existed"){
+                                    checkBookCode = false
+                                    $('#check-add-book-code').html("Book code existed,Pls try again")
+                                }
+                                else {
+                                    $('#check-add-book-code').html("")
+                                    checkBookCode = true
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+        }else {
+            $.ajax({
+                async: false,
+                url: href,
+                type: 'GET',
+                success: function (data) {
+                    if (data=="existed"){
+                        checkBookCode = false
+                        $('#check-add-book-code').html("Book code existed,Pls try again")
+                    }
+                    else {
+                        $('#check-add-book-code').html("")
+                        checkBookCode = true
+                    }
+                }
+            })
+        }
     }
 
     function checkBookInput(){
@@ -265,6 +335,8 @@
         let code = $('#add-book-code').val();
         let name = $('#add-book-name').val();
         let author = $('#add-book-author').val();
+        checkName();
+        checkCode();
         console.log("check name "+ checkBookName + "check code "+ checkBookCode)
         if (name==""||name==null){
             $('#check-add-book-name').html("Name cannot blank");
@@ -272,7 +344,7 @@
             $('#function-btn-book').attr("data-toggle","");
         }else {
             console.log("check name", checkBookName)
-            if (checkBookName&&checkBookCode){
+            if (checkBookName&&checkBookCode&&author){
                 $('#check-add-book-name').html("");
                 if (id){
                     $('#function-btn-book').attr("data-toggle","modal");
@@ -284,8 +356,7 @@
                     getNewBookInfo();
                 }
             }else {
-                console.log("check code", checkBookName)
-                $('#check-add-book-name').html("Name not valid");
+               checkName()
                 $('#function-btn-book').attr("data-target","");
                 $('#function-btn-book').attr("data-toggle","");
             }
@@ -296,15 +367,17 @@
             $('#function-btn-book').attr("data-target","");
             $('#function-btn-book').attr("data-toggle","");
         }else {
-            $('#check-add-book-author').html("");
-            if (id){
-                $('#function-btn-book').attr("data-toggle","modal");
-                $('#function-btn-book').attr("data-target","#editbookModal");
-                getEditBookInfo();
-            }else {
-                $('#function-btn-book').attr("data-toggle","modal");
-                $('#function-btn-book').attr("data-target","#showBookModal");
-                getNewBookInfo();
+            if (checkBookCode&&checkBookName) {
+                $('#check-add-book-author').html("");
+                if (id) {
+                    $('#function-btn-book').attr("data-toggle", "modal");
+                    $('#function-btn-book').attr("data-target", "#editbookModal");
+                    getEditBookInfo();
+                } else {
+                    $('#function-btn-book').attr("data-toggle", "modal");
+                    $('#function-btn-book').attr("data-target", "#showBookModal");
+                    getNewBookInfo();
+                }
             }
         }
         if (code==""||code==null){
@@ -312,7 +385,7 @@
             $('#function-btn-book').attr("data-target","");
             $('#function-btn-book').attr("data-toggle","");
         }else {
-            if (checkBookCode&&checkBookName){
+            if (checkBookCode&&checkBookName&&author){
                 $('#check-add-book-code').html("");
                 if (id){
                     $('#function-btn-book').attr("data-toggle","modal");
@@ -325,7 +398,7 @@
                     getNewBookInfo();
                 }
             }else {
-                $('#check-add-book-code').html("code not valid");
+                checkCode();
                 $('#function-btn-book').attr("data-target","");
                 $('#function-btn-book').attr("data-toggle","");
             }

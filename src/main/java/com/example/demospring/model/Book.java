@@ -16,6 +16,7 @@ public class Book {
     @NotNull
     private boolean status;
     @NotNull
+    @Column(unique = true)
     private String name;
     @NotNull
     private String author;

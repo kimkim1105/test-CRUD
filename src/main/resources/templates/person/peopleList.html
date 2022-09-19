@@ -245,42 +245,59 @@ let checkPhoneInput;
     })
 
 function checkPhone(){
-        // let id = $('#add-person-id').val();
+        let id = $('#add-person-id').val();
         let phone = $('#add-person-phone').val();
-        let href1 = "http://localhost:8080/persons/phone/"+phone
-        // let href2 = "http://localhost:8080/persons/phone/"+phone+"/"+id;
-    // if (id){
-    //     $.get(href2,function (data,status){
-    //
-    //         if (!phone.match("(0[3|5|7|8|9])+([0-9]{8})")){
-    //             checkPhoneInput = false
-    //             $('#check-add-person-phone').html("Phone number not correct format, phone contains 10 numbers begin with 0")
-    //         }else if (data=="existed"){
-    //             checkPhoneInput = false
-    //             $('#check-add-person-phone').html("Phone number existed,Pls try again")
-    //         }
-    //         else {
-    //             $('#check-add-person-phone').html("")
-    //             checkPhoneInput = true
-    //             console.log("id2",id)
-    //         }
-    //     })
-    // }else {
-    //     console.log("id1",id)
-        $.get(href1,function (data,status){
-            if (!phone.match("(0[3|5|7|8|9])+([0-9]{8})")){
-                checkPhoneInput = false
-                $('#check-add-person-phone').html("Phone number not correct format, phone contains 10 numbers begin with 0")
-            }else if (data=="existed"){
-                checkPhoneInput = false
-                $('#check-add-person-phone').html("Phone number existed,Pls try again")
-            }
-            else {
-                $('#check-add-person-phone').html("")
-                checkPhoneInput = true
+        let href = "http://localhost:8080/persons/phone/"+phone
+    if (id){
+        $.ajax({
+            async: false,
+            url: "http://localhost:8080/persons/"+id,
+            type: 'GET',
+            success: function (data) {
+               if (data.phone==phone){
+                   checkPhoneInput = true;
+               }else {
+                   $.ajax({
+                       async: false,
+                       url: href,
+                       type: 'GET',
+                       success: function (data) {
+                           if (!phone.match("(0[3|5|7|8|9])+([0-9]{8})\\b")){
+                               checkPhoneInput = false
+                               $('#check-add-person-phone').html("Phone number not correct format, phone contains 10 numbers begin with 0")
+                           }else if (data=="existed"){
+                               checkPhoneInput = false
+                               $('#check-add-person-phone').html("Phone number existed,Pls try again")
+                           }
+                           else {
+                               $('#check-add-person-phone').html("")
+                               checkPhoneInput = true
+                           }
+                       }
+                   })
+               }
             }
         })
-    // }
+    }else {
+        $.ajax({
+            async: false,
+            url: href,
+            type: 'GET',
+            success: function (data) {
+                if (!phone.match("(0[3|5|7|8|9])+([0-9]{8})\\b")){
+                    checkPhoneInput = false
+                    $('#check-add-person-phone').html("Phone number not correct format, phone contains 10 numbers begin with 0")
+                }else if (data=="existed"){
+                    checkPhoneInput = false
+                    $('#check-add-person-phone').html("Phone number existed,Pls try again")
+                }
+                else {
+                    $('#check-add-person-phone').html("")
+                    checkPhoneInput = true
+                }
+            }
+        })
+    }
 }
 
 function checkInput(){
@@ -289,6 +306,7 @@ function checkInput(){
     let name = $('#add-person-name').val();
     let dob = $('#add-person-dob').val();
     let phone = $('#add-person-phone').val();
+    checkPhone()
     console.log("check phone", checkPhoneInput)
     if (name==""||name==null){
         $('#check-add-person-name').html("Name cannot blank");
@@ -334,155 +352,19 @@ if (checkPhoneInput){
         $('#function-btn').attr("data-target","#editPersonModal");
         getEditPersonInfo();
     }else {
-        console.log("name lay ra", name)
+        // console.log("name lay ra", name)
         $('#function-btn').attr("data-toggle","modal");
         $('#function-btn').attr("data-target","#showModal");
         getNewPersonInfo();
     }
 }else {
-    $('#check-add-person-phone').html("Phone not valid");
+    checkPhone();
     $('#function-btn').attr("data-target","");
     $('#function-btn').attr("data-toggle","");
 }
     }
 }
 
-function somefunction(){
-    console.log("vao ham khong")
-        checkPhone()
-    checkInput()
-}
-
-    //PAGINATION
-    // function pagePerson() {
-    //     $(function () {
-    //         let container = $('#person-content');
-    //         let key = $('#key').val();
-    //         container.pagination({
-    //             dataSource: 'http://localhost:8080/person/listPerson?key='+key,
-    //             locator: 'items',
-    //             totalNumber: size,
-    //             pageSize: 5,
-    //             callback: function (response, pagination) {
-    //                 console.log("response", response)
-    //                 let dataHtml = '<table border="1" class="table">'
-    //                 dataHtml +=
-    //                     '<table class="table table-striped">\n' +
-    //                     '        <form class="form-inline">\n' +
-    //                     '            <input class="form-control mr-sm-2" type="search" id="key" name="key" placeholder="Search by name or person id" aria-label="Search">\n' +
-    //                     '        </form>\n' +
-    //                     '        <thead>\n' +
-    //                     '        <th colspan="3">Person Information</th>\n' +
-    //                     '        <th></th>\n' +
-    //                     '        <th>\n' +
-    //                     '            <button type="button" id="add-person" class="btn btn-success" >Add new person</button>\n' +
-    //                     '        </th>\n' +
-    //                     '        </thead>\n' +
-    //                     '        <thead>\n' +
-    //                     '        <tr>\n' +
-    //                     '            <th scope="col">#</th>\n' +
-    //                     '            <th scope="col">ID</th>\n' +
-    //                     '            <th scope="col">Name</th>\n' +
-    //                     '            <th scope="col">Gender</th>\n' +
-    //                     '            <th scope="col">Date of birth</th>\n' +
-    //                     '            <th scope="col">Classify</th>\n' +
-    //                     '            <th scope="col">Phone number</th>\n' +
-    //                     '            <th scope="col">Address</th>\n' +
-    //                     '            <th colspan="2" scope="col">Action</th>\n' +
-    //                     '        </tr>\n' +
-    //                     '        </thead>\n' +
-    //                     '        <tbody>'
-    //
-    //                 dataHtml += '</tr>'
-    //                 let pageStart = (pagination.pageNumber - 1) * pagination.pageSize;
-    //                 let pageEnd = pageStart + pagination.pageSize;
-    //                 let pageItems = response.slice(pageStart, pageEnd);
-    //                 $.each(pageItems, function (index, item) {
-    //                     dataHtml +=
-    //                         '<tr>\n' +
-    //                         '            <td>'+(index+1)+'</td>\n' +
-    //                         '            <td>'+item.code+'</td>\n' +
-    //                         '            <td>'+item.name+'</td>\n' +
-    //                         // '            <td>'+item.gender==true?'Male':'Female'+'</td>\n' +
-    //                             '            <td >'+item.dateOfBirth+'</td>\n' +
-    //                             '            <td>'+item.classify.classify+'</td>\n' +
-    //                             '            <td>'+item.phone+'</td>\n' +
-    //                             '            <td>'+item.address+'</td>\n' +
-    //                             '            <td><a>Edit</a></td>\n' +
-    //                             '            <td><a>Delete</a></td>\n' +
-    //                             '        </tr>'
-    //                     dataHtml += '</tr>'
-    //                 })
-    //                 dataHtml += '</table>';
-    //                 container.prev().html(dataHtml);
-    //             }
-    //         })
-    //     })
-    // }
-
-//get list all person
-// function listPerson() {
-//     $.ajax({
-//         async: false,
-//         url: 'http://localhost:8080/persons/listPerson?key=',
-//         method: 'GET',
-//         dataType: 'json',
-//         success: function (data) {
-//             // console.log(data)
-//             let str;
-//             str += '<table class="table table-striped">\n' +
-//                 '        <form class="form-inline">\n' +
-//                 '            <input class="form-control mr-sm-2" type="search" name="key" placeholder="Search by name or person id" aria-label="Search">\n' +
-//                 '        </form>\n' +
-//                 '        <thead>\n' +
-//                 '        <th colspan="3">Person Information</th>\n' +
-//                 '        <th></th>\n' +
-//                 '        <th>\n' +
-//                 '            <button type="button" id="add-person" class="btn btn-success" >Add new person</button>\n' +
-//                 '        </th>\n' +
-//                 '        </thead>\n' +
-//                 '        <thead>\n' +
-//                 '        <tr>\n' +
-//                 '            <th scope="col">#</th>\n' +
-//                 '            <th scope="col">ID</th>\n' +
-//                 '            <th scope="col">Name</th>\n' +
-//                 '            <th scope="col">Gender</th>\n' +
-//                 '            <th scope="col">Date of birth</th>\n' +
-//                 '            <th scope="col">Classify</th>\n' +
-//                 '            <th scope="col">Phone number</th>\n' +
-//                 '            <th scope="col">Address</th>\n' +
-//                 '<!--            <th colspan="2" scope="col">Action</th>-->\n' +
-//                 '        </tr>\n' +
-//                 '        </thead>\n' +
-//                 '        <tbody id="person-content-body">\n'
-//                 let person = data.slice();
-//             let gender;
-//             $.each(person, function (index, items){
-//                 console.log("index", index)
-//                 if (items.gender){
-//                     gender = "Male";
-//                 }else {
-//                     gender = "Female"
-//                 }
-//                 str +=  '        <tr onclick="showDetail('+items.id+')">\n' +
-//                     '            <td>'+(index +1)+'</td>\n' +
-//                     '            <td>'+items.code+'</td>\n' +
-//                     '            <td>'+items.name+'</td>\n'+
-//                     '            <td>'+gender+'</td>\n' +
-//                     '            <td>'+items.dateOfBirth+'</td>\n' +
-//                     '            <td>'+items.classify.classify+'</td>\n' +
-//                     '            <td>'+items.phone+'</td>\n' +
-//                     '            <td>'+items.address+'</td>\n' +
-//                     '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-primary">Edit</a></td>-->\n' +
-//                     '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-danger" id="deleteButton">Delete</a></td>-->\n' +
-//                     '        </tr>\n'
-//             })
-//                 str += '        </tbody>\n' +
-//                 '    </table>';
-//             $('#person-content').html(str);
-//         }
-//     })
-// }
 
     // show detail person form
     function showDetail(id){
