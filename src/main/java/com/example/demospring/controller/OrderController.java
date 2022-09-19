@@ -95,4 +95,10 @@ public class OrderController {
         orderOptional.setStatus(true);
         return new ResponseEntity<>(iOrderService.save(orderOptional), HttpStatus.OK);
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<?> deleteOrder(@PathVariable Long id){
+        Order orderOptional = iOrderService.findById(id).get();
+        iOrderService.remove(orderOptional.getId());
+        return new ResponseEntity<>(iOrderService.save(orderOptional),HttpStatus.OK);
+    }
 }

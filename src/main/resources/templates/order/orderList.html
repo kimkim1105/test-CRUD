@@ -166,7 +166,7 @@
                 <th scope="col">#</th>
                 <th scope="col">Person Code</th>
                 <th scope="col">Person Name</th>
-<!--                <th scope="col">Book Quantity</th>-->
+                <th scope="col">Book Quantity</th>
                 <th scope="col">Date on</th>
                 <th scope="col">Date off</th>
             </tr>
@@ -176,6 +176,7 @@
                 <td th:utext="${s.index +1}"></td>
                 <td th:utext="${b.person.code}"></td>
                 <td th:utext="${b.person.name}"></td>
+                <td th:utext="${b.book.size()}"></td>
                 <td th:utext="${b.dateOn}"></td>
                 <td th:utext="${b.dateOff}"></td>
                 <!--                            <td><a class="btn btn-primary">Quick act</a></td>-->
@@ -229,7 +230,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <a type="button" data-toggle="modal" data-target="#confirmModal" onclick="editBook()" data-dismiss="modal" class="btn btn-primary" >Confirm</a>
+                <a type="button" data-toggle="modal" data-target="#confirmModal" onclick="returnOrder()" data-dismiss="modal" class="btn btn-primary" >Confirm</a>
             </div>
         </div>
     </div>
@@ -250,7 +251,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <a type="button" data-toggle="modal" data-target="#confirmModal" onclick="deletebook()" data-dismiss="modal" class="btn btn-primary" >Confirm</a>
+                <a type="button" data-toggle="modal" data-target="#confirmModal" onclick="deleteOrder()" data-dismiss="modal" class="btn btn-primary" >Confirm</a>
             </div>
         </div>
     </div>
@@ -276,7 +277,6 @@
         </div>
     </div>
 </div>
-
 
 
 <th:block th:replace="share/footer :: footer"></th:block>
@@ -566,7 +566,7 @@
     function showDetail(id){
         $.ajax({
             async: false,
-            url: 'http://localhost:8080/books/'+id,
+            url: 'http://localhost:8080/orders/'+id,
             method: 'GET',
             dataType: 'json',
             success: function (data) {
@@ -576,58 +576,65 @@
                     '  <div class="container">\n' +
                     '    <div class="row">\n' +
                     '      <div class="col-md-9 col-lg-8 mx-auto pl-5 pr-5">\n' +
-                    '        <h3 class="login-heading mb-4">Book Information</h3>\n' +
-                    '<a style="margin-inline-end: auto; text-align: right" onclick="showEditForm()"><i class="far fa-edit">Edit</i></a>'+
+                    '        <h3 class="login-heading mb-4">Order Information</h3>\n' +
                     '        <form>\n' +
-                    '            <input type="text" disabled value="'+data.id+'" hidden id="add-book-id" class="form-control" >\n' +
+                    '            <input type="text" disabled value="'+data.id+'" hidden id="add-order-id" class="form-control" >\n' +
                     '          <div class="form-label-group">\n' +
-                    '            <label class="text-secondary">Book code</label>\n' +
-                    '<small style="color: red" id="check-add-book-code"></small>'+
-                    '            <input type="text" oninput="checkCode()" disabled value="'+data.code+'" id="add-book-code" class="form-control" >\n' +
+                    '            <label class="text-secondary">Person Code</label>\n' +
+                    '<small style="color: red" id="check-add-order-person-code"></small>'+
+                    '            <input type="text" disabled value="'+data.person.code+'" id="add-order-person-code" class="form-control" >\n' +
                     '          </div>\n' +
                     '          <div class="form-label-group">\n' +
-                    '            <label class="text-secondary">Book name</label>\n' +
-                    '<small style="color: red" id="check-add-book-name"></small>'+
-                    '            <input type="text" oninput="checkName()" disabled value="'+data.name+'" id="add-book-name" class="form-control" >\n' +
+                    '            <label class="text-secondary">Person Name</label>\n' +
+                    '<small style="color: red" id="check-add-order-person-name"></small>'+
+                    '            <input type="text" disabled value="'+data.person.name+'" id="add-order-person-name" class="form-control" >\n' +
                     '          </div>\n' +
+                    '<table class="table">\n' +
+                    '    <tr>\n' +
+                    '        <td>Date on: '+data.dateOn+'</td>\n' +
+                    '        <td>Date off: '+data.dateOff+'</td>\n' +
+                        '    </tr>\n'+
+                        '</table>'+
                     '          <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">\n' +
-                    '            <label class="text-secondary">Author</label>\n' +
-                    '<small style="color: red" id="check-add-book-author"></small>'+
-                    '            <input disabled type="text" id="add-book-author" value="'+data.author+'" class="form-control">\n' +
-                    '          </div>\n' +
-                    '          <div class="form-label-group mb-4">\n '+
-                    '           <label class="text-secondary">Category</label> <br><br><br>\n'+
-                    '<select disabled id="add-book-category" class="form-control">';
-                var link = 'http://localhost:8080/categories';
-                $.get(link,function (category, status){
-                    let categoryList = category.slice();
-                    let html;
-                    $.each(categoryList, function (index, items){
-                        // console.log("items laa ra", items.id)
-                        if (items.category == data.category.category){
-                            html +='<option selected value="'+items.id+'">'+items.category+'</option>'
-                        }else {
-                            html +='<option value="'+items.id+'">'+items.category+'</option>'
-                        }
+                    '            <label class="text-secondary">Book list</label>\n' +
+                    '<small style="color: red" id="check-add-order-book"></small>'+
+                    '<table class="table">\n' +
+                    '    <tr>\n' +
+                    '        <td>Book code</td>\n' +
+                    '        <td>Book name</td>\n' +
+                    '    </tr>\n'
+                    // '            <input disabled type="text" id="add-book-author" value="'+data.author+'" class="form-control">\n' +
+                    let bookList = data.book.slice();
+                    $.each(bookList, function (index, items){
+                        str +=
+                            '    <tr>\n' +
+                            '        <td>'+items.code+'</td>\n' +
+                            '        <td>'+items.name+'</td>\n' +
+                            '    </tr>\n'
+
                     })
-                    $('#add-book-category').append(html);
-                })
-                str +=  ' </select>'+
-                    '       </div>\n' +
+                   str +=  '</table>'+
+                       '       </div>\n' +
+                  '       </div>\n' +
                     '          <div class="form-label-group mb-4">\n' +
                     '         </div>\n' +
-                    '          <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">\n' +
-                    '            <label class="text-secondary">Quantity</label>\n' +
-                    '<small style="color: red" id="check-add-book-inStock"></small>'+
-                    '            <input disabled type="text" id="add-book-inStock" value="'+data.inStock+'" class="form-control">\n' +
-                    '          </div>\n' +
-                    '         <a data-toggle="modal" id="function-btn-book" onclick="getDeletebookInfo()" data-target="#deletebookModal" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Delete</a>\n' +
+                    '         </div>\n'
+
+                if (data.dateOff==null){
+                    str +=    '<div class="row">'+'<div class="col-md">' +
+                        '         <a data-toggle="modal" id="function-btn-return" onclick="getEditOrderInfo()" data-target="#editbookModal" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Return</a>\n' +
+                        '</div>'+
+                        '<div class="col-md">' +
+                        '         <a data-toggle="modal" id="function-btn-delete" onclick="getDeleteOrderInfo()" data-target="#deletebookModal" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Delete</a>\n' +
+                        '</div>'+ '</div>'
+                }
+                 str +=
                     '        <a onclick="reload()" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Back</a>\n' +
                     '       </form>\n' +
                     '      </div>\n' +
-                    '    </div>\n' +
+                    '      </div>\n' +
                     '</div>';
-                $('#book-content').html(str);
+                $('#order-content').html(str);
             }
         })
     }
@@ -682,99 +689,96 @@
         $('#add-order-show-modal').html(str)
     }
     // get edit book info
-    function getEditBookInfo(){
-        let name = $('#add-book-name').val();
-        let categoryId = $('#add-book-category').val();
-        let author = $('#add-book-author').val();
-        let code = $('#add-book-code').val();
-        let inStock = $('#add-book-inStock').val();
+    function getEditOrderInfo(){
         let str;
+let id = $('#add-order-id').val();
+        $.ajax({
+            async: false,
+            url: 'http://localhost:8080/orders/'+id,
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                // console.log(data)
 
-        str += "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Book code:</label>\n" +
-            "                        <input type='text' disabled value='"+code+"' >\n" +
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Name:</label>\n" +
-            "                        <input type='text' disabled value='"+name+"' >\n" +
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Author:</label>\n" +
-            "                        <input type='text' disabled value='"+author+"' >\n" +
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label id='category' class=\"col-form-label\">Category:</label>\n"+
-            "<input id='categoryShow' type='text' disabled value='' >"
-        let href = "http://localhost:8080/categories/"+categoryId;
-        $.get(href,function (data,status){
-            // console.log("data",data)
-            category = data.category;
-            // console.log("lay ra category", category)
-            $('#categoryShow').val(category);
+                str +=
+                    '          <div class="form-label-group">\n' +
+                    '            <label class="text-secondary">Person Code</label>\n' +
+                    '<small style="color: red" id="check-add-order-person-code"></small>'+
+                    '            <input type="text" disabled value="'+data.person.code+'" id="add-order-person-code" class="form-control" >\n' +
+                    '          </div>\n' +
+                    '          <div class="form-label-group">\n' +
+                    '            <label class="text-secondary">Person Name</label>\n' +
+                    '<small style="color: red" id="check-add-order-person-name"></small>'+
+                    '            <input type="text" disabled value="'+data.person.name+'" id="add-order-person-name" class="form-control" >\n' +
+                    '          </div>\n' +
+                    '          <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">\n' +
+                    '            <label class="text-secondary">Book list</label>\n' +
+                    '<small style="color: red" id="check-add-order-book"></small>'+
+                    '<table class="table">\n' +
+                    '    <tr>\n' +
+                    '        <td>Book code</td>\n' +
+                    '        <td>Book name</td>\n' +
+                    '    </tr>\n'
+                // '            <input disabled type="text" id="add-book-author" value="'+data.author+'" class="form-control">\n' +
+                let bookList = data.book.slice();
+                $.each(bookList, function (index, items){
+                    str +=
+                        '    <tr>\n' +
+                        '        <td>'+items.code+'</td>\n' +
+                        '        <td>'+items.name+'</td>\n' +
+                        '    </tr>\n'
+
+                })
+                str +=  '</table>';
+            }
         })
-        str +=
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Quantity:</label>\n" +
-            "                        <input type='text' disabled value='"+inStock+"' >\n" +
-            "                    </div>";
         $('#edit-book-show-modal').html(str)
     }
     //get delet book info
-    function getDeletebookInfo(){
-        let id = $('#add-book-id').val();
-        // console.log("lay ra duoc id hien tai k", id)
-        let name = $('#add-book-name').val();
-        let code = $('#add-book-code').val();
-        let categoryId = $('#add-book-category').val();
-        let author = $('#add-book-author').val();
-        let inStock = $('#add-book-inStock').val();
+    function getDeleteOrderInfo(){
         let str;
-        // console.log("lay id xoa",id)
-        str +=
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">ID:</label>\n" +
-            "                        <input type='text' disabled value='"+code+"' >\n" +
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Name:</label>\n" +
-            "                        <input type='text' disabled value='"+name+"' >\n" +
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Gender:</label>\n" +
-            "                        <input type='text' disabled value='"+author+"' >\n" +
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label id='category' class=\"col-form-label\">category:</label>\n"
-        let href = "http://localhost:8080/categories/"+categoryId;
-        $.get(href,function (data,status){
-            // console.log("data",data)
-            category = data.category;
-            let html = "<input type='text' disabled value='"+category+"' >"
-            // console.log("lay ra category", category)
-            $('#category').append(html);
+        let id = $('#add-order-id').val();
+        $.ajax({
+            async: false,
+            url: 'http://localhost:8080/orders/'+id,
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                // console.log(data)
+
+                str +=
+                    '          <div class="form-label-group">\n' +
+                    '            <label class="text-secondary">Person Code</label>\n' +
+                    '<small style="color: red" id="check-add-order-person-code"></small>'+
+                    '            <input type="text" disabled value="'+data.person.code+'" id="add-order-person-code" class="form-control" >\n' +
+                    '          </div>\n' +
+                    '          <div class="form-label-group">\n' +
+                    '            <label class="text-secondary">Person Name</label>\n' +
+                    '<small style="color: red" id="check-add-order-person-name"></small>'+
+                    '            <input type="text" disabled value="'+data.person.name+'" id="add-order-person-name" class="form-control" >\n' +
+                    '          </div>\n' +
+                    '          <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">\n' +
+                    '            <label class="text-secondary">Book list</label>\n' +
+                    '<small style="color: red" id="check-add-order-book"></small>'+
+                    '<table class="table">\n' +
+                    '    <tr>\n' +
+                    '        <td>Book code</td>\n' +
+                    '        <td>Book name</td>\n' +
+                    '    </tr>\n'
+                // '            <input disabled type="text" id="add-book-author" value="'+data.author+'" class="form-control">\n' +
+                let bookList = data.book.slice();
+                $.each(bookList, function (index, items){
+                    str +=
+                        '    <tr>\n' +
+                        '        <td>'+items.code+'</td>\n' +
+                        '        <td>'+items.name+'</td>\n' +
+                        '    </tr>\n'
+                })
+                str +=  '</table>';
+            }
         })
-        str +=
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Quantity:</label>\n" +
-            "                        <input type='text' disabled value='"+inStock+"' >\n" +
-            "                    </div>";
         $('#delete-book-show-modal').html(str)
-
     }
-
-    // show edit form
-    function showEditForm(){
-        $('#add-book-name').attr("disabled", false);
-        $('#add-book-code').attr("disabled", false);
-        $('#add-book-category').attr("disabled", false);
-        $('#add-book-author').attr("disabled", false);
-        $('#function-btn-book').html("Update");
-        $('#function-btn-book').attr("data-target","#editbookModal");
-        $('#function-btn-book').attr("onclick","checkBookInput()");
-    }
-
     // create new book
     function addNewOrder(){
         let person_info;
@@ -842,43 +846,46 @@
         })
     }
     // create new book
-    function editBook(){
-        let id = $('#add-book-id').val();
-        let name = $('#add-book-name').val();
-        let code = $('#add-book-code').val();
-        let categoryId = $('#add-book-category').val();
-        let author = $('#add-book-author').val();
-        let obj = {
+    function returnOrder(){
+        let id = $('#add-order-id').val();
+        let book = [];
+        let person;
+        $.ajax({
+            async: false,
+            url: 'http://localhost:8080/orders/'+id,
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                book = data.book;
+                person = data.person;
+            }})
+                let obj = {
             "id": id,
-            "name": name,
-            "code": code,
-            "author":author,
-            "category": {
-                "id": categoryId
-            }
+            "book": book,
+            "person": person
         }
         // console.log("type",typeof(obj))
         let data = JSON.stringify(obj)
-        // console.log("data tao tu obj",data)
+        console.log("data tao tu obj",data)
         $.ajax({
             async: false,
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            url: "http://localhost:8080/books",
+            url: "http://localhost:8080/orders",
             type: 'PUT',
             data: data,
             success: function (data) {
                 console.log("sau khi update", data)
-                $('#confirmModalLabel').html("Update book confirm");
-                $('#confirm-content').html("Update success!");
+                $('#confirmModalLabel').html("Resturn book confirm");
+                $('#confirm-content').html("success!");
             }
         })
     }
     // create new book
-    function deletebook(){
-        let id = $('#add-book-id').val();
+    function deleteOrder(){
+        let id = $('#add-order-id').val();
         // console.log("data tao tu obj",data)
         $.ajax({
             async: false,
@@ -886,11 +893,11 @@
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            url: "http://localhost:8080/books/"+id,
+            url: "http://localhost:8080/orders/"+id,
             type: 'PUT',
             success: function (data) {
                 // console.log("sau khi update", data)
-                $('#confirmModalLabel').html("Delete book confirm");
+                $('#confirmModalLabel').html("Delete order confirm");
                 $('#confirm-content').html("Delete success!");
             }
         })
