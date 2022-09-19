@@ -354,136 +354,135 @@ function somefunction(){
 }
 
     //PAGINATION
-    function pagePerson() {
-        $(function () {
-            let container = $('#person-content');
-            let key = $('#key').val();
-            container.pagination({
-                dataSource: 'http://localhost:8080/person/listPerson?key='+key,
-                locator: 'items',
-                totalNumber: size,
-                pageSize: 5,
-                callback: function (response, pagination) {
-                    console.log("response", response)
-                    let dataHtml = '<table border="1" class="table">'
-                    dataHtml +=
-                        '<table class="table table-striped">\n' +
-                        '        <form class="form-inline">\n' +
-                        '            <input class="form-control mr-sm-2" type="search" id="key" name="key" placeholder="Search by name or person id" aria-label="Search">\n' +
-                        '        </form>\n' +
-                        '        <thead>\n' +
-                        '        <th colspan="3">Person Information</th>\n' +
-                        '        <th></th>\n' +
-                        '        <th>\n' +
-                        '            <button type="button" id="add-person" class="btn btn-success" >Add new person</button>\n' +
-                        '        </th>\n' +
-                        '        </thead>\n' +
-                        '        <thead>\n' +
-                        '        <tr>\n' +
-                        '            <th scope="col">#</th>\n' +
-                        '            <th scope="col">ID</th>\n' +
-                        '            <th scope="col">Name</th>\n' +
-                        '            <th scope="col">Gender</th>\n' +
-                        '            <th scope="col">Date of birth</th>\n' +
-                        '            <th scope="col">Classify</th>\n' +
-                        '            <th scope="col">Phone number</th>\n' +
-                        '            <th scope="col">Address</th>\n' +
-                        '            <th colspan="2" scope="col">Action</th>\n' +
-                        '        </tr>\n' +
-                        '        </thead>\n' +
-                        '        <tbody>'
-
-                    dataHtml += '</tr>'
-                    let pageStart = (pagination.pageNumber - 1) * pagination.pageSize;
-                    let pageEnd = pageStart + pagination.pageSize;
-                    let pageItems = response.slice(pageStart, pageEnd);
-                    $.each(pageItems, function (index, item) {
-                        dataHtml +=
-                            '<tr>\n' +
-                            '            <td>'+(index+1)+'</td>\n' +
-                            '            <td>'+item.code+'</td>\n' +
-                            '            <td>'+item.name+'</td>\n' +
-                            // '            <td>'+item.gender==true?'Male':'Female'+'</td>\n' +
-                                '            <td >'+item.dateOfBirth+'</td>\n' +
-                                '            <td>'+item.classify.classify+'</td>\n' +
-                                '            <td>'+item.phone+'</td>\n' +
-                                '            <td>'+item.address+'</td>\n' +
-                                '            <td><a>Edit</a></td>\n' +
-                                '            <td><a>Delete</a></td>\n' +
-                                '        </tr>'
-                        dataHtml += '</tr>'
-                    })
-                    dataHtml += '</table>';
-                    container.prev().html(dataHtml);
-                }
-            })
-        })
-    }
+    // function pagePerson() {
+    //     $(function () {
+    //         let container = $('#person-content');
+    //         let key = $('#key').val();
+    //         container.pagination({
+    //             dataSource: 'http://localhost:8080/person/listPerson?key='+key,
+    //             locator: 'items',
+    //             totalNumber: size,
+    //             pageSize: 5,
+    //             callback: function (response, pagination) {
+    //                 console.log("response", response)
+    //                 let dataHtml = '<table border="1" class="table">'
+    //                 dataHtml +=
+    //                     '<table class="table table-striped">\n' +
+    //                     '        <form class="form-inline">\n' +
+    //                     '            <input class="form-control mr-sm-2" type="search" id="key" name="key" placeholder="Search by name or person id" aria-label="Search">\n' +
+    //                     '        </form>\n' +
+    //                     '        <thead>\n' +
+    //                     '        <th colspan="3">Person Information</th>\n' +
+    //                     '        <th></th>\n' +
+    //                     '        <th>\n' +
+    //                     '            <button type="button" id="add-person" class="btn btn-success" >Add new person</button>\n' +
+    //                     '        </th>\n' +
+    //                     '        </thead>\n' +
+    //                     '        <thead>\n' +
+    //                     '        <tr>\n' +
+    //                     '            <th scope="col">#</th>\n' +
+    //                     '            <th scope="col">ID</th>\n' +
+    //                     '            <th scope="col">Name</th>\n' +
+    //                     '            <th scope="col">Gender</th>\n' +
+    //                     '            <th scope="col">Date of birth</th>\n' +
+    //                     '            <th scope="col">Classify</th>\n' +
+    //                     '            <th scope="col">Phone number</th>\n' +
+    //                     '            <th scope="col">Address</th>\n' +
+    //                     '            <th colspan="2" scope="col">Action</th>\n' +
+    //                     '        </tr>\n' +
+    //                     '        </thead>\n' +
+    //                     '        <tbody>'
+    //
+    //                 dataHtml += '</tr>'
+    //                 let pageStart = (pagination.pageNumber - 1) * pagination.pageSize;
+    //                 let pageEnd = pageStart + pagination.pageSize;
+    //                 let pageItems = response.slice(pageStart, pageEnd);
+    //                 $.each(pageItems, function (index, item) {
+    //                     dataHtml +=
+    //                         '<tr>\n' +
+    //                         '            <td>'+(index+1)+'</td>\n' +
+    //                         '            <td>'+item.code+'</td>\n' +
+    //                         '            <td>'+item.name+'</td>\n' +
+    //                         // '            <td>'+item.gender==true?'Male':'Female'+'</td>\n' +
+    //                             '            <td >'+item.dateOfBirth+'</td>\n' +
+    //                             '            <td>'+item.classify.classify+'</td>\n' +
+    //                             '            <td>'+item.phone+'</td>\n' +
+    //                             '            <td>'+item.address+'</td>\n' +
+    //                             '            <td><a>Edit</a></td>\n' +
+    //                             '            <td><a>Delete</a></td>\n' +
+    //                             '        </tr>'
+    //                     dataHtml += '</tr>'
+    //                 })
+    //                 dataHtml += '</table>';
+    //                 container.prev().html(dataHtml);
+    //             }
+    //         })
+    //     })
+    // }
 
 //get list all person
-function listPerson() {
-    $.ajax({
-        async: false,
-        url: 'http://localhost:8080/persons/listPerson?key=',
-        method: 'GET',
-        dataType: 'json',
-        success: function (data) {
-            // console.log(data)
-            size = data.length
-            let str;
-            str += '<table class="table table-striped">\n' +
-                '        <form class="form-inline">\n' +
-                '            <input class="form-control mr-sm-2" type="search" name="key" placeholder="Search by name or person id" aria-label="Search">\n' +
-                '        </form>\n' +
-                '        <thead>\n' +
-                '        <th colspan="3">Person Information</th>\n' +
-                '        <th></th>\n' +
-                '        <th>\n' +
-                '            <button type="button" id="add-person" class="btn btn-success" >Add new person</button>\n' +
-                '        </th>\n' +
-                '        </thead>\n' +
-                '        <thead>\n' +
-                '        <tr>\n' +
-                '            <th scope="col">#</th>\n' +
-                '            <th scope="col">ID</th>\n' +
-                '            <th scope="col">Name</th>\n' +
-                '            <th scope="col">Gender</th>\n' +
-                '            <th scope="col">Date of birth</th>\n' +
-                '            <th scope="col">Classify</th>\n' +
-                '            <th scope="col">Phone number</th>\n' +
-                '            <th scope="col">Address</th>\n' +
-                '<!--            <th colspan="2" scope="col">Action</th>-->\n' +
-                '        </tr>\n' +
-                '        </thead>\n' +
-                '        <tbody id="person-content-body">\n'
-                let person = data.slice();
-            let gender;
-            $.each(person, function (index, items){
-                console.log("index", index)
-                if (items.gender){
-                    gender = "Male";
-                }else {
-                    gender = "Female"
-                }
-                str +=  '        <tr onclick="showDetail('+items.id+')">\n' +
-                    '            <td>'+(index +1)+'</td>\n' +
-                    '            <td>'+items.code+'</td>\n' +
-                    '            <td>'+items.name+'</td>\n'+
-                    '            <td>'+gender+'</td>\n' +
-                    '            <td>'+items.dateOfBirth+'</td>\n' +
-                    '            <td>'+items.classify.classify+'</td>\n' +
-                    '            <td>'+items.phone+'</td>\n' +
-                    '            <td>'+items.address+'</td>\n' +
-                    '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-primary">Edit</a></td>-->\n' +
-                    '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-danger" id="deleteButton">Delete</a></td>-->\n' +
-                    '        </tr>\n'
-            })
-                str += '        </tbody>\n' +
-                '    </table>';
-            $('#person-content').html(str);
-        }
-    })
-}
+// function listPerson() {
+//     $.ajax({
+//         async: false,
+//         url: 'http://localhost:8080/persons/listPerson?key=',
+//         method: 'GET',
+//         dataType: 'json',
+//         success: function (data) {
+//             // console.log(data)
+//             let str;
+//             str += '<table class="table table-striped">\n' +
+//                 '        <form class="form-inline">\n' +
+//                 '            <input class="form-control mr-sm-2" type="search" name="key" placeholder="Search by name or person id" aria-label="Search">\n' +
+//                 '        </form>\n' +
+//                 '        <thead>\n' +
+//                 '        <th colspan="3">Person Information</th>\n' +
+//                 '        <th></th>\n' +
+//                 '        <th>\n' +
+//                 '            <button type="button" id="add-person" class="btn btn-success" >Add new person</button>\n' +
+//                 '        </th>\n' +
+//                 '        </thead>\n' +
+//                 '        <thead>\n' +
+//                 '        <tr>\n' +
+//                 '            <th scope="col">#</th>\n' +
+//                 '            <th scope="col">ID</th>\n' +
+//                 '            <th scope="col">Name</th>\n' +
+//                 '            <th scope="col">Gender</th>\n' +
+//                 '            <th scope="col">Date of birth</th>\n' +
+//                 '            <th scope="col">Classify</th>\n' +
+//                 '            <th scope="col">Phone number</th>\n' +
+//                 '            <th scope="col">Address</th>\n' +
+//                 '<!--            <th colspan="2" scope="col">Action</th>-->\n' +
+//                 '        </tr>\n' +
+//                 '        </thead>\n' +
+//                 '        <tbody id="person-content-body">\n'
+//                 let person = data.slice();
+//             let gender;
+//             $.each(person, function (index, items){
+//                 console.log("index", index)
+//                 if (items.gender){
+//                     gender = "Male";
+//                 }else {
+//                     gender = "Female"
+//                 }
+//                 str +=  '        <tr onclick="showDetail('+items.id+')">\n' +
+//                     '            <td>'+(index +1)+'</td>\n' +
+//                     '            <td>'+items.code+'</td>\n' +
+//                     '            <td>'+items.name+'</td>\n'+
+//                     '            <td>'+gender+'</td>\n' +
+//                     '            <td>'+items.dateOfBirth+'</td>\n' +
+//                     '            <td>'+items.classify.classify+'</td>\n' +
+//                     '            <td>'+items.phone+'</td>\n' +
+//                     '            <td>'+items.address+'</td>\n' +
+//                     '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-primary">Edit</a></td>-->\n' +
+//                     '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-danger" id="deleteButton">Delete</a></td>-->\n' +
+//                     '        </tr>\n'
+//             })
+//                 str += '        </tbody>\n' +
+//                 '    </table>';
+//             $('#person-content').html(str);
+//         }
+//     })
+// }
 
     // show detail person form
     function showDetail(id){

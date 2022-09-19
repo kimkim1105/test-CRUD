@@ -11,5 +11,8 @@ public interface IPersonService extends IGeneralService<Person> {
     Page<Person> findAll(Pageable pageable);
     Optional<Person> getLastestPerson();
     Optional<Person> findPersonByPhone(String phone);
+    Iterable<Person> findPersonWithKey(String key);
     Iterable<Person> findAllByNameContainingAndStatusIsTrue(String name);
+    Iterable<Person> findPersonWithKeyBorroed(String key);
+    Iterable<Person> findAllPersonInFree();
 }

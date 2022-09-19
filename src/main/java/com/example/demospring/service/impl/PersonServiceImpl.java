@@ -31,8 +31,39 @@ public class PersonServiceImpl implements IPersonService {
     }
 
     @Override
+    public Iterable<Person> findPersonWithKey(String key) {
+        try {
+            if (!key.isEmpty()){
+                return iPersonRepository.findPersonWithKey('%'+key+'%');
+            }else {
+                return iPersonRepository.findAllByStatusIsTrueOrderByIdDesc();
+            }
+        }catch (Exception e){
+            return iPersonRepository.findAllByStatusIsTrueOrderByIdDesc();
+        }
+    }
+
+    @Override
     public Iterable<Person> findAllByNameContainingAndStatusIsTrue(String name) {
         return iPersonRepository.findAllByNameContainingAndStatusIsTrue(name);
+    }
+
+    @Override
+    public Iterable<Person> findPersonWithKeyBorroed(String key) {
+        try {
+            if (!key.isEmpty()){
+                return iPersonRepository.findPersonWithKeyBorroed('%'+key+'%');
+            }else {
+                return iPersonRepository.findAllPersonInFree();
+            }
+        }catch (Exception e){
+            return iPersonRepository.findAllPersonInFree();
+        }
+    }
+
+    @Override
+    public Iterable<Person> findAllPersonInFree() {
+        return iPersonRepository.findAllPersonInFree();
     }
 
     @Override

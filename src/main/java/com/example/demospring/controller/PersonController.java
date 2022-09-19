@@ -5,7 +5,6 @@ import com.example.demospring.model.Person;
 import com.example.demospring.model.dto.PersonDTO;
 import com.example.demospring.service.IClassifyService;
 import com.example.demospring.service.IPersonService;
-import com.example.demospring.service.ITypeActionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -25,8 +24,6 @@ public class PersonController {
     IPersonService iPersonService;
     @Autowired
     IClassifyService iClassifyService;
-    @Autowired
-    ITypeActionService iTypeActionService;
 
     @GetMapping
     public String getListPerson(@RequestParam(required = false, name = "key") String key, Model model, @PageableDefault(value = 5) Pageable pageable){
@@ -36,10 +33,11 @@ public class PersonController {
     }
     @GetMapping("/listPerson")
     public ResponseEntity<?> getAllListPerson(@RequestParam(required = false, name = "key") String key){
-        if (!key.isEmpty()){
-            return new ResponseEntity<>(iPersonService.findAll(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(iPersonService.findAllByNameContainingAndStatusIsTrue(key),HttpStatus.OK);
+        return new ResponseEntity<>(iPersonService.findPersonWithKey(key),HttpStatus.OK);
+    }
+    @GetMapping("/free")
+    public ResponseEntity<?> getAllPersonInFree(@RequestParam(required = false, name = "key") String key){
+        return new ResponseEntity<>(iPersonService.findPersonWithKeyBorroed(key),HttpStatus.OK);
     }
 
     @GetMapping("/phone/{phone}")
@@ -77,7 +75,7 @@ public class PersonController {
         person.setPhone(personDTO.getPhone());
         person.setDateOfBirth(personDTO.getDateOfBirth());
         person.setAvatar("");
-        person.setTypeAction(iTypeActionService.findById(1L).get());
+        person.setTypeAction(false);
         Optional<Classify> classifyOptional = iClassifyService.findById(personDTO.getClassify().getId());
         person.setClassify(classifyOptional.get());
         Optional<Person> personOptional = iPersonService.getLastestPerson();
@@ -110,7 +108,7 @@ public class PersonController {
         personOptional.setPhone(person.getPhone());
         personOptional.setDateOfBirth(person.getDateOfBirth());
         personOptional.setAvatar("");
-        personOptional.setTypeAction(iTypeActionService.findById(1L).get());
+        personOptional.setTypeAction(false);
         Optional<Classify> classifyOptional = iClassifyService.findById(person.getClassify().getId());
         personOptional.setClassify(classifyOptional.get());
         return new ResponseEntity<>(iPersonService.save(personOptional),HttpStatus.OK);

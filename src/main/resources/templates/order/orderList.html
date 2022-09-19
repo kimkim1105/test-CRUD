@@ -23,6 +23,121 @@
     <!--    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>-->
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <style>
+        .scrollbar-deep-purple::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+            background-color: #F5F5F5;
+            border-radius: 10px;
+        }
+
+        .scrollbar-deep-purple::-webkit-scrollbar {
+            width: 12px;
+            background-color: #F5F5F5;
+        }
+
+        .scrollbar-deep-purple::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+            background-color: #512da8;
+        }
+
+        .scrollbar-deep-purple {
+            scrollbar-color: #512da8 #F5F5F5;
+        }
+
+        .scrollbar-cyan::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+            background-color: #F5F5F5;
+            border-radius: 10px;
+        }
+
+        .scrollbar-cyan::-webkit-scrollbar {
+            width: 12px;
+            background-color: #F5F5F5;
+        }
+
+        .scrollbar-cyan::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+            background-color: #00bcd4;
+        }
+
+        .scrollbar-cyan {
+            scrollbar-color: #00bcd4 #F5F5F5;
+        }
+
+        .scrollbar-dusty-grass::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+            background-color: #F5F5F5;
+            border-radius: 10px;
+        }
+
+        .scrollbar-dusty-grass::-webkit-scrollbar {
+            width: 12px;
+            background-color: #F5F5F5;
+        }
+
+        .scrollbar-dusty-grass::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+            background-image: -webkit-linear-gradient(330deg, #d4fc79 0%, #96e6a1 100%);
+            background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
+        }
+
+        .scrollbar-ripe-malinka::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+            background-color: #F5F5F5;
+            border-radius: 10px;
+        }
+
+        .scrollbar-ripe-malinka::-webkit-scrollbar {
+            width: 12px;
+            background-color: #F5F5F5;
+        }
+
+        .scrollbar-ripe-malinka::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+            background-image: -webkit-linear-gradient(330deg, #f093fb 0%, #f5576c 100%);
+            background-image: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .bordered-deep-purple::-webkit-scrollbar-track {
+            -webkit-box-shadow: none;
+            border: 1px solid #512da8;
+        }
+
+        .bordered-deep-purple::-webkit-scrollbar-thumb {
+            -webkit-box-shadow: none;
+        }
+
+        .bordered-cyan::-webkit-scrollbar-track {
+            -webkit-box-shadow: none;
+            border: 1px solid #00bcd4;
+        }
+
+        .bordered-cyan::-webkit-scrollbar-thumb {
+            -webkit-box-shadow: none;
+        }
+
+        .square::-webkit-scrollbar-track {
+            border-radius: 0 !important;
+        }
+
+        .square::-webkit-scrollbar-thumb {
+            border-radius: 0 !important;
+        }
+
+        .thin::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .example-1 {
+            position: relative;
+            overflow-y: scroll;
+            height: 200px;
+        }
+    </style>
 </head>
 <body>
 <th:block th:replace="share/header :: header"></th:block>
@@ -34,7 +149,7 @@
     <span style="color: red; margin-top:5px" id="validate"></span>
     <br>
     <br>
-    <div id="book-content" >
+    <div id="order-content" >
         <table class="table table-striped">
             <form class="form-inline">
                 <input class="form-control mr-sm-2" type="search" name="key" placeholder="Search by name or book id" aria-label="Search">
@@ -72,28 +187,28 @@
         <div>
             <ul class="nav nav-pills">
                 <li class="nav-item" th:each="i:${#numbers.sequence(0,orders.totalPages-1)}">
-                    <a th:href="@{'/books'(page=${i})}" th:text="${i+1}" class="nav-link" th:classappend="${orders.number}==${i}?'active':''"></a>
+                    <a th:href="@{'/orders'(page=${i})}" th:text="${i+1}" class="nav-link" th:classappend="${orders.number}==${i}?'active':''"></a>
                 </li>
             </ul>
         </div>
     </div>
 </div>
 <!-- show Modal -->
-<div class="modal fade" id="showOrderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="showModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="showOrderModalLabel">Add new book confirm</h5>
+                <h5 class="modal-title" id="showModalLabel">Add new order confirm</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body" style="color: red">
-                <div id="add-book-show-modal"></div>
+                <div id="add-order-show-modal"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <a type="button" data-toggle="modal" data-target="#confirmModal" onclick="addNewBook()" data-dismiss="modal" class="btn btn-primary" >Confirm</a>
+                <a type="button" data-toggle="modal" data-target="#confirmModal" onclick="addNewOrder()" data-dismiss="modal" class="btn btn-primary" >Confirm</a>
             </div>
         </div>
     </div>
@@ -168,8 +283,6 @@
 
 
 <script th:inline="javascript">
-    let checkBookCode;
-    let checkBookName;
     function reload(){
         window.location.reload();
     }
@@ -177,159 +290,272 @@
         //show form add book
         $('#add-order').on('click',function (event){
             // event.preventDefault();
-            let str = '<div class=login d-flex align-items-center py-5>\n '+
+            let str = '<div>\n '+
                 ' <div class=container>\n' +
                 '   <div class="row">\n' +
-                '<div className="col-md">'+
-                '    <div class="col-md-9 col-lg-8 mx-auto pl-5 pr-5">\n' +
-                '       <h3 class="login-heading mb-4">Add new book</h3>\n'+
-                '<i style="color: black">Pls fill the form, have <i style="color: red">* </i>is required</i>'+
-                '       <form id="form" method="post">\n' +
+                '    <div class="mx-auto">\n' +
+                '       <h3 class="login-heading mb-4">Add new order</h3>\n'+
+                '       <form id="form">\n' +
                 '         <div class="form-label-group">\n' +
-                '            <label for="add-book-code" class="text-secondary">Book code<i style="color: red">* </i></label>\n' +
-                '<small style="color: red" id="check-add-book-code"></small>'+
-                '           <input oninput="checkCode()" type="text" name="add-book-code" id="add-book-code" required class="form-control" >\n' +
-                '          </div>\n' +
-                '         <div class="form-label-group">\n' +
-                '            <label for="add-book-name" class="text-secondary">Book name<i style="color: red">* </i></label>\n' +
-                '<small style="color: red" id="check-add-book-name"></small>'+
-                '           <input oninput="checkName()" type="text" name="add-book-name" id="add-book-name" required class="form-control" >\n' +
-                '          </div>\n' +
-                '         <div class="form-label-group">\n' +
-                '            <label for="add-book-author" class="text-secondary">Book Author<i style="color: red">* </i></label>\n' +
-                '<small style="color: red" id="check-add-book-author"></small>'+
-                '           <input type="text" name="add-book-author" id="add-book-author" required class="form-control" >\n' +
-                '          </div>\n' +
-                '          <div class="form-label-group mb-4">\n '+
-                '           <span class="text-secondary">Category<i style="color: red">* </i></span> <br><br><br>\n'+
-                '<select id="add-book-category" class="form-control">';
-            var link = 'http://localhost:8080/categories';
-            $.get(link,function (category, status){
-                let categories = category.slice();
-                let html;
-                $.each(categories, function (index, items){
-                    // console.log("items laa ra", items.id)
-                    html +='<option value="'+items.id+'">'+items.category+'</option>'
-                })
-                $('#add-book-category').append(html);
-            })
-            str +=  ' </select>'+
-                '         <div class="form-label-group">\n' +
-                '            <label for="add-book-inStock" class="text-secondary">Quantity</label>\n' +
-                '<small style="color: red" id="check-add-book-inStock"></small>'+
-                '           <input type="text" name="add-book-inStock" id="add-book-inStock" required class="form-control" >\n' +
+                '            <label for="add-order-person-key" class="text-secondary">Enter name or person code<i style="color: red">* </i></label>\n' +
+                '<small style="color: red" id="check-add-order-person-key"></small>'+
+                '           <input oninput="personSearch()" type="text" name="add-order-person-key" id="add-order-person-key" required class="form-control" >\n' +
                 '          </div>\n' +
                 '<br><br>'+
-                '         <a data-toggle="modal" id="function-btn-book" data-target="#showBookModal" onclick="checkBookInput()" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Add new</a>\n' +
+               '<div class="card example-1 scrollbar-ripe-malinka">\n' +
+                '      <div class="card-body" id="add-order-person">\n';
+            var getPersonLink = 'http://localhost:8080/persons/free?key=';
+            $.get(getPersonLink,function (person, status){
+                let personList = person.slice();
+                // console.log(person)
+                let html;
+                html += '<table class="table">\n' +
+                    '        <thead>\n'+
+                    '        <tr>\n' +
+                    '            <th scope="col">#</th>\n' +
+                    '            <th scope="col">ID</th>\n' +
+                    '            <th scope="col">Name</th>\n' +
+                    '            <th scope="col">Gender</th>\n' +
+                    '            <th scope="col">Date of birth</th>\n' +
+                    '            <th scope="col">Classify</th>\n' +
+                    '            <th scope="col">Phone number</th>\n' +
+                    '            <th scope="col">Address</th>\n' +
+                    '<!--            <th colspan="2" scope="col">Action</th>-->\n' +
+                    '        </tr>\n' +
+                    '        </thead>\n'
+                $.each(personList, function (index, items){
+                    // console.log("items laa ra", items.id)
+                    if (items.gender){
+                        gender = "Male";
+                    }else {
+                        gender = "Female"
+                    }
+                    html +=  '        <tr>\n' +
+                        '            <td><input name="add-order-person-id" id="add-order-person-id-'+items.id+'" type="radio" value="'+items.id+'"></td>\n' +
+                        '            <td>'+items.code+'</td>\n' +
+                        '            <td>'+items.name+'</td>\n'+
+                        '            <td>'+gender+'</td>\n' +
+                        '            <td>'+items.dateOfBirth+'</td>\n' +
+                        '            <td>'+items.classify.classify+'</td>\n' +
+                        '            <td>'+items.phone+'</td>\n' +
+                        '            <td>'+items.address+'</td>\n' +
+                        '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-primary">Edit</a></td>-->\n' +
+                        '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-danger" id="deleteButton">Delete</a></td>-->\n' +
+                        '        </tr>\n'
+                })
+                html += '        </tbody>\n' +
+                    '    </table>';
+                $('#add-order-person').append(html);
+            })
+            str += '     </div>\n' +
+            '     </div>\n'+      '<br><br>'
+
+            str +=  '         <div class="form-label-group">\n' +
+                '            <label for="add-order-book-key" class="text-secondary">Enter name or book code</label>\n' +
+                '<small style="color: red" id="check-add-order-book-key"></small>'+
+                '           <input oninput="bookSearch()" type="text" name="add-order-book-key" id="add-order-book-key" required class="form-control" >\n' +
+                '          </div>\n' +
+                '<br><br>'+
+                '<div class="card example-1 scrollbar-ripe-malinka">\n' +
+                '      <div class="card-body" id="add-order-book">\n';
+            var getBookLink = 'http://localhost:8080/books/free?key=';
+            $.get(getBookLink,function (book, status){
+                let getBookList = book.slice();
+                // console.log(person)
+                let html;
+                html += '<table class="table">\n' +
+                    '        <thead>\n'+
+                    '        <tr>\n' +
+                    '            <th scope="col">#</th>\n' +
+                    '            <th scope="col">Code</th>\n' +
+                    '            <th scope="col">Name</th>\n' +
+                    '            <th scope="col">Author</th>\n' +
+                    '            <th scope="col">Category</th>\n' +
+                    '                 <th scope="col">Quantity</th>'+
+                    '        </tr>\n' +
+                    '        </thead>\n'
+                $.each(getBookList, function (index, items){
+                    // console.log("items laa ra", items.id)
+                    html +=  '        <tr>\n' +
+                        '            <td><input name="add-order-book-id" id="add-order-book-id-'+items.id+'" type="checkbox" value="'+items.id+'"></td>\n' +
+                        '            <td>'+items.code+'</td>\n' +
+                        '            <td>'+items.name+'</td>\n'+
+                        '            <td>'+items.author+'</td>\n' +
+                        '            <td>'+items.category.category+'</td>\n' +
+                        '            <td>'+items.quantity+'</td>\n' +
+                        '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-primary">Edit</a></td>-->\n' +
+                        '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-danger" id="deleteButton">Delete</a></td>-->\n' +
+                        '        </tr>\n'
+                })
+                html += '        </tbody>\n' +
+                    '    </table>';
+                $('#add-order-book').append(html);
+            })
+            str += '     </div>\n' +
+                '     </div>\n'
+            str += '<br><br>'+
+                '         <a data-toggle="modal" id="function-btn" data-target="#showModal" onclick="ShowInputInfo()" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Add new</a>\n' +
                 '         <a onclick="reload()" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Back</a>\n' +
                 '       </form>\n' +
-                '     </div>\n' +
-                '     </div>\n' +
                 '   </div>\n' +
-                '  </div>\n' +
+                '   </div>\n' +
                 '</div>'
-            $('#book-content').html(str);
+            $('#order-content').html(str);
         })
     })
-
-    function checkName(){
-        let name = $('#add-book-name').val();
-        let href = "http://localhost:8080/books/name/"+name
-        $.get(href,function (data,status){
-            if (data=="existed"){
-                checkBookName = false
-                $('#check-add-book-name').html("Book name existed,Pls try again")
-            }
-            else {
-                $('#check-add-book-name').html("")
-                checkBookName = true
-            }
+    function personSearch(){
+        let key = $('#add-order-person-key').val();
+        let href;
+        if (key){
+            href = 'http://localhost:8080/persons/free?key='+key
+        }else {
+            href = 'http://localhost:8080/persons/free?key='
+        }
+        // console.log("key search", key)
+        $.get(href,function (person, status){
+            let personList = person.slice();
+            // console.log(list)
+            // console.log("list lay ra", personList)
+            let html;
+            html += '<table class="table">\n' +
+                '        <thead>\n'+
+                '        <tr>\n' +
+                '            <th scope="col">#</th>\n' +
+                '            <th scope="col">ID</th>\n' +
+                '            <th scope="col">Name</th>\n' +
+                '            <th scope="col">Gender</th>\n' +
+                '            <th scope="col">Date of birth</th>\n' +
+                '            <th scope="col">Classify</th>\n' +
+                '            <th scope="col">Phone number</th>\n' +
+                '            <th scope="col">Address</th>\n' +
+                '<!--            <th colspan="2" scope="col">Action</th>-->\n' +
+                '        </tr>\n' +
+                '        </thead>\n'
+            $.each(personList, function (index, items){
+                // console.log("items laa ra", items.id)
+                if (items.gender){
+                    gender = "Male";
+                }else {
+                    gender = "Female"
+                }
+                html +=  '        <tr>\n' +
+                    '            <td><input name="add-order-person-id" id="add-order-person-id-'+items.id+'" type="radio" value="'+items.id+'"></td>\n' +
+                    '            <td>'+items.code+'</td>\n' +
+                    '            <td>'+items.name+'</td>\n'+
+                    '            <td>'+gender+'</td>\n' +
+                    '            <td>'+items.dateOfBirth+'</td>\n' +
+                    '            <td>'+items.classify.classify+'</td>\n' +
+                    '            <td>'+items.phone+'</td>\n' +
+                    '            <td>'+items.address+'</td>\n' +
+                    '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-primary">Edit</a></td>-->\n' +
+                    '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-danger" id="deleteButton">Delete</a></td>-->\n' +
+                    '        </tr>\n'
+            })
+            html += '        </tbody>\n' +
+                '    </table>';
+            $('#add-order-person').html(html);
         })
     }
-    function checkCode(){
-        let code = $('#add-book-code').val();
-        let href = "http://localhost:8080/books/code/"+code
-        $.get(href,function (data,status){
-            if (data=="existed"){
-                checkBookCode = false
-                $('#check-add-book-code').html("Book code existed,Pls try again")
-            }
-            else {
-                $('#check-add-book-code').html("")
-                checkBookCode = true
-            }
+    function bookSearch(){
+        let key = $('#add-order-book-key').val();
+        let href;
+        if (key){
+            href = 'http://localhost:8080/books/free?key='+key
+        }else {
+            href = 'http://localhost:8080/books/free?key='
+        }
+        // console.log("key search", key)
+        $.get(href,function (book, status){
+            let getBookList = book.slice();
+            // console.log(person)
+            let html;
+            html += '<table class="table">\n' +
+                '        <thead>\n'+
+                '        <tr>\n' +
+                '            <th scope="col">#</th>\n' +
+                '            <th scope="col">Code</th>\n' +
+                '            <th scope="col">Name</th>\n' +
+                '            <th scope="col">Author</th>\n' +
+                '            <th scope="col">Category</th>\n' +
+                '        </tr>\n' +
+                '        </thead>\n'
+            $.each(getBookList, function (index, items){
+                // console.log("items laa ra", items.id)
+                html +=  '>\n' +
+                    '            <td><input name="add-order-book-id" id="add-order-book-id-'+items.id+'" type="checkbox" value="'+items.id+'"></td>\n' +
+                    '            <td>'+items.code+'</td>\n' +
+                    '            <td>'+items.name+'</td>\n'+
+                    '            <td>'+items.author+'</td>\n' +
+                    '            <td>'+items.category.category+'</td>\n' +
+                    '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-primary">Edit</a></td>-->\n' +
+                    '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-danger" id="deleteButton">Delete</a></td>-->\n' +
+                    '        </tr>\n'
+            })
+            html += '        </tbody>\n' +
+                '    </table>';
+            $('#add-order-book').html(html);
         })
     }
 
-    function checkBookInput(){
-        let id = $('#add-book-id').val()
-        let code = $('#add-book-code').val();
-        let name = $('#add-book-name').val();
-        let author = $('#add-book-author').val();
-        console.log("check name "+ checkBookName + "check code "+ checkBookCode)
-        if (name==""||name==null){
-            $('#check-add-book-name').html("Name cannot blank");
-            $('#function-btn-book').attr("data-target","");
-            $('#function-btn-book').attr("data-toggle","");
-        }else {
-            console.log("check name", checkBookName)
-            if (checkBookName&&checkBookCode){
-                $('#check-add-book-name').html("");
-                if (id){
-                    $('#function-btn-book').attr("data-toggle","modal");
-                    $('#function-btn-book').attr("data-target","#editbookModal");
-                    getEditBookInfo();
-                }else {
-                    $('#function-btn-book').attr("data-toggle","modal");
-                    $('#function-btn-book').attr("data-target","#showBookModal");
-                    getNewBookInfo();
-                }
-            }else {
-                console.log("check code", checkBookName)
-                $('#check-add-book-name').html("Name not valid");
-                $('#function-btn-book').attr("data-target","");
-                $('#function-btn-book').attr("data-toggle","");
-            }
 
-        }
-        if (author==""||author==null){
-            $('#check-add-book-author').html("Book author cannot blank");
-            $('#function-btn-book').attr("data-target","");
-            $('#function-btn-book').attr("data-toggle","");
+    function ShowInputInfo(){
+        let person_info;
+        let book_info= [];
+        let key_person = $('#add-order-person-key').val();
+        let key_book = $('#add-order-book-key').val();
+        let href_person;
+        if (key_person){
+            href_person = 'http://localhost:8080/persons/free?key='+key_person
         }else {
-            $('#check-add-book-author').html("");
-            if (id){
-                $('#function-btn-book').attr("data-toggle","modal");
-                $('#function-btn-book').attr("data-target","#editbookModal");
-                getEditBookInfo();
-            }else {
-                $('#function-btn-book').attr("data-toggle","modal");
-                $('#function-btn-book').attr("data-target","#showBookModal");
-                getNewBookInfo();
-            }
+            href_person = 'http://localhost:8080/persons/free?key='
         }
-        if (code==""||code==null){
-            $('#check-add-book-code').html("code cannot blank");
-            $('#function-btn-book').attr("data-target","");
-            $('#function-btn-book').attr("data-toggle","");
+        let href_book;
+        if (key_book){
+            href_book = 'http://localhost:8080/books/free?key='+key_book
         }else {
-            if (checkBookCode&&checkBookName){
-                $('#check-add-book-code').html("");
-                if (id){
-                    $('#function-btn-book').attr("data-toggle","modal");
-                    $('#function-btn-book').attr("data-target","#editbookModal");
-                    getEditBookInfo();
-                }else {
-                    // console.log("name lay ra", name)
-                    $('#function-btn-book').attr("data-toggle","modal");
-                    $('#function-btn-book').attr("data-target","#showBookModal");
-                    getNewBookInfo();
-                }
-            }else {
-                $('#check-add-book-code').html("code not valid");
-                $('#function-btn-book').attr("data-target","");
-                $('#function-btn-book').attr("data-toggle","");
+            href_book = 'http://localhost:8080/books/free?key='
+        }
+        $.ajax({
+            async: false,
+            url: href_person,
+            type: 'GET',
+            success: function (data) {
+                let personList = data.slice();
+                $.each(personList, function (index, items) {
+                    if (document.getElementById('add-order-person-id-'+items.id).checked){
+                        person_info = items;
+                    }
+                })
             }
+        })
+        $.ajax({
+            async: false,
+            url: href_book,
+            type: 'GET',
+            success: function (data) {
+                let personList = data.slice();
+                $.each(personList, function (index, items) {
+                    if (document.getElementById('add-order-book-id-'+items.id).checked){
+                        book_info.push(items);
+                    }
+                })
+            }
+        })
+
+        console.log("peson info", book_info)
+        if (!person_info){
+            $('#check-add-order-person-key').html("Person is not choosen")
+            $('#function-btn').attr("data-target","");
+            $('#function-btn').attr("data-toggle","");
+        }else if(!book_info||book_info.length==0){
+            $('#check-add-order-book-key').html("Book is not choosen!")
+            $('#function-btn').attr("data-target","");
+            $('#function-btn').attr("data-toggle","");
+        }else {
+            $('#check-add-order-book-key').html("")
+            $('#function-btn').attr("data-toggle","modal");
+            $('#function-btn').attr("data-target","#showModal");
+            getNewOrderInfo();
         }
     }
 
@@ -405,45 +631,53 @@
     }
 
     // get book info
-    function getNewBookInfo(){
-        // console.log("new book")
-        let name = $('#add-book-name').val();
-        let categoryId = $('#add-book-category').val();
-        let category;
-        let author = $('#add-book-author').val();
-        let code = $('#add-book-code').val();
-        let inStock = $('#add-book-inStock').val();
+    function getNewOrderInfo(){
         let str;
-
+        let key_person = $('#add-order-person-key').val();
+        let key_book = $('#add-order-book-key').val();
+        let href_person;
+        if (key_person){
+            href_person = 'http://localhost:8080/persons/free?key='+key_person
+        }else {
+            href_person = 'http://localhost:8080/persons/free?key='
+        }
+        let person_info;
+        let book_info= [];
+        let href_book;
+        if (key_book){
+            href_book = 'http://localhost:8080/books/free?key='+key_book
+        }else {
+            href_book = 'http://localhost:8080/books/free?key='
+        }
         str += "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Book code:</label>\n" +
-            "                        <input type='text' disabled value='"+code+"' >\n" +
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Name:</label>\n" +
-            "                        <input type='text' disabled value='"+name+"' >\n" +
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Author:</label>\n" +
-            "                        <input type='text' disabled value='"+author+"' >\n" +
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label id='category' class=\"col-form-label\">Category:</label>\n"+
-            "<input id='categoryShow' type='text' disabled value='' >"
-        let href = "http://localhost:8080/categories/"+categoryId;
-        $.get(href,function (data,status){
-            // console.log("data",data)
-            category = data.category;
-            // console.log("lay ra category", category)
-            $('#categoryShow').val(category);
+            "                        <label class=\"col-form-label\">Person Info</label>\n" +
+            "                        <input type='text' id='add-order-person-code' disabled value='' >\n" +
+            "                        <input type='text' id='add-order-person-name' disabled value='' >\n" +
+            "                    </div>"
+        $.get(href_person,function (person, status) {
+            let personList = person.slice();
+            $.each(personList, function (index, items) {
+                if (document.getElementById('add-order-person-id-'+items.id).checked){
+                    $('#add-order-person-code').val(items.code)
+                    $('#add-order-person-name').val(items.name)
+                }
+            })
         })
-        str +=
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Quantity:</label>\n" +
-            "                        <input type='text' disabled value='"+inStock+"' >\n" +
-            "                    </div>";
-        $('#add-book-show-modal').html(str)
+        str +=  "<div class=\"form-group\">\n" +
+            "                        <label class=\"col-form-label\">Book List:</label><br>\n"+
+            '<div id="order-book-list"></div>'
+        $.get(href_book,function (book, status) {
+            let bookList = book.slice();
+            let html = "";
+            $.each(bookList, function (index, items) {
+                if (document.getElementById('add-order-book-id-'+items.id).checked){
+                   html += "<input type='text' disabled value='"+items.name+"' ><br>"
+                }
+            })
+            $('#order-book-list').html(html);
+        })
+           str+= "                    </div>";
+        $('#add-order-show-modal').html(str)
     }
     // get edit book info
     function getEditBookInfo(){
@@ -540,20 +774,53 @@
     }
 
     // create new book
-    function addNewBook(){
-        let name = $('#add-book-name').val();
-        let categoryId = $('#add-book-category').val();
-        let author = $('#add-book-author').val();
-        let code = $('#add-book-code').val();
-        let inStock = $('#add-book-inStock').val();
+    function addNewOrder(){
+        let person_info;
+        let book_info= [];
+        let key_person = $('#add-order-person-key').val();
+        let key_book = $('#add-order-book-key').val();
+        let href_person;
+        if (key_person){
+            href_person = 'http://localhost:8080/persons/free?key='+key_person
+        }else {
+            href_person = 'http://localhost:8080/persons/free?key='
+        }
+        let href_book;
+        if (key_book){
+            href_book = 'http://localhost:8080/books/free?key='+key_book
+        }else {
+            href_book = 'http://localhost:8080/books/free?key='
+        }
+        $.ajax({
+            async: false,
+            url: href_person,
+            type: 'GET',
+            success: function (data) {
+                let personList = data.slice();
+                $.each(personList, function (index, items) {
+                    if (document.getElementById('add-order-person-id-'+items.id).checked){
+                        person_info = items;
+                    }
+                })
+            }
+        })
+        $.ajax({
+            async: false,
+            url: href_book,
+            type: 'GET',
+            success: function (data) {
+                let personList = data.slice();
+                $.each(personList, function (index, items) {
+                    if (document.getElementById('add-order-book-id-'+items.id).checked){
+                        book_info.push(items);
+                    }
+                })
+            }
+        })
+        // console.log("obj"+person_info+book_info)
         let obj = {
-            "name": name,
-            "code": code,
-            "author":author,
-            "category": {
-                "id": categoryId
-            },
-            "inStock":inStock,
+            "person": person_info,
+            "book": book_info
         }
         // console.log("type",typeof(obj))
         let data = JSON.stringify(obj)
@@ -564,10 +831,11 @@
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            url: "http://localhost:8080/books",
+            url: "http://localhost:8080/orders",
             type: 'POST',
             data: data,
-            success: function (data) { console.log("data tao tu obj",data)
+            success: function (data) {
+                // console.log("data lay ra", data)
             }
         })
     }

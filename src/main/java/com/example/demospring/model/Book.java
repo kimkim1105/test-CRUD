@@ -22,6 +22,7 @@ public class Book {
     @ManyToOne
     @NotNull
     private BookCategory category;
+    @NotNull
     private Integer inStock;
 
 

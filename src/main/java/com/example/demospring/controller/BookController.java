@@ -28,6 +28,14 @@ public class BookController {
         model.addAttribute("books", iBookService.findAllWithKey(key, pageable));
         return "book/bookList";
     }
+    @GetMapping("/listBook")
+    public ResponseEntity<?> getListBookWithKey(@RequestParam(required = false, name = "key") String key){
+        return new ResponseEntity<>(iBookService.findBookWithKey(key), HttpStatus.OK);
+    }
+    @GetMapping("/free")
+    public ResponseEntity<?> getListBookInFree(@RequestParam(required = false, name = "key") String key){
+        return new ResponseEntity<>(iBookService.findBookWithKeyBorroed(key), HttpStatus.OK);
+    }
     @GetMapping("/name/{name}")
     public ResponseEntity<?> getBookByName(@PathVariable String name){
         if (iBookService.findBookByName(name).isPresent()){

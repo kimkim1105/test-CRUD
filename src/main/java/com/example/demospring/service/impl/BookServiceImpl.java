@@ -53,6 +53,19 @@ iBookRepository.findById(id).get().setStatus(false);
     }
 
     @Override
+    public Iterable<Book> findBookWithKey(String key) {
+        try {
+            if (!key.isEmpty()){
+                return iBookRepository.findBookWithKey('%'+key+'%');
+            }else {
+                return iBookRepository.findAllByStatusIsTrueOrderByIdDesc();
+            }
+        }catch (Exception e){
+            return iBookRepository.findAllByStatusIsTrueOrderByIdDesc();
+        }
+    }
+
+    @Override
     public Optional<Book> getLastestBook() {
         return iBookRepository.getLastestBook();
     }
@@ -70,5 +83,23 @@ iBookRepository.findById(id).get().setStatus(false);
     @Override
     public Iterable<Book> findAllByNameContainingAndStatusIsTrue(String name) {
         return null;
+    }
+
+    @Override
+    public Iterable<Book> findBookWithKeyBorroed(String key) {
+        try {
+            if (!key.isEmpty()){
+                return iBookRepository.findBookWithKeyBorroed('%'+key+'%');
+            }else {
+                return iBookRepository.findAllBookInFree();
+            }
+        }catch (Exception e){
+            return iBookRepository.findAllBookInFree();
+        }
+    }
+
+    @Override
+    public Iterable<Book> findAllBookInFree() {
+        return iBookRepository.findAllBookInFree();
     }
 }

@@ -35,9 +35,7 @@ public class Person {
     private LocalDate dateOfBirth;
     @Lob
     private String avatar;
-    @ManyToOne
-    @NotNull
-    private TypeAction typeAction;
+    private boolean typeAction;
     @ManyToOne
     @NotNull
     private Classify classify;
@@ -117,11 +115,11 @@ public class Person {
         this.avatar = avatar;
     }
 
-    public TypeAction getTypeAction() {
+    public boolean isTypeAction() {
         return typeAction;
     }
 
-    public void setTypeAction(TypeAction typeAction) {
+    public void setTypeAction(boolean typeAction) {
         this.typeAction = typeAction;
     }
 
