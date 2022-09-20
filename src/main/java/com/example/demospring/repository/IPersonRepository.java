@@ -25,4 +25,5 @@ public interface IPersonRepository extends JpaRepository<Person, Long> {
     Iterable<Person> findAllByNameContainingAndStatusIsTrue(String name);
     @Query(value = "select * from person where status = true and type_action = false and concat(name,code) like :key order by id desc",nativeQuery = true)
     Iterable<Person> findPersonWithKeyBorroed(String key);
+
 }

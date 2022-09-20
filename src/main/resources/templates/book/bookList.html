@@ -337,13 +337,13 @@
         let author = $('#add-book-author').val();
         checkName();
         checkCode();
-        console.log("check name "+ checkBookName + "check code "+ checkBookCode)
+        // console.log("check name "+ checkBookName + "check code "+ checkBookCode)
         if (name==""||name==null){
             $('#check-add-book-name').html("Name cannot blank");
             $('#function-btn-book').attr("data-target","");
             $('#function-btn-book').attr("data-toggle","");
         }else {
-            console.log("check name", checkBookName)
+            // console.log("check name", checkBookName)
             if (checkBookName&&checkBookCode&&author){
                 $('#check-add-book-name').html("");
                 if (id){
@@ -415,7 +415,7 @@
             dataType: 'json',
             success: function (data) {
                 // console.log(data)
-                let str;
+                let str = "";
                 str +=
                     '  <div class="container">\n' +
                     '    <div class="row">\n' +
@@ -485,7 +485,7 @@
         let author = $('#add-book-author').val();
         let code = $('#add-book-code').val();
         let inStock = $('#add-book-inStock').val();
-        let str;
+        let str = "";
 
         str += "<div class=\"form-group\">\n" +
             "                        <label class=\"col-form-label\">Book code:</label>\n" +
@@ -565,7 +565,7 @@
         let categoryId = $('#add-book-category').val();
         let author = $('#add-book-author').val();
         let inStock = $('#add-book-inStock').val();
-        let str;
+        let str = "";
         // console.log("lay id xoa",id)
         str +=
             "<div class=\"form-group\">\n" +
@@ -602,6 +602,7 @@
 
     // show edit form
     function showEditForm(){
+
         $('#add-book-name').attr("disabled", false);
         $('#add-book-code').attr("disabled", false);
         $('#add-book-category').attr("disabled", false);

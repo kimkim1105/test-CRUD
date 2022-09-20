@@ -25,6 +25,12 @@ public class PersonController {
     @Autowired
     IClassifyService iClassifyService;
 
+    @GetMapping("/test")
+    public String getListPersontest(@RequestParam(required = false, name = "key") String key, Model model, @PageableDefault(value = 5) Pageable pageable){
+        model.addAttribute("classifies", iClassifyService.findAll());
+        model.addAttribute("persons", iPersonService.findAllWithKey(key, pageable));
+        return "test";
+    }
     @GetMapping
     public String getListPerson(@RequestParam(required = false, name = "key") String key, Model model, @PageableDefault(value = 5) Pageable pageable){
         model.addAttribute("classifies", iClassifyService.findAll());

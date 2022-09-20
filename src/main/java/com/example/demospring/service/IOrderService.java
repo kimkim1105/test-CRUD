@@ -8,4 +8,6 @@ import org.springframework.data.domain.Pageable;
 public interface IOrderService extends IGeneralService<Order>{
     Page<Order> findAllWithKey(String key, Pageable pageable);
     Page<Order> findAll(Pageable pageable);
+    Iterable<Order> findAllByPersonAndDateOffNull(Long id);
+    Iterable<Order> findAllByBookAndDateOffNull(Long id);
 }

@@ -101,4 +101,18 @@ public class OrderController {
         iOrderService.remove(orderOptional.getId());
         return new ResponseEntity<>(iOrderService.save(orderOptional),HttpStatus.OK);
     }
+    @GetMapping("/person/{id}")
+    public ResponseEntity<?> findAllByPersonAndDateOffNull(@PathVariable Long id){
+        if (iOrderService.findAllByPersonAndDateOffNull(id)!= null){
+            return new ResponseEntity<>("existed", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("ok", HttpStatus.OK);
+    }
+    @GetMapping("/book/{id}")
+    public ResponseEntity<?> findAllByBookAndDateOffNull(@PathVariable Long id){
+        if (iOrderService.findAllByBookAndDateOffNull(id)!= null){
+            return new ResponseEntity<>("existed", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("ok", HttpStatus.OK);
+    }
 }

@@ -146,7 +146,6 @@
         <h1 style="text-align: center; margin: 0">Manage Order Information</h1>
     </div>
     <hr>
-    <span style="color: red; margin-top:5px" id="validate"></span>
     <br>
     <br>
     <div id="order-content" >
@@ -205,7 +204,7 @@
                 </button>
             </div>
             <div class="modal-body" style="color: red">
-                <div id="add-order-show-modal"></div>
+                <div id="add-order-show-modal">New info</div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -499,7 +498,6 @@
         })
     }
 
-
     function ShowInputInfo(){
         let person_info;
         let book_info= [];
@@ -564,6 +562,7 @@
 
     // show detail book form
     function showDetail(id){
+        let str = "";
         $.ajax({
             async: false,
             url: 'http://localhost:8080/orders/'+id,
@@ -571,7 +570,6 @@
             dataType: 'json',
             success: function (data) {
                 // console.log(data)
-                let str;
                 str +=
                     '  <div class="container">\n' +
                     '    <div class="row">\n' +
@@ -634,14 +632,15 @@
                     '      </div>\n' +
                     '      </div>\n' +
                     '</div>';
-                $('#order-content').html(str);
+
             }
         })
+        $('#order-content').html(str);
     }
 
     // get book info
     function getNewOrderInfo(){
-        let str;
+        let str = "";
         let key_person = $('#add-order-person-key').val();
         let key_book = $('#add-order-book-key').val();
         let href_person;
@@ -690,7 +689,7 @@
     }
     // get edit book info
     function getEditOrderInfo(){
-        let str;
+        let str = "";
 let id = $('#add-order-id').val();
         $.ajax({
             async: false,
@@ -736,7 +735,7 @@ let id = $('#add-order-id').val();
     }
     //get delet book info
     function getDeleteOrderInfo(){
-        let str;
+        let str = "";
         let id = $('#add-order-id').val();
         $.ajax({
             async: false,
