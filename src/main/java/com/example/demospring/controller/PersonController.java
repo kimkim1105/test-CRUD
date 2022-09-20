@@ -3,6 +3,7 @@ package com.example.demospring.controller;
 import com.example.demospring.model.Classify;
 import com.example.demospring.model.Person;
 import com.example.demospring.model.dto.PersonDTO;
+import com.example.demospring.model.dto.Validation;
 import com.example.demospring.service.IClassifyService;
 import com.example.demospring.service.IPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class PersonController {
     IPersonService iPersonService;
     @Autowired
     IClassifyService iClassifyService;
+    @Autowired
+    Validation validation;
 
     @GetMapping("/test")
     public String getListPersontest(@RequestParam(required = false, name = "key") String key, Model model, @PageableDefault(value = 5) Pageable pageable){
@@ -70,6 +73,9 @@ public class PersonController {
     }
     @PostMapping
     public ResponseEntity<?> addNewPerson(@RequestBody PersonDTO personDTO){
+        if (!validation.validate(personDTO.getPhone())){
+            return new ResponseEntity<>("incorrect fomat", HttpStatus.OK);
+        }
         if (iPersonService.findPersonByPhone(personDTO.getPhone()).isPresent()){
             return new ResponseEntity<>("phone existed, pls try again",HttpStatus.OK);
         }

@@ -307,7 +307,7 @@
             $.get(getPersonLink,function (person, status){
                 let personList = person.slice();
                 // console.log(person)
-                let html;
+                let html = "";
                 html += '<table class="table">\n' +
                     '        <thead>\n'+
                     '        <tr>\n' +
@@ -361,7 +361,7 @@
             $.get(getBookLink,function (book, status){
                 let getBookList = book.slice();
                 // console.log(person)
-                let html;
+                let html = "";
                 html += '<table class="table">\n' +
                     '        <thead>\n'+
                     '        <tr>\n' +
@@ -415,7 +415,7 @@
             let personList = person.slice();
             // console.log(list)
             // console.log("list lay ra", personList)
-            let html;
+            let html = "";
             html += '<table class="table">\n' +
                 '        <thead>\n'+
                 '        <tr>\n' +
@@ -467,7 +467,7 @@
         $.get(href,function (book, status){
             let getBookList = book.slice();
             // console.log(person)
-            let html;
+            let html = "";
             html += '<table class="table">\n' +
                 '        <thead>\n'+
                 '        <tr>\n' +
@@ -589,9 +589,14 @@
                     '          </div>\n' +
                     '<table class="table">\n' +
                     '    <tr>\n' +
-                    '        <td>Date on: '+data.dateOn+'</td>\n' +
-                    '        <td>Date off: '+data.dateOff+'</td>\n' +
-                        '    </tr>\n'+
+                    '        <td>Date on: '+data.dateOn+'</td>\n'
+                if (data.dateOff!= null){
+                    str += '        <td>Date off: '+data.dateOff+'</td>\n'
+                }else {
+                    str += '        <td>Date off: </td>\n'
+                }
+
+                   str +=     '    </tr>\n'+
                         '</table>'+
                     '          <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">\n' +
                     '            <label class="text-secondary">Book list</label>\n' +

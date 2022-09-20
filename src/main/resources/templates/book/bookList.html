@@ -420,9 +420,11 @@
                     '  <div class="container">\n' +
                     '    <div class="row">\n' +
                     '      <div class="col-md-9 col-lg-8 mx-auto pl-5 pr-5">\n' +
-                    '        <h3 class="login-heading mb-4">Book Information</h3>\n' +
                     '            <input type="text" disabled value="'+data.id+'" hidden id="add-book-id" class="form-control" >\n' +
-                    '<a style="margin-inline-end: auto; text-align: right" data-toggle="" data-target="" id="showEdit" onclick="showEditForm()"><i class="far fa-edit">Edit</i></a>'+
+                    '<div class="row no-gutters">\n' +
+                    '  <div class="col-12 col-sm-6 col-md-10"><h3 class="login-heading mb-4">Book Information</h3></div>\n' +
+                    '  <div class="col-6 col-md-2"><a type="button" class="btn btn-primary" style="margin-inline-end: auto; text-align: right" data-toggle="" data-target="" id="showEdit" onclick="showEditForm()">Edit</a></div>\n' +
+                    '</div>'+
                     '        <form>\n' +
                     '          <div class="form-label-group">\n' +
                     '            <label class="text-secondary">Book code</label>\n' +
@@ -445,7 +447,7 @@
                 var link = 'http://localhost:8080/categories';
                 $.get(link,function (category, status){
                     let categoryList = category.slice();
-                    let html;
+                    let html = "";
                     $.each(categoryList, function (index, items){
                         // console.log("items laa ra", items.id)
                         if (items.category == data.category.category){
@@ -524,7 +526,7 @@
         let author = $('#add-book-author').val();
         let code = $('#add-book-code').val();
         let inStock = $('#add-book-inStock').val();
-        let str;
+        let str = "";
 
         str += "<div class=\"form-group\">\n" +
             "                        <label class=\"col-form-label\">Book code:</label>\n" +
