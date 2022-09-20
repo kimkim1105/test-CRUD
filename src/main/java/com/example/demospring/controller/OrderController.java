@@ -103,14 +103,14 @@ public class OrderController {
     }
     @GetMapping("/person/{id}")
     public ResponseEntity<?> findAllByPersonAndDateOffNull(@PathVariable Long id){
-        if (iOrderService.findAllByPersonAndDateOffNull(id)!= null){
+        if (iOrderService.findAllByPersonAndDateOffNull(id).iterator().hasNext()){
             return new ResponseEntity<>("existed", HttpStatus.OK);
         }
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
     @GetMapping("/book/{id}")
     public ResponseEntity<?> findAllByBookAndDateOffNull(@PathVariable Long id){
-        if (iOrderService.findAllByBookAndDateOffNull(id)!= null){
+        if (iOrderService.findAllByBookAndDateOffNull(id).iterator().hasNext()){
             return new ResponseEntity<>("existed", HttpStatus.OK);
         }
         return new ResponseEntity<>("ok", HttpStatus.OK);

@@ -37,7 +37,7 @@
     <div id="book-content" >
         <table class="table table-striped">
             <form class="form-inline">
-                <input class="form-control mr-sm-2" type="search" name="key" placeholder="Search by name or book id" aria-label="Search">
+                <input class="form-control mr-sm-2" type="search" name="key" placeholder="Search by name or book code" aria-label="Search">
             </form>
 
             <thead>
@@ -421,9 +421,9 @@
                     '    <div class="row">\n' +
                     '      <div class="col-md-9 col-lg-8 mx-auto pl-5 pr-5">\n' +
                     '        <h3 class="login-heading mb-4">Book Information</h3>\n' +
-                    '<a style="margin-inline-end: auto; text-align: right" onclick="showEditForm()"><i class="far fa-edit">Edit</i></a>'+
-                    '        <form>\n' +
                     '            <input type="text" disabled value="'+data.id+'" hidden id="add-book-id" class="form-control" >\n' +
+                    '<a style="margin-inline-end: auto; text-align: right" data-toggle="" data-target="" id="showEdit" onclick="showEditForm()"><i class="far fa-edit">Edit</i></a>'+
+                    '        <form>\n' +
                     '          <div class="form-label-group">\n' +
                     '            <label class="text-secondary">Book code</label>\n' +
                     '<small style="color: red" id="check-add-book-code"></small>'+
@@ -559,58 +559,87 @@
     //get delet book info
     function getDeletebookInfo(){
         let id = $('#add-book-id').val();
-        // console.log("lay ra duoc id hien tai k", id)
-        let name = $('#add-book-name').val();
-        let code = $('#add-book-code').val();
-        let categoryId = $('#add-book-category').val();
-        let author = $('#add-book-author').val();
-        let inStock = $('#add-book-inStock').val();
-        let str = "";
-        // console.log("lay id xoa",id)
-        str +=
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">ID:</label>\n" +
-            "                        <input type='text' disabled value='"+code+"' >\n" +
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Name:</label>\n" +
-            "                        <input type='text' disabled value='"+name+"' >\n" +
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Gender:</label>\n" +
-            "                        <input type='text' disabled value='"+author+"' >\n" +
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label id='category' class=\"col-form-label\">category:</label>\n"
-        let href = "http://localhost:8080/categories/"+categoryId;
-        $.get(href,function (data,status){
-            // console.log("data",data)
-            category = data.category;
-            let html = "<input type='text' disabled value='"+category+"' >"
-            // console.log("lay ra category", category)
-            $('#category').append(html);
-        })
-        str +=
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Quantity:</label>\n" +
-            "                        <input type='text' disabled value='"+inStock+"' >\n" +
-            "                    </div>";
-        $('#delete-book-show-modal').html(str)
+        $.ajax({
+            async: false,
+            url:"http://localhost:8080/orders/book/" +id,
+            type: 'GET',
+            success: function (data) {
+               if (data=="existed"){
+                   $('#function-btn-book').attr("data-target","#confirmModal");
+                   $('#function-btn-book').attr("data-toggle","modal");
+                   $('#confirmModalLabel').html("Action error")
+                   $('#confirm-content').html("Book's in borrowing, can't delete")
+               }else {
+                   // console.log("lay ra duoc id hien tai k", id)
+                   let name = $('#add-book-name').val();
+                   let code = $('#add-book-code').val();
+                   let categoryId = $('#add-book-category').val();
+                   let author = $('#add-book-author').val();
+                   let inStock = $('#add-book-inStock').val();
+                   let str = "";
+                   // console.log("lay id xoa",id)
+                   str +=
+                       "<div class=\"form-group\">\n" +
+                       "                        <label class=\"col-form-label\">ID:</label>\n" +
+                       "                        <input type='text' disabled value='"+code+"' >\n" +
+                       "                    </div>"+
+                       "<div class=\"form-group\">\n" +
+                       "                        <label class=\"col-form-label\">Name:</label>\n" +
+                       "                        <input type='text' disabled value='"+name+"' >\n" +
+                       "                    </div>"+
+                       "<div class=\"form-group\">\n" +
+                       "                        <label class=\"col-form-label\">Gender:</label>\n" +
+                       "                        <input type='text' disabled value='"+author+"' >\n" +
+                       "                    </div>"+
+                       "<div class=\"form-group\">\n" +
+                       "                        <label id='category' class=\"col-form-label\">category:</label>\n"
+                   let href = "http://localhost:8080/categories/"+categoryId;
+                   $.get(href,function (data,status){
+                       // console.log("data",data)
+                       category = data.category;
+                       let html = "<input type='text' disabled value='"+category+"' >"
+                       // console.log("lay ra category", category)
+                       $('#category').append(html);
+                   })
+                   str +=
+                       "                    </div>"+
+                       "<div class=\"form-group\">\n" +
+                       "                        <label class=\"col-form-label\">Quantity:</label>\n" +
+                       "                        <input type='text' disabled value='"+inStock+"' >\n" +
+                       "                    </div>";
+                   $('#delete-book-show-modal').html(str)
 
+               }
+            }
+        })
     }
 
     // show edit form
-    function showEditForm(){
-
-        $('#add-book-name').attr("disabled", false);
-        $('#add-book-code').attr("disabled", false);
-        $('#add-book-category').attr("disabled", false);
-        $('#add-book-author').attr("disabled", false);
-        $('#function-btn-book').html("Update");
-        $('#function-btn-book').attr("data-target","#editbookModal");
-        $('#function-btn-book').attr("onclick","checkBookInput()");
+    function showEditForm() {
+        let id = $('#add-book-id').val();
+        $.ajax({
+            async: false,
+            url: "http://localhost:8080/orders/book/" + id,
+            type: 'GET',
+            success: function (data) {
+                if (data == "existed") {
+                    $('#confirmModalLabel').html("Action error")
+                    $('#confirm-content').html("Book's in borrowing, can't edit")
+                    $('#showEdit').attr("data-toggle","modal");
+                    $('#showEdit').attr("data-target","#confirmModal");
+                } else {
+                    $('#add-book-name').attr("disabled", false);
+                    $('#add-book-code').attr("disabled", false);
+                    $('#add-book-category').attr("disabled", false);
+                    $('#add-book-author').attr("disabled", false);
+                    $('#function-btn-book').html("Update");
+                    $('#function-btn-book').attr("data-target", "#editbookModal");
+                    $('#function-btn-book').attr("onclick", "checkBookInput()");
+                }
+            }
+        })
     }
+
 
     // create new book
     function addNewBook(){

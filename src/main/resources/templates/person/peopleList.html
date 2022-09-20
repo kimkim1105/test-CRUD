@@ -173,7 +173,7 @@
 <script th:inline="javascript">
 let checkPhoneInput;
 let checkDob;
-var today = new Date().toLocaleDateString();
+var today = new Date();
     function reload(){
         window.location.reload();
     }
@@ -303,12 +303,9 @@ function checkPhone(){
 
 function checkDobInput(){
             let dob = $('#add-person-dob').val();
-            let check = new Date(dob).toLocaleDateString()
-    // console.log("dob", dob)
-    // console.log("check date", check)
-    // console.log("today", today)
-            if (check.valueOf()<=today.valueOf()){
-                // console.log("date ok")
+            let check = new Date(dob)
+            if (check.getTime()<=today.getTime()){
+                console.log("date ok")
                 $('#check-add-person-dob').html("")
                 checkDob = true;
             }else {
@@ -323,8 +320,9 @@ function checkInput(){
     let name = $('#add-person-name').val();
     let dob = $('#add-person-dob').val();
     let phone = $('#add-person-phone').val();
+    checkDobInput()
     checkPhone()
-    console.log("check phone", checkPhoneInput)
+    console.log("check phone", checkDob)
     if (name==""||name==null){
         $('#check-add-person-name').html("Name cannot blank");
         $('#function-btn').attr("data-target","");
@@ -346,7 +344,7 @@ function checkInput(){
         $('#function-btn').attr("data-target","");
         $('#function-btn').attr("data-toggle","");
     }else {
-        if (checkDob){
+        if (checkDob&&checkPhoneInput){
         $('#check-add-person-dob').html("");
         if (code){
             $('#function-btn').attr("data-toggle","modal");
@@ -368,7 +366,7 @@ function checkInput(){
         $('#function-btn').attr("data-target","");
         $('#function-btn').attr("data-toggle","");
     }else {
-if (checkPhoneInput){
+if (checkPhoneInput&&checkDob){
     $('#check-add-person-phone').html("");
     if (code){
         $('#function-btn').attr("data-toggle","modal");
@@ -404,9 +402,9 @@ if (checkPhoneInput){
                         '    <div class="row">\n' +
                         '      <div class="col-md-9 col-lg-8 mx-auto pl-5 pr-5">\n' +
                         '        <h3 class=" mb-4" >Person Information</h3>\n' +
-                        '<a style="margin-inline-end: auto; text-align: right" onclick="showEditForm()"><i class="far fa-edit">Edit</i></a>'+
-                        '        <form>\n' +
                         '            <input type="text" disabled value="'+data.id+'" hidden id="add-person-id" class="form-control" >\n' +
+                        '<a style="margin-inline-end: auto; text-align: right" data-toggle="" data-target="" id="showEdit" onclick="showEditForm()"><i class="far fa-edit">Edit</i></a>'+
+                        '        <form>\n' +
                         '          <div class="form-label-group">\n' +
                         '            <label class="text-secondary">Person ID</label>\n' +
                         '            <input type="text" disabled value="'+data.code+'" id="add-person-code" class="form-control" >\n' +
@@ -431,7 +429,7 @@ if (checkPhoneInput){
                         '          <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">\n' +
                         '            <label class="text-secondary">Date of birth</label>\n' +
                            '<small style="color: red" id="check-add-person-dob"></small>'+
-                           '            <input disabled type="date" id="add-person-dob" value="'+data.dateOfBirth+'" class="form-control">\n' +
+                           '            <input disabled type="date" oninput="checkDobInput()" id="add-person-dob" value="'+data.dateOfBirth+'" class="form-control">\n' +
                     '          </div>\n' +
                         '          <div class="form-label-group mb-4">\n' +
                         '            <label class="text-secondary">Phone number</label>\n' +
@@ -590,6 +588,18 @@ function getEditPersonInfo(){
 function getDeletePersonInfo(){
     let id = $('#add-person-id').val();
     // console.log("lay ra duoc id hien tai k", id)
+    $.ajax({
+        async: false,
+        url:"http://localhost:8080/orders/person/" +id,
+        type: 'GET',
+        success: function (data) {
+            console.log(data)
+            if (data=="existed"){
+                $('#function-btn').attr("data-target","#confirmModal");
+                $('#function-btn').attr("data-toggle","modal");
+                $('#confirmModalLabel').html("Action error")
+                $('#confirm-content').html("Person's in borrowing, can't delete")
+            }else {
     let name = $('#add-person-name').val();
     let code = $('#add-person-code').val();
     let genderId = $('#add-person-gender').val();
@@ -644,11 +654,25 @@ function getDeletePersonInfo(){
     str +=
         "                    </div>";
     $('#delete-person-show-modal').html(str)
-
+            }
+        }
+    })
 }
 
     // show edit form
     function showEditForm(){
+        let id = $('#add-person-id').val();
+        $.ajax({
+            async: false,
+            url: "http://localhost:8080/orders/person/" + id,
+            type: 'GET',
+            success: function (data) {
+                if (data == "existed") {
+                    $('#confirmModalLabel').html("Action error")
+                    $('#confirm-content').html("Person's in borrowing, can't edit")
+                    $('#showEdit').attr("data-toggle","modal");
+                    $('#showEdit').attr("data-target","#confirmModal");
+                } else {
       $('#add-person-name').attr("disabled", false);
         $('#add-person-gender').attr("disabled", false);
        $('#add-person-classify').attr("disabled", false);
@@ -658,6 +682,9 @@ function getDeletePersonInfo(){
        $('#function-btn').html("Update");
        $('#function-btn').attr("data-target","#editPersonModal");
        $('#function-btn').attr("onclick","checkInput()");
+                }
+            }
+        })
     }
 
 // create new person
