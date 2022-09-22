@@ -2,10 +2,12 @@ package com.example.demospring.controller;
 
 import com.example.demospring.model.Book;
 import com.example.demospring.model.BookCategory;
+import com.example.demospring.model.Person;
 import com.example.demospring.model.dto.BookDTO;
 import com.example.demospring.model.dto.Validation;
 import com.example.demospring.service.IBookCategoryService;
 import com.example.demospring.service.IBookService;
+import com.example.demospring.service.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -13,8 +15,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.Binding;
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -25,15 +32,22 @@ public class BookController {
     @Autowired
     IBookCategoryService iBookCategoryService;
     @Autowired
-    Validation validation;
+    IOrderService iOrderService;
     @GetMapping
-    public String getListBook(@RequestParam(required = false, name = "key") String key, Model model, @PageableDefault(value = 5) Pageable pageable){
-        model.addAttribute("books", iBookService.findAllWithKey(key, pageable));
+    public String getListBook(@RequestParam(required = false, name = "key") String key,
+                              @RequestParam(required = false, name = "category_id") Long category_id,
+                              Model model,
+                              @PageableDefault(value = 5) Pageable pageable){
+        model.addAttribute("books", iBookService.findAllWithKeyAndCategory(key, category_id, pageable));
         return "book/bookList";
     }
     @GetMapping("/listBook")
-    public ResponseEntity<?> getListBookWithKey(@RequestParam(required = false, name = "key") String key){
-        return new ResponseEntity<>(iBookService.findBookWithKey(key), HttpStatus.OK);
+    public ResponseEntity<?> getListBookWithKey(@RequestParam(required = false, name = "key") String key,
+                                                @RequestParam(required = false, name = "category_id") Long category_id){
+        if (!iBookService.findBookWithKeyAndCategory(key, category_id).iterator().hasNext()){
+            return new ResponseEntity<>("not found", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(iBookService.findBookWithKeyAndCategory(key, category_id), HttpStatus.OK);
     }
     @GetMapping("/free")
     public ResponseEntity<?> getListBookInFree(@RequestParam(required = false, name = "key") String key){
@@ -55,18 +69,34 @@ public class BookController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> getBookById(@PathVariable Long id){
+        if (!iBookService.findById(id).isPresent()){
+            return new ResponseEntity<>("not found",HttpStatus.NOT_FOUND);
+        }
+        if (!iBookService.findById(id).get().isStatus()){
+            return new ResponseEntity<>("Not found",HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(iBookService.findById(id),HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<?> addNewBook(@RequestBody BookDTO bookDTO){
-        if (!validation.validateInStock(String.valueOf(bookDTO.getInStock()))){
-            return new ResponseEntity<>("inStock incorrect format", HttpStatus.OK);
+    public ResponseEntity<?> addNewBook(@RequestBody @Valid BookDTO bookDTO, BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            Map<String, String> errors= new HashMap<>();
+
+            bindingResult.getFieldErrors().forEach(
+                    error -> errors.put(error.getField(), error.getDefaultMessage())
+            );
+            String errorMsg= "";
+
+            for(String key: errors.keySet()){
+                errorMsg+= "error in: " + key + ", by: " + errors.get(key) + "\n";
+            }
+            return new ResponseEntity<>(errorMsg,HttpStatus.OK);
         }
         if (iBookService.findBookByName(bookDTO.getName()).isPresent()){
-            return new ResponseEntity<>("bookname existed, pls try again",HttpStatus.OK);
+            return  new ResponseEntity<>("bookname existed", HttpStatus.OK);
         }
         if (iBookService.findBookByCode(bookDTO.getCode()).isPresent()){
-            return new ResponseEntity<>("code existed, pls try again",HttpStatus.OK);
+            return  new ResponseEntity<>("code existed", HttpStatus.OK);
         }
         Book book = new Book();
         book.setName(bookDTO.getName());
@@ -75,16 +105,31 @@ public class BookController {
         book.setAuthor(bookDTO.getAuthor());
         Optional<BookCategory> bookCategoryOptional = iBookCategoryService.findById(bookDTO.getCategory().getId());
         book.setCategory(bookCategoryOptional.get());
-        if (String.valueOf(bookDTO.getInStock()).isEmpty()){
-            book.setInStock(0);
-        }else {
-            book.setInStock(bookDTO.getInStock());
-        }
+        book.setInStock(Integer.valueOf(bookDTO.getInStock()));
         return new ResponseEntity<>(iBookService.save(book),HttpStatus.OK);
     }
     @PutMapping
-    public ResponseEntity<?> editBook(@RequestBody Book book){
-        Book bookOptional = iBookService.findById(book.getId()).get();
+    public ResponseEntity<?> editBook(@RequestParam Long id,@RequestBody @Valid BookDTO book, BindingResult bindingResult){
+        if (!iBookService.findById(id).isPresent()){
+            return new ResponseEntity<>("not found", HttpStatus.NOT_FOUND);
+        }
+        Book bookOptional = iBookService.findById(id).get();
+        if (iOrderService.findAllByBookAndDateOffNull(id).iterator().hasNext()){
+            return new ResponseEntity<>("Book in borrowing, can't edit",HttpStatus.OK);
+        }
+        if (bindingResult.hasErrors()){
+            Map<String, String> errors= new HashMap<>();
+
+            bindingResult.getFieldErrors().forEach(
+                    error -> errors.put(error.getField(), error.getDefaultMessage())
+            );
+            String errorMsg= "";
+
+            for(String key: errors.keySet()){
+                errorMsg+= "error in: " + key + ", by: " + errors.get(key) + "\n";
+            }
+            return new ResponseEntity<>(errorMsg,HttpStatus.OK);
+        }
         if (bookOptional.getName().equals(book.getName())){
             bookOptional.setName(book.getName());
         }else {
@@ -92,12 +137,8 @@ public class BookController {
                 return new ResponseEntity<>("bookname existed, pls try again",HttpStatus.OK);
             }
         }
-        if (bookOptional.getCode().equals(book.getCode())){
-            bookOptional.setCode(book.getCode());
-        }else {
-            if (iBookService.findBookByCode(book.getCode()).isPresent()){
-                return new ResponseEntity<>("code existed, pls try again",HttpStatus.OK);
-            }
+        if (!bookOptional.getCode().equals(book.getCode())){
+            return new ResponseEntity<>("code not valid", HttpStatus.OK);
         }
         bookOptional.setName(book.getName());
         bookOptional.setStatus(true);
@@ -110,6 +151,9 @@ public class BookController {
     @PutMapping("/{id}")
     public ResponseEntity<?> deleteBook(@PathVariable Long id){
         Book bookOptional = iBookService.findById(id).get();
+        if (iOrderService.findAllByBookAndDateOffNull(id).iterator().hasNext()){
+            return new ResponseEntity<>("Book in borrowing, can't edit",HttpStatus.OK);
+        }
         iBookService.remove(bookOptional.getId());
         return new ResponseEntity<>(iBookService.save(bookOptional),HttpStatus.OK);
     }

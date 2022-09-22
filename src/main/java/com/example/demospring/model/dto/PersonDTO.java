@@ -2,15 +2,26 @@ package com.example.demospring.model.dto;
 
 import com.example.demospring.model.Classify;
 
+import javax.persistence.Column;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 public class PersonDTO {
+    @NotEmpty(message = "Name can't blank")
+    @Pattern(regexp = "^([a-vxyA-Zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ]+)((\\s{1}[a-vxyA-Zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ]+){1,})$", message = "Name least 2 word with space seperate")
     private String name;
     private boolean gender;
     private String address;
+    @NotEmpty(message = "Phone can't blank")
+    @Pattern(regexp = "(0[3|5|7|8|9])+([0-9]{8})\\b", message = "incorrect fomat")
+    @Column(unique = true)
     private String phone;
+    @NotNull(message = "Date can't blank")
+    @PastOrPresent(message = "date of birth must be in past")
     private LocalDate dateOfBirth;
     private String avatar;
+    @NotNull
     private Classify classify;
 
     public PersonDTO() {

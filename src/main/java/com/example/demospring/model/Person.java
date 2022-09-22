@@ -3,6 +3,7 @@ package com.example.demospring.model;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 
 @Entity
@@ -20,8 +21,10 @@ public class Person {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
     @NotNull
+    @NotEmpty
     private String code;
     @NotNull
+    @NotEmpty
     private String name;
     @NotNull
     private boolean gender;
@@ -29,7 +32,7 @@ public class Person {
     private boolean status;
     private String address;
     @NotNull
-    @Column(unique = true)
+    @NotEmpty
     private String phone;
     @NotNull
     private LocalDate dateOfBirth;

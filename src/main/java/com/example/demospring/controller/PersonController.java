@@ -13,9 +13,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -51,6 +55,9 @@ public class PersonController {
     public ResponseEntity<?> getAllListPerson(@RequestParam(required = false, name = "key") String key,
                                               @RequestParam(required = false, name = "from") String from,
                                               @RequestParam(required = false, name = "to") String to){
+        if (!iPersonService.findPersonWithKey(key, from, to).iterator().hasNext()){
+            return new ResponseEntity<>("Not found",HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(iPersonService.findPersonWithKey(key,from,to),HttpStatus.OK);
     }
     @GetMapping("/free")
@@ -65,28 +72,37 @@ public class PersonController {
         }
         return new ResponseEntity<>("ok",HttpStatus.OK);
     }
-    @GetMapping("/phone/{phone}/{id}")
-    public ResponseEntity<?> getPersonByPhoneAndId(@PathVariable String phone,@PathVariable Long id){
-        if (iPersonService.findById(id).isPresent()){
-            if (iPersonService.findById(id).get().getPhone().equals(phone)){
-                return new ResponseEntity<>("ok",HttpStatus.OK);
-            }else {
-                return new ResponseEntity<>("existed",HttpStatus.OK);
-            }
-        }
-        return new ResponseEntity<>("existed",HttpStatus.OK);
-    }
     @GetMapping("/{id}")
     public ResponseEntity<?> getPersonById(@PathVariable Long id){
+        if (!iPersonService.findById(id).isPresent()){
+            return new ResponseEntity<>("Not found",HttpStatus.NOT_FOUND);
+        }
+        if (!iPersonService.findById(id).get().isStatus()){
+            return new ResponseEntity<>("Not found",HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(iPersonService.findById(id),HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<?> addNewPerson(@RequestBody PersonDTO personDTO){
-        if (!validation.validate(personDTO.getPhone())){
-            return new ResponseEntity<>("incorrect fomat", HttpStatus.OK);
+    public ResponseEntity<?> addNewPerson(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            Map<String, String> errors= new HashMap<>();
+
+            bindingResult.getFieldErrors().forEach(
+                    error -> errors.put(error.getField(), error.getDefaultMessage())
+            );
+
+            String errorMsg= "";
+
+            for(String key: errors.keySet()){
+                errorMsg+= "error in: " + key + ", by: " + errors.get(key) + "\n";
+            }
+//            if (iPersonService.findPersonByPhone(personDTO.getPhone()).isPresent()){
+//                errorMsg+= "phone existed";
+//            }
+            return new ResponseEntity<>(errorMsg,HttpStatus.OK);
         }
         if (iPersonService.findPersonByPhone(personDTO.getPhone()).isPresent()){
-            return new ResponseEntity<>("phone existed, pls try again",HttpStatus.OK);
+            return new ResponseEntity<>("phone existed", HttpStatus.OK);
         }
         Person person = new Person();
         person.setName(personDTO.getName());
@@ -115,24 +131,45 @@ public class PersonController {
     }
 
     @PutMapping
-    public ResponseEntity<?> editPerson(@RequestBody Person person){
-        Person personOptional = iPersonService.findById(person.getId()).get();
-        if (personOptional.getPhone().equals(person.getPhone())){
-            personOptional.setPhone(person.getPhone());
+    public ResponseEntity<?> editPerson(@RequestParam Long id, @RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult){
+        if (!iPersonService.findById(id).isPresent()){
+            return new ResponseEntity<>("not found", HttpStatus.NOT_FOUND);
+        }
+        Person personOptional = iPersonService.findById(id).get();
+        if (personOptional.isTypeAction()){
+            return new ResponseEntity<>("Person in borrowing, can't edit",HttpStatus.OK);
+        }
+        if (bindingResult.hasErrors()){
+            Map<String, String> errors= new HashMap<>();
+
+            bindingResult.getFieldErrors().forEach(
+                    error -> errors.put(error.getField(), error.getDefaultMessage())
+            );
+
+            String errorMsg= "";
+
+            for(String key: errors.keySet()){
+                errorMsg+= "error in: " + key + ", by: " + errors.get(key) + "\n";
+            }
+
+            return new ResponseEntity<>(errorMsg,HttpStatus.OK);
+        }
+        if (personOptional.getPhone().equals(personDTO.getPhone())){
+            personOptional.setPhone(personDTO.getPhone());
         }else {
-            if (iPersonService.findPersonByPhone(person.getPhone()).isPresent()){
-                return new ResponseEntity<>("existed", HttpStatus.OK);
+            if (iPersonService.findPersonByPhone(personDTO.getPhone()).isPresent()){
+                return new ResponseEntity<>(" phone existed", HttpStatus.OK);
             }
         }
-        personOptional.setName(person.getName());
-        personOptional.setGender(person.isGender());
+        personOptional.setName(personDTO.getName());
+        personOptional.setGender(personDTO.isGender());
         personOptional.setStatus(true);
-        personOptional.setAddress(person.getAddress());
-        personOptional.setPhone(person.getPhone());
-        personOptional.setDateOfBirth(person.getDateOfBirth());
+        personOptional.setAddress(personDTO.getAddress());
+        personOptional.setPhone(personDTO.getPhone());
+        personOptional.setDateOfBirth(personDTO.getDateOfBirth());
         personOptional.setAvatar("");
         personOptional.setTypeAction(false);
-        Optional<Classify> classifyOptional = iClassifyService.findById(person.getClassify().getId());
+        Optional<Classify> classifyOptional = iClassifyService.findById(personDTO.getClassify().getId());
         personOptional.setClassify(classifyOptional.get());
         return new ResponseEntity<>(iPersonService.save(personOptional),HttpStatus.OK);
     }
@@ -140,6 +177,9 @@ public class PersonController {
     @PutMapping("/{id}")
     public ResponseEntity<?> deletePerson(@PathVariable Long id){
         Person personOptional = iPersonService.findById(id).get();
+        if (personOptional.isTypeAction()){
+            return new ResponseEntity<>("Person in borrowing, can't delete",HttpStatus.OK);
+        }
         iPersonService.remove(personOptional.getId());
         return new ResponseEntity<>(iPersonService.save(personOptional),HttpStatus.OK);
     }

@@ -40,12 +40,13 @@ iBookRepository.findById(id).get().setStatus(false);
     }
 
     @Override
-    public Page<Book> findAllWithKey(String key, Pageable pageable) {
+    public Page<Book> findAllWithKeyAndCategory(String key,Long category_id, Pageable pageable) {
         try {
-            if (!key.isEmpty()){
+            key = '%'+key+'%';
+            if (category_id==null){
                 return iBookRepository.findAllWithKey('%'+key+'%', pageable);
             }else {
-                return iBookRepository.findAllByStatusIsTrueOrderByIdDesc(pageable);
+                return iBookRepository.findAllWithKeyAndCategory(key, category_id, pageable);
             }
         }catch (Exception e){
             return iBookRepository.findAllByStatusIsTrueOrderByIdDesc(pageable);
@@ -53,12 +54,13 @@ iBookRepository.findById(id).get().setStatus(false);
     }
 
     @Override
-    public Iterable<Book> findBookWithKey(String key) {
+    public Iterable<Book> findBookWithKeyAndCategory(String key,Long category_id) {
         try {
-            if (!key.isEmpty()){
+            key = '%'+key+'%';
+            if (category_id==null){
                 return iBookRepository.findBookWithKey('%'+key+'%');
             }else {
-                return iBookRepository.findAllByStatusIsTrueOrderByIdDesc();
+                return iBookRepository.findBookWithKeyAndCategory(key, category_id);
             }
         }catch (Exception e){
             return iBookRepository.findAllByStatusIsTrueOrderByIdDesc();

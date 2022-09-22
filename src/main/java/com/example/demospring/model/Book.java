@@ -6,17 +6,23 @@ import com.sun.istack.NotNull;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "book", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {
+                "code"
+        }),
+        @UniqueConstraint(columnNames = {
+                "name"
+        })
+})
 public class Book {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
     @NotNull
-    @Column(unique = true)
     private String code;
     @NotNull
     private boolean status;
     @NotNull
-    @Column(unique = true)
     private String name;
     @NotNull
     private String author;

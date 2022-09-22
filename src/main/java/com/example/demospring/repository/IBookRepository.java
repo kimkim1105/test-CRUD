@@ -18,8 +18,12 @@ public interface IBookRepository extends JpaRepository<Book,Long> {
     Page<Book> findAllByStatusIsTrueOrderByIdDesc(Pageable pageable);
     @Query(value = "select * from book where status = true and concat(name,code,author) like :key order by id desc",nativeQuery = true)
     Page<Book> findAllWithKey(String key, Pageable pageable);
+    @Query(value = "select * from book where status = true and concat(name,code,author) like :key and category_id = :category_id order by id desc",nativeQuery = true)
+    Page<Book> findAllWithKeyAndCategory(String key,Long category_id, Pageable pageable);
     @Query(value = "select * from book where status = true and concat(name,code,author) like :key order by id desc",nativeQuery = true)
     Iterable<Book> findBookWithKey(String key);
+    @Query(value = "select * from book where status = true and concat(name,code,author) like :key and category_id = :category_id order by id desc",nativeQuery = true)
+    Iterable<Book> findBookWithKeyAndCategory(String key,Long category_id);
     @Query(value = "select * from book where id = (select max(id) from book)", nativeQuery = true)
     Optional<Book> getLastestBook();
     Optional<Book> findBookByName(String name);

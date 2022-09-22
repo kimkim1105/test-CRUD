@@ -248,6 +248,7 @@
                     url: "http://localhost:8080/books/"+id,
                     type: 'GET',
                     success: function (data) {
+                        console.log("data", data)
                         if (data.name==name){
                             return true;
                         }else {
@@ -344,88 +345,120 @@
         let id = $('#add-book-id').val();
         let inStock = $('#add-book-inStock').val();
        if (inStock.match("^[0-9]+$")){
-           checkBookInStock = true;
            $('#check-add-book-inStock').html("")
+           return true;
        }else {
-           checkBookInStock = false;
            $('#check-add-book-inStock').html("Quantity incorrect format")
+           return false;
        }
+    }
+    function checkAuthor(){
+        let author = $('#add-book-author').val();
+        if (author==""){
+            $('#check-add-book-name').html("Name cannot blank")
+            return false;
+        }else {
+            $('#check-add-book-name').html("")
+            return true;
+        }
     }
 
     function checkBookInput(){
         let id = $('#add-book-id').val()
-        let code = $('#add-book-code').val();
-        let name = $('#add-book-name').val();
-        let author = $('#add-book-author').val();
         checkName();
         checkCode();
         checkQuantity();
-        // console.log("check name "+ checkBookName + "check code "+ checkBookCode)
-        if (name==""||name==null){
-            $('#check-add-book-name').html("Name cannot blank");
-            $('#function-btn-book').attr("data-target","");
-            $('#function-btn-book').attr("data-toggle","");
-        }else {
-            // console.log("check name", checkBookName)
-            if (checkBookName&&checkBookCode&&author&&checkBookInStock){
-                $('#check-add-book-name').html("");
-                if (id){
-                    $('#function-btn-book').attr("data-toggle","modal");
-                    $('#function-btn-book').attr("data-target","#editbookModal");
-                    getEditBookInfo();
-                }else {
-                    $('#function-btn-book').attr("data-toggle","modal");
-                    $('#function-btn-book').attr("data-target","#showBookModal");
-                    getNewBookInfo();
-                }
+        checkAuthor();
+        console.log("data", checkAuthor(), checkName(),checkCode(), checkQuantity())
+        if (checkQuantity()&&checkName()&&checkCode()&&checkAuthor()){
+            if (id){
+
+                $('#function-btn-book').attr("data-toggle","modal");
+                $('#function-btn-book').attr("data-target","#editbookModal");
+                getEditBookInfo();
             }else {
-               checkName()
-                $('#function-btn-book').attr("data-target","");
-                $('#function-btn-book').attr("data-toggle","");
+                $('#function-btn-book').attr("data-toggle","modal");
+                $('#function-btn-book').attr("data-target","#showBookModal");
+                getNewBookInfo();
             }
-            
-        }
-        if (author==""||author==null){
-            $('#check-add-book-author').html("Book author cannot blank");
-            $('#function-btn-book').attr("data-target","");
-            $('#function-btn-book').attr("data-toggle","");
         }else {
-            if (checkBookCode&&checkBookName&&checkBookInStock) {
-                $('#check-add-book-author').html("");
-                if (id) {
-                    $('#function-btn-book').attr("data-toggle", "modal");
-                    $('#function-btn-book').attr("data-target", "#editbookModal");
-                    getEditBookInfo();
-                } else {
-                    $('#function-btn-book').attr("data-toggle", "modal");
-                    $('#function-btn-book').attr("data-target", "#showBookModal");
-                    getNewBookInfo();
-                }
-            }
-        }
-        if (code==""||code==null){
-            $('#check-add-book-code').html("code cannot blank");
-            $('#function-btn-book').attr("data-target","");
             $('#function-btn-book').attr("data-toggle","");
-        }else {
-            if (checkBookCode&&checkBookName&&author&&checkBookInStock){
-                $('#check-add-book-code').html("");
-                if (id){
-                    $('#function-btn-book').attr("data-toggle","modal");
-                    $('#function-btn-book').attr("data-target","#editbookModal");
-                    getEditBookInfo();
-                }else {
-                    // console.log("name lay ra", name)
-                    $('#function-btn-book').attr("data-toggle","modal");
-                    $('#function-btn-book').attr("data-target","#showBookModal");
-                    getNewBookInfo();
-                }
-            }else {
-                checkCode();
-                $('#function-btn-book').attr("data-target","");
-                $('#function-btn-book').attr("data-toggle","");
-            }
+            $('#function-btn-book').attr("data-target","");
+            checkName();
+            checkCode();
+            checkQuantity();
         }
+
+        // let id = $('#add-book-id').val()
+        // let code = $('#add-book-code').val();
+        // let name = $('#add-book-name').val();
+        // let author = $('#add-book-author').val();
+        // // console.log("check name "+ checkBookName + "check code "+ checkBookCode)
+        // if (name==""||name==null){
+        //     $('#check-add-book-name').html("Name cannot blank");
+        //     $('#function-btn-book').attr("data-target","");
+        //     $('#function-btn-book').attr("data-toggle","");
+        // }else {
+        //     // console.log("check name", checkBookName)
+        //     if (checkBookName&&checkBookCode&&author&&checkBookInStock){
+        //         $('#check-add-book-name').html("");
+        //         if (id){
+        //             $('#function-btn-book').attr("data-toggle","modal");
+        //             $('#function-btn-book').attr("data-target","#editbookModal");
+        //             getEditBookInfo();
+        //         }else {
+        //             $('#function-btn-book').attr("data-toggle","modal");
+        //             $('#function-btn-book').attr("data-target","#showBookModal");
+        //             getNewBookInfo();
+        //         }
+        //     }else {
+        //        checkName()
+        //         $('#function-btn-book').attr("data-target","");
+        //         $('#function-btn-book').attr("data-toggle","");
+        //     }
+        //
+        // }
+        // if (author==""||author==null){
+        //     $('#check-add-book-author').html("Book author cannot blank");
+        //     $('#function-btn-book').attr("data-target","");
+        //     $('#function-btn-book').attr("data-toggle","");
+        // }else {
+        //     if (checkBookCode&&checkBookName&&checkBookInStock) {
+        //         $('#check-add-book-author').html("");
+        //         if (id) {
+        //             $('#function-btn-book').attr("data-toggle", "modal");
+        //             $('#function-btn-book').attr("data-target", "#editbookModal");
+        //             getEditBookInfo();
+        //         } else {
+        //             $('#function-btn-book').attr("data-toggle", "modal");
+        //             $('#function-btn-book').attr("data-target", "#showBookModal");
+        //             getNewBookInfo();
+        //         }
+        //     }
+        // }
+        // if (code==""||code==null){
+        //     $('#check-add-book-code').html("code cannot blank");
+        //     $('#function-btn-book').attr("data-target","");
+        //     $('#function-btn-book').attr("data-toggle","");
+        // }else {
+        //     if (checkBookCode&&checkBookName&&author&&checkBookInStock){
+        //         $('#check-add-book-code').html("");
+        //         if (id){
+        //             $('#function-btn-book').attr("data-toggle","modal");
+        //             $('#function-btn-book').attr("data-target","#editbookModal");
+        //             getEditBookInfo();
+        //         }else {
+        //             // console.log("name lay ra", name)
+        //             $('#function-btn-book').attr("data-toggle","modal");
+        //             $('#function-btn-book').attr("data-target","#showBookModal");
+        //             getNewBookInfo();
+        //         }
+        //     }else {
+        //         checkCode();
+        //         $('#function-btn-book').attr("data-target","");
+        //         $('#function-btn-book').attr("data-toggle","");
+        //     }
+        // }
     }
 
 
@@ -452,12 +485,12 @@
                     '          <div class="form-label-group">\n' +
                     '            <label class="text-secondary">Book code</label>\n' +
                     '<small style="color: red" id="check-add-book-code"></small>'+
-                    '            <input type="text" oninput="checkCode()" disabled value="'+data.code+'" id="add-book-code" class="form-control" >\n' +
+                    '            <input type="text" disabled value="'+data.code+'" id="add-book-code" class="form-control" >\n' +
                     '          </div>\n' +
                     '          <div class="form-label-group">\n' +
                     '            <label class="text-secondary">Book name</label>\n' +
                     '<small style="color: red" id="check-add-book-name"></small>'+
-                    '            <input type="text" oninput="checkName()" disabled value="'+data.name+'" id="add-book-name" class="form-control" >\n' +
+                    '            <input type="text" disabled value="'+data.name+'" id="add-book-name" class="form-control" >\n' +
                     '          </div>\n' +
                     '          <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">\n' +
                     '            <label class="text-secondary">Author</label>\n' +
