@@ -98,6 +98,18 @@ public class OrderController {
     @PutMapping("/{id}")
     public ResponseEntity<?> deleteOrder(@PathVariable Long id){
         Order orderOptional = iOrderService.findById(id).get();
+        if (orderOptional.getDateOff()!=null){
+            return new ResponseEntity<>("order completed", HttpStatus.OK);
+        }
+        Person person = iPersonService.findById(orderOptional.getPerson().getId()).get();
+        person.setTypeAction(false);
+        iPersonService.save(person);
+        Iterator<Book> bookIterator = orderOptional.getBook().iterator();
+        while (bookIterator.hasNext()){
+            Book book = iBookService.findById(bookIterator.next().getId()).get();
+            book.setInStock(book.getInStock()+1);
+            iBookService.save(book);
+        }
         iOrderService.remove(orderOptional.getId());
         return new ResponseEntity<>(iOrderService.save(orderOptional),HttpStatus.OK);
     }

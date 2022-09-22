@@ -171,6 +171,7 @@
 <script th:inline="javascript">
     let checkBookCode;
     let checkBookName;
+    let checkBookInStock;
     function reload(){
         window.location.reload();
     }
@@ -178,7 +179,7 @@
         //show form add book
         $('#add-book').on('click',function (event){
             // event.preventDefault();
-            let str = '<div class=login d-flex align-items-center py-5>\n '+
+            let str = '<div class="login d-flex align-items-center py-5">\n '+
                 ' <div class=container>\n' +
                 '   <div class="row">\n' +
                 '    <div class="col-md-9 col-lg-8 mx-auto pl-5 pr-5">\n' +
@@ -187,13 +188,14 @@
                 '       <form id="form" method="post">\n' +
                 '         <div class="form-label-group">\n' +
                 '            <label for="add-book-code" class="text-secondary">Book code<i style="color: red">* </i></label>\n' +
+                '<small >suggest: you can make name with structure: "book category code + barcode", eg: NOV032654785</small>'+
                 '<small style="color: red" id="check-add-book-code"></small>'+
-                '           <input oninput="checkCode()" type="text" name="add-book-code" id="add-book-code" required class="form-control" >\n' +
+                '           <input type="text" name="add-book-code" id="add-book-code" required class="form-control" >\n' +
                 '          </div>\n' +
                 '         <div class="form-label-group">\n' +
                 '            <label for="add-book-name" class="text-secondary">Book name<i style="color: red">* </i></label>\n' +
                 '<small style="color: red" id="check-add-book-name"></small>'+
-                '           <input oninput="checkName()" type="text" name="add-book-name" id="add-book-name" required class="form-control" >\n' +
+                '           <input type="text" name="add-book-name" id="add-book-name" required class="form-control" >\n' +
                 '          </div>\n' +
                 '         <div class="form-label-group">\n' +
                 '            <label for="add-book-author" class="text-secondary">Book Author<i style="color: red">* </i></label>\n' +
@@ -201,23 +203,24 @@
                 '           <input type="text" name="add-book-author" id="add-book-author" required class="form-control" >\n' +
                 '          </div>\n' +
                 '          <div class="form-label-group mb-4">\n '+
-                '           <span class="text-secondary">Category<i style="color: red">* </i></span> <br><br><br>\n'+
+                '           <label class="text-secondary">Category<i style="color: red">* </i></label> <br>\n'+
                 '<select id="add-book-category" class="form-control">';
-            var link = 'http://localhost:8080/categories';
-            $.get(link,function (category, status){
-                let categories = category.slice();
-                let html;
-                $.each(categories, function (index, items){
-                    // console.log("items laa ra", items.id)
-                    html +='<option value="'+items.id+'">'+items.category+'</option>'
-                })
-                $('#add-book-category').append(html);
-            })
+            $.ajax({
+                async: false,
+                url: "http://localhost:8080/categories",
+                type: 'GET',
+                success: function (data) {
+                    let categories = data.slice();
+                    $.each(categories, function (index, items){
+                        // console.log("items laa ra", items.id)
+                        str +='<option value="'+items.id+'">'+items.code+'-'+items.category+'</option>'
+                    })
+                }})
             str +=  ' </select>'+
                 '         <div class="form-label-group">\n' +
                 '            <label for="add-book-inStock" class="text-secondary">Quantity</label>\n' +
                 '<small style="color: red" id="check-add-book-inStock"></small>'+
-                '           <input type="text" name="add-book-inStock" id="add-book-inStock" required class="form-control" >\n' +
+                '           <input type="number" name="add-book-inStock" id="add-book-inStock" required class="form-control" >\n' +
                 '          </div>\n' +
                 '<br><br>'+
                 '         <a data-toggle="modal" id="function-btn-book" data-target="#showBookModal" onclick="checkBookInput()" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Add new</a>\n' +
@@ -235,6 +238,10 @@
         let name = $('#add-book-name').val();
         let id = $('#add-book-id').val();
         let href = "http://localhost:8080/books/name/"+name
+        if (name==""){
+            $('#check-add-book-name').html("Name cannot blank")
+            return false;
+        }
             if (id){
                 $.ajax({
                     async: false,
@@ -242,7 +249,7 @@
                     type: 'GET',
                     success: function (data) {
                         if (data.name==name){
-                            checkBookName = true;
+                            return true;
                         }else {
                             $.ajax({
                                 async: false,
@@ -250,12 +257,12 @@
                                 type: 'GET',
                                 success: function (data) {
                                     if (data=="existed"){
-                                        checkBookName = false
                                         $('#check-add-book-name').html("Book name existed,Pls try again")
+                                        return false;
                                     }
                                     else {
                                         $('#check-add-book-name').html("")
-                                        checkBookName = true
+                                      return true;
                                     }
                                 }
                             })
@@ -269,12 +276,12 @@
                     type: 'GET',
                     success: function (data) {
                         if (data=="existed"){
-                            checkBookName = false
                             $('#check-add-book-name').html("Book name existed,Pls try again")
+                            return false;
                         }
                         else {
                             $('#check-add-book-name').html("")
-                            checkBookName = true
+                            return true;
                         }
                     }
                 })
@@ -284,6 +291,10 @@
         let id = $('#add-book-id').val();
         let code = $('#add-book-code').val();
         let href = "http://localhost:8080/books/code/"+code;
+        if (code==""){
+            $('#check-add-book-code').html("Book code cannot blank")
+            return false;
+        }
         if (id){
             $.ajax({
                 async: false,
@@ -291,7 +302,7 @@
                 type: 'GET',
                 success: function (data) {
                     if (data.code==code){
-                        checkBookCode = true;
+                        return true;
                     }else {
                         $.ajax({
                             async: false,
@@ -299,12 +310,12 @@
                             type: 'GET',
                             success: function (data) {
                                 if (data=="existed"){
-                                    checkBookCode = false
                                     $('#check-add-book-code').html("Book code existed,Pls try again")
+                                    return false;
                                 }
                                 else {
                                     $('#check-add-book-code').html("")
-                                    checkBookCode = true
+                                    return true;
                                 }
                             }
                         })
@@ -318,16 +329,27 @@
                 type: 'GET',
                 success: function (data) {
                     if (data=="existed"){
-                        checkBookCode = false
                         $('#check-add-book-code').html("Book code existed,Pls try again")
+                        return false;
                     }
                     else {
                         $('#check-add-book-code').html("")
-                        checkBookCode = true
+                        return true;
                     }
                 }
             })
         }
+    }
+    function checkQuantity(){
+        let id = $('#add-book-id').val();
+        let inStock = $('#add-book-inStock').val();
+       if (inStock.match("^[0-9]+$")){
+           checkBookInStock = true;
+           $('#check-add-book-inStock').html("")
+       }else {
+           checkBookInStock = false;
+           $('#check-add-book-inStock').html("Quantity incorrect format")
+       }
     }
 
     function checkBookInput(){
@@ -337,6 +359,7 @@
         let author = $('#add-book-author').val();
         checkName();
         checkCode();
+        checkQuantity();
         // console.log("check name "+ checkBookName + "check code "+ checkBookCode)
         if (name==""||name==null){
             $('#check-add-book-name').html("Name cannot blank");
@@ -344,7 +367,7 @@
             $('#function-btn-book').attr("data-toggle","");
         }else {
             // console.log("check name", checkBookName)
-            if (checkBookName&&checkBookCode&&author){
+            if (checkBookName&&checkBookCode&&author&&checkBookInStock){
                 $('#check-add-book-name').html("");
                 if (id){
                     $('#function-btn-book').attr("data-toggle","modal");
@@ -367,7 +390,7 @@
             $('#function-btn-book').attr("data-target","");
             $('#function-btn-book').attr("data-toggle","");
         }else {
-            if (checkBookCode&&checkBookName) {
+            if (checkBookCode&&checkBookName&&checkBookInStock) {
                 $('#check-add-book-author').html("");
                 if (id) {
                     $('#function-btn-book').attr("data-toggle", "modal");
@@ -385,7 +408,7 @@
             $('#function-btn-book').attr("data-target","");
             $('#function-btn-book').attr("data-toggle","");
         }else {
-            if (checkBookCode&&checkBookName&&author){
+            if (checkBookCode&&checkBookName&&author&&checkBookInStock){
                 $('#check-add-book-code').html("");
                 if (id){
                     $('#function-btn-book').attr("data-toggle","modal");
@@ -442,7 +465,7 @@
                     '            <input disabled type="text" id="add-book-author" value="'+data.author+'" class="form-control">\n' +
                     '          </div>\n' +
                     '          <div class="form-label-group mb-4">\n '+
-                    '           <label class="text-secondary">Category</label> <br><br><br>\n'+
+                    '           <label class="text-secondary">Category</label> <br>\n'+
                     '<select disabled id="add-book-category" class="form-control">';
                 var link = 'http://localhost:8080/categories';
                 $.get(link,function (category, status){
@@ -451,9 +474,9 @@
                     $.each(categoryList, function (index, items){
                         // console.log("items laa ra", items.id)
                         if (items.category == data.category.category){
-                            html +='<option selected value="'+items.id+'">'+items.category+'</option>'
+                            html +='<option selected value="'+items.id+'">'+items.code+'-'+items.category+'</option>'
                         }else {
-                            html +='<option value="'+items.id+'">'+items.category+'</option>'
+                            html +='<option value="'+items.id+'">'+items.code+'-'+items.category+'</option>'
                         }
                     })
                     $('#add-book-category').append(html);
@@ -465,7 +488,7 @@
                     '          <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">\n' +
                     '            <label class="text-secondary">Quantity</label>\n' +
                     '<small style="color: red" id="check-add-book-inStock"></small>'+
-                    '            <input disabled type="text" id="add-book-inStock" value="'+data.inStock+'" class="form-control">\n' +
+                    '            <input disabled type="number" id="add-book-inStock" value="'+data.inStock+'" class="form-control">\n' +
                     '          </div>\n' +
                     '         <a data-toggle="modal" id="function-btn-book" onclick="getDeletebookInfo()" data-target="#deletebookModal" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Delete</a>\n' +
                     '        <a onclick="reload()" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Back</a>\n' +
@@ -604,11 +627,11 @@
                        $('#category').append(html);
                    })
                    str +=
-                       "                    </div>"+
-                       "<div class=\"form-group\">\n" +
-                       "                        <label class=\"col-form-label\">Quantity:</label>\n" +
-                       "                        <input type='text' disabled value='"+inStock+"' >\n" +
-                       "                    </div>";
+                       "                    </div>"
+                       // "<div class=\"form-group\">\n" +
+                       // "                        <label class=\"col-form-label\">Quantity:</label>\n" +
+                       // "                        <input type='text' disabled value='"+inStock+"' >\n" +
+                       // "                    </div>";
                    $('#delete-book-show-modal').html(str)
 
                }
@@ -631,7 +654,6 @@
                     $('#showEdit').attr("data-target","#confirmModal");
                 } else {
                     $('#add-book-name').attr("disabled", false);
-                    $('#add-book-code').attr("disabled", false);
                     $('#add-book-category').attr("disabled", false);
                     $('#add-book-author').attr("disabled", false);
                     $('#function-btn-book').html("Update");

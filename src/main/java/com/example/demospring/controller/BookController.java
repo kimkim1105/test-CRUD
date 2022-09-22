@@ -3,6 +3,7 @@ package com.example.demospring.controller;
 import com.example.demospring.model.Book;
 import com.example.demospring.model.BookCategory;
 import com.example.demospring.model.dto.BookDTO;
+import com.example.demospring.model.dto.Validation;
 import com.example.demospring.service.IBookCategoryService;
 import com.example.demospring.service.IBookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ public class BookController {
     IBookService iBookService;
     @Autowired
     IBookCategoryService iBookCategoryService;
+    @Autowired
+    Validation validation;
     @GetMapping
     public String getListBook(@RequestParam(required = false, name = "key") String key, Model model, @PageableDefault(value = 5) Pageable pageable){
         model.addAttribute("books", iBookService.findAllWithKey(key, pageable));
@@ -56,6 +59,9 @@ public class BookController {
     }
     @PostMapping
     public ResponseEntity<?> addNewBook(@RequestBody BookDTO bookDTO){
+        if (!validation.validateInStock(String.valueOf(bookDTO.getInStock()))){
+            return new ResponseEntity<>("inStock incorrect format", HttpStatus.OK);
+        }
         if (iBookService.findBookByName(bookDTO.getName()).isPresent()){
             return new ResponseEntity<>("bookname existed, pls try again",HttpStatus.OK);
         }
@@ -69,19 +75,11 @@ public class BookController {
         book.setAuthor(bookDTO.getAuthor());
         Optional<BookCategory> bookCategoryOptional = iBookCategoryService.findById(bookDTO.getCategory().getId());
         book.setCategory(bookCategoryOptional.get());
-        if (bookDTO.getInStock()>0){
-            book.setInStock(bookDTO.getInStock());
-        }else {
+        if (String.valueOf(bookDTO.getInStock()).isEmpty()){
             book.setInStock(0);
+        }else {
+            book.setInStock(bookDTO.getInStock());
         }
-//        Optional<Book> bookOptional = iBookService.getLastestBook();
-//        StringBuffer bookCode = new StringBuffer();
-//        Long lastId = bookOptional.get().getId();
-//        String format = String.format("%05d",(lastId+1));
-//        String categoryCode = bookCategoryOptional.get().getCode();
-//        bookCode.append(categoryCode);
-//        bookCode.append(format);
-//        book.setCode(bookCode.toString());
         return new ResponseEntity<>(iBookService.save(book),HttpStatus.OK);
     }
     @PutMapping
@@ -103,7 +101,6 @@ public class BookController {
         }
         bookOptional.setName(book.getName());
         bookOptional.setStatus(true);
-        bookOptional.setCode(book.getCode());
         bookOptional.setAuthor(book.getAuthor());
         Optional<BookCategory> bookCategoryOptional = iBookCategoryService.findById(book.getCategory().getId());
         bookOptional.setCategory(bookCategoryOptional.get());

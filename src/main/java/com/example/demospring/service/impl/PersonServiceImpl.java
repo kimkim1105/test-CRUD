@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -31,13 +32,16 @@ public class PersonServiceImpl implements IPersonService {
     }
 
     @Override
-    public Iterable<Person> findPersonWithKey(String key) {
+    public Iterable<Person> findPersonWithKey(String key, String from, String to) {
         try {
-            if (!key.isEmpty()){
-                return iPersonRepository.findPersonWithKey('%'+key+'%');
-            }else {
-                return iPersonRepository.findAllByStatusIsTrueOrderByIdDesc();
+            key = '%'+key+'%';
+            if (from.isEmpty()){
+                from = "1900-01-01";
             }
+            if (to.isEmpty()){
+                to = LocalDate.now().toString();
+            }
+            return iPersonRepository.findPersonWithKey(key,from,to);
         }catch (Exception e){
             return iPersonRepository.findAllByStatusIsTrueOrderByIdDesc();
         }
@@ -87,13 +91,16 @@ public class PersonServiceImpl implements IPersonService {
     }
 
     @Override
-    public Page<Person> findAllWithKey(String key, Pageable pageable) {
+    public Page<Person> findAllWithKey(String key, String from, String to, Pageable pageable) {
         try {
-            if (!key.isEmpty()){
-                return iPersonRepository.findAllWithKey('%'+key+'%', pageable);
-            }else {
-                return iPersonRepository.findAllByStatusIsTrueOrderByIdDesc(pageable);
+            key = '%'+key+'%';
+            if (from.isEmpty()){
+                from = "1900-01-01";
             }
+            if (to.isEmpty()){
+                to = LocalDate.now().toString();
+            }
+                return iPersonRepository.findAllWithKey(key, from, to, pageable);
         }catch (Exception e){
             return iPersonRepository.findAllByStatusIsTrueOrderByIdDesc(pageable);
         }

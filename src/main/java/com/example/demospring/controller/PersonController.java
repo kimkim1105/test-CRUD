@@ -29,20 +29,29 @@ public class PersonController {
     Validation validation;
 
     @GetMapping("/test")
-    public String getListPersontest(@RequestParam(required = false, name = "key") String key, Model model, @PageableDefault(value = 5) Pageable pageable){
+    public String getListPersontest(@RequestParam(required = false, name = "key") String key, Model model,
+             @RequestParam(required = false, name = "from") String from,
+                                    @RequestParam(required = false, name = "to") String to,
+                                    @PageableDefault(value = 5) Pageable pageable){
         model.addAttribute("classifies", iClassifyService.findAll());
-        model.addAttribute("persons", iPersonService.findAllWithKey(key, pageable));
+        model.addAttribute("persons", iPersonService.findAllWithKey(key, from, to, pageable));
         return "test";
     }
     @GetMapping
-    public String getListPerson(@RequestParam(required = false, name = "key") String key, Model model, @PageableDefault(value = 5) Pageable pageable){
+    public String getListPerson(@RequestParam(required = false, name = "key") String key, Model model,
+                                @RequestParam(required = false, name = "from") String from,
+                                @RequestParam(required = false, name = "to") String to,
+                                @PageableDefault(value = 5) Pageable pageable){
         model.addAttribute("classifies", iClassifyService.findAll());
-        model.addAttribute("persons", iPersonService.findAllWithKey(key, pageable));
+        model.addAttribute("persons", iPersonService.findAllWithKey(key, from, to, pageable));
         return "person/peopleList";
     }
+
     @GetMapping("/listPerson")
-    public ResponseEntity<?> getAllListPerson(@RequestParam(required = false, name = "key") String key){
-        return new ResponseEntity<>(iPersonService.findPersonWithKey(key),HttpStatus.OK);
+    public ResponseEntity<?> getAllListPerson(@RequestParam(required = false, name = "key") String key,
+                                              @RequestParam(required = false, name = "from") String from,
+                                              @RequestParam(required = false, name = "to") String to){
+        return new ResponseEntity<>(iPersonService.findPersonWithKey(key,from,to),HttpStatus.OK);
     }
     @GetMapping("/free")
     public ResponseEntity<?> getAllPersonInFree(@RequestParam(required = false, name = "key") String key){

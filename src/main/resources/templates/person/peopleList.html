@@ -37,7 +37,13 @@
     <div id="person-content">
     <table class="table table-striped">
         <form class="form-inline">
-            <input class="form-control mr-sm-2" type="search" name="key" placeholder="Search by name or person id" aria-label="Search">
+            <input class="form-control mr-sm-2" type="search" name="key" placeholder="Search by name, person id or phone number" aria-label="Search">
+            <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">
+                <label class="text-secondary">Date from</label>
+                <input type="date"  class="form-control datepicker" name="from" >
+                <input type="date" class="form-control datepicker" name="to">
+            </div>
+            <input type="submit" value="search">
         </form>
         <thead>
         <th colspan="3">Person Information</th>
@@ -69,8 +75,6 @@
             <td th:utext="${person.classify.classify}"></td>
             <td th:utext="${person.phone}"></td>
             <td th:utext="${person.address}"></td>
-<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-primary">Edit</a></td>-->
-<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-danger" id="deleteButton">Delete</a></td>-->
         </tr>
         </tbody>
     </table>
@@ -173,77 +177,85 @@
 <script th:inline="javascript">
 let checkPhoneInput;
 let checkDob;
-var today = new Date();
     function reload(){
         window.location.reload();
     }
-        $('#add-person-dob').datepicker({
-            maxDate: today
-        });
-        //show form add person
-        $('#add-person').on('click',function (event){
-            // event.preventDefault();
-            let str = '<div class=login d-flex align-items-center py-5>\n '+
-                 ' <div class=container>\n' +
-                 '   <div class="row">\n' +
-                 '    <div class="col-md-9 col-lg-8 mx-auto pl-5 pr-5">\n' +
-                 '       <h3 class="login-heading mb-4">Add new person</h3>\n'+
-            '<i style="color: black">Pls fill the form, have <i style="color: red">* </i>is required</i>'+
-                 '       <form id="form" method="post">\n' +
-                 '         <div class="form-label-group">\n' +
-                '            <label for="add-person-name" class="text-secondary">Person name<i style="color: red">* </i></label>\n' +
-                '<small style="color: red" id="check-add-person-name"></small>'+
-                 '           <input type="text" name="add-person-name" id="add-person-name" required class="form-control" >\n' +
-                '          </div>\n' +
-                 '         <div class="form-label-group">\n' +
-                 '           <label for="add-person-gender" class="text-secondary">Gender<i style="color: red">* </i></label>\n' +
-                '<small style="color: red" id="check-add-person-gender"></small>'+
-                '<select id="add-person-gender" class="form-control">\n' +
-                 '   <option value="true">Male</option>\n' +
-                 '   <option value="false">Female</option>\n' +
-               ' </select>'+
-                 '         </div>\n' +
-                '          <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">\n' +
-                '            <label class="text-secondary">Date of birth<i style="color: red">* </i></label>\n' +
-                '<small style="color: red" id="check-add-person-dob"></small>'+
-                '            <input oninput="checkDobInput()" type="date"  name="add-person-dob" id="add-person-dob" required  class="form-control datepicker" data-date-end-date="0d" >\n' +
-                '          </div>\n' +
-                '          <div class="form-label-group mb-4">\n' +
-                '            <label class="text-secondary">Phone number<i style="color: red">* </i></label>\n' +
-                '<small style="color: red" id="check-add-person-phone"></small>'+
-                '            <input oninput="checkPhone()" type="number" id="add-person-phone" class="form-control" required>\n' +
-                '<p></p>'+
-                '          </div>\n' +
-                '          <div class="form-label-group mb-4">\n '+
-                 '           <span class="text-secondary">Classify<i style="color: red">* </i></span> <br><br><br>\n'+
-                '<select id="add-person-classify" class="form-control">';
-                var link = 'http://localhost:8080/classifies';
-            $.get(link,function (classify, status){
-                let classifyList = classify.slice();
-                let html;
-                $.each(classifyList, function (index, items){
-                    // console.log("items laa ra", items.id)
-                   html +='<option value="'+items.id+'">'+items.classify+'</option>'
-                })
-                $('#add-person-classify').append(html);
+$(document).ready(function () {
+    // show form add person
+    let today = new Date();
+    console.log("today", today)
+    let year = today.getFullYear();
+    let month = today.getMonth()+1;
+    if (month<10){
+        month = "0"+month
+    }
+    let day =today.getDate();
+    const maxDate = '' + year + '-' + month + '-' + day;
+    // $('#add-person-dob').attr("max",maxDate)
+    $('#add-person').on('click', function (event) {
+        $('#add-person-dob').attr("max", today)
+        let str = '<div class=login d-flex align-items-center py-5>\n ' +
+            ' <div class=container>\n' +
+            '   <div class="row">\n' +
+            '    <div class="col-md-9 col-lg-8 mx-auto pl-5 pr-5">\n' +
+            '       <h3 class="login-heading mb-4">Add new person</h3>\n' +
+            '<i style="color: black">Pls fill the form, have <i style="color: red">* </i>is required</i>' +
+            '       <form id="form" method="post">\n' +
+            '         <div class="form-label-group">\n' +
+            '            <label for="add-person-name" class="text-secondary">Person name<i style="color: red">* </i></label>\n' +
+            '<small style="color: red" id="check-add-person-name"></small>' +
+            '           <input type="text" name="add-person-name" id="add-person-name" required class="form-control" >\n' +
+            '          </div>\n' +
+            '         <div class="form-label-group">\n' +
+            '           <label for="add-person-gender" class="text-secondary">Gender<i style="color: red">* </i></label>\n' +
+            '<small style="color: red" id="check-add-person-gender"></small>' +
+            '<select id="add-person-gender" class="form-control">\n' +
+            '   <option value="true">Male</option>\n' +
+            '   <option value="false">Female</option>\n' +
+            ' </select>' +
+            '         </div>\n' +
+            '          <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">\n' +
+            '            <label class="text-secondary">Date of birth<i style="color: red">* </i></label>\n' +
+            '<small style="color: red" id="check-add-person-dob"></small>' +
+            '            <input type="date" max="'+maxDate+'" name="add-person-dob" id="add-person-dob" required  class="form-control datepicker" >\n' +
+            '          </div>\n' +
+            '          <div class="form-label-group mb-4">\n' +
+            '            <label class="text-secondary">Phone number<i style="color: red">* </i></label>\n' +
+            '<small style="color: red" id="check-add-person-phone"></small>' +
+            '            <input oninput="checkPhone()" type="number" id="add-person-phone" class="form-control" required>\n' +
+            '<p></p>' +
+            '          </div>\n' +
+            '          <div class="form-label-group mb-4">\n ' +
+            '           <label class="text-secondary">Classify<i style="color: red">* </i></label>' +
+            '<select id="add-person-classify" class="form-control">';
+        var link = 'http://localhost:8080/classifies';
+        $.get(link, function (classify, status) {
+            let classifyList = classify.slice();
+            let html;
+            $.each(classifyList, function (index, items) {
+                html += '<option value="' + items.id + '">' + items.classify + '</option>'
             })
-            str +=  ' </select>'+
-                '       </div>\n' +
-                 '        <div class="form-label-group mb-4">\n' +
-                 '           <label class="text-secondary">Address</label>\n' +
-                 '           <input  type="text" id="add-person-address" class="form-control">\n' +
-                '         </div>\n' +
-                '          <div class="form-label-group mb-4">\n' +
-                 '         </div>\n' +
-                 '         <a data-toggle="modal" id="function-btn" data-target="#showModal" onclick="checkInput()" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Add new</a>\n' +
-                 '         <a onclick="reload()" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Back</a>\n' +
-                 '       </form>\n' +
-                 '     </div>\n' +
-                 '   </div>\n' +
-                '  </div>\n' +
-                '</div>'
-            $('#person-content').html(str);
+            $('#add-person-classify').append(html);
         })
+        str += ' </select>' +
+            '       </div>\n' +
+            '        <div class="form-label-group mb-4">\n' +
+            '           <label class="text-secondary">Address</label>\n' +
+            '           <input  type="text" id="add-person-address" class="form-control">\n' +
+            '         </div>\n' +
+            '          <div class="form-label-group mb-4">\n' +
+            '         </div>\n' +
+            '         <a data-toggle="modal" id="function-btn" data-target="#showModal" onclick="checkInput()" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Add new</a>\n' +
+            '         <a onclick="reload()" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Back</a>\n' +
+            '       </form>\n' +
+            '     </div>\n' +
+            '   </div>\n' +
+            '  </div>\n' +
+            '</div>'
+
+        $('#person-content').html(str);
+    })
+})
 
 function checkPhone(){
         let id = $('#add-person-id').val();
@@ -320,7 +332,6 @@ function checkInput(){
     let name = $('#add-person-name').val();
     let dob = $('#add-person-dob').val();
     let phone = $('#add-person-phone').val();
-    checkDobInput()
     checkPhone()
     console.log("check phone", checkDob)
     if (name==""||name==null){
@@ -344,7 +355,7 @@ function checkInput(){
         $('#function-btn').attr("data-target","");
         $('#function-btn').attr("data-toggle","");
     }else {
-        if (checkDob&&checkPhoneInput){
+        if (checkPhoneInput){
         $('#check-add-person-dob').html("");
         if (code){
             $('#function-btn').attr("data-toggle","modal");
@@ -366,7 +377,7 @@ function checkInput(){
         $('#function-btn').attr("data-target","");
         $('#function-btn').attr("data-toggle","");
     }else {
-if (checkPhoneInput&&checkDob){
+if (checkPhoneInput){
     $('#check-add-person-phone').html("");
     if (code){
         $('#function-btn').attr("data-toggle","modal");
@@ -440,7 +451,7 @@ if (checkPhoneInput&&checkDob){
                         '<p></p>'+
                         '          </div>\n' +
                         '          <div class="form-label-group mb-4">\n '+
-                        '           <label class="text-secondary">Classify</label> <br><br><br>\n'+
+                        '           <label class="text-secondary">Classify</label> <br>\n'+
                         '<select disabled id="add-person-classify" class="form-control">';
                     var link = 'http://localhost:8080/classifies';
                     $.get(link,function (classify, status){
@@ -518,9 +529,7 @@ if (checkPhoneInput&&checkDob){
             "<input id='classifyShow' type='text' disabled value='' >"
         let href = "http://localhost:8080/classifies/"+classifyId;
         $.get(href,function (data,status){
-            // console.log("data",data)
             classify = data.classify;
-            // console.log("lay ra classify", classify)
             $('#classifyShow').val(classify);
         })
            str +=
@@ -530,7 +539,6 @@ if (checkPhoneInput&&checkDob){
 // get edit person info
 function getEditPersonInfo(){
         let id = $('#add-person-id').val();
-    // console.log("lay ra duoc id hien tai k", id)
     let name = $('#add-person-name').val();
     let code = $('#add-person-code').val();
     let genderId = $('#add-person-gender').val();
@@ -577,9 +585,7 @@ function getEditPersonInfo(){
         "<input id='classifyShow' type='text' disabled value='' >"
     let href = "http://localhost:8080/classifies/"+classifyId;
     $.get(href,function (data,status){
-        // console.log("data",data)
         classify = data.classify;
-        // console.log("lay ra classify", classify)
         $('#classifyShow').val(classify);
     })
     str +=
@@ -589,7 +595,6 @@ function getEditPersonInfo(){
 //get delet person info
 function getDeletePersonInfo(){
     let id = $('#add-person-id').val();
-    // console.log("lay ra duoc id hien tai k", id)
     $.ajax({
         async: false,
         url:"http://localhost:8080/orders/person/" +id,
@@ -617,7 +622,6 @@ function getDeletePersonInfo(){
     let phone = $('#add-person-phone').val();
     let address = $('#add-person-address').val();
     let str = "";
-    // console.log("lay id xoa",id)
     str +=
         "<div class=\"form-group\">\n" +
         "                        <label class=\"col-form-label\">ID:</label>\n" +
@@ -650,7 +654,6 @@ function getDeletePersonInfo(){
         // console.log("data",data)
         classify = data.classify;
         let html = "<input type='text' disabled value='"+classify+"' >"
-        // console.log("lay ra classify", classify)
         $('#classify').append(html);
     })
     str +=
@@ -708,9 +711,7 @@ function getDeletePersonInfo(){
                 "id": classifyId
             }
         }
-        // console.log("type",typeof(obj))
         let data = JSON.stringify(obj)
-        // console.log("data tao tu obj",data)
         $.ajax({
             async: false,
             headers: {
@@ -745,9 +746,7 @@ function editPerson(){
             "id": classifyId
         }
     }
-    // console.log("type",typeof(obj))
     let data = JSON.stringify(obj)
-    // console.log("data tao tu obj",data)
     $.ajax({
         async: false,
         headers: {
@@ -758,7 +757,6 @@ function editPerson(){
         type: 'PUT',
         data: data,
         success: function (data) {
-            // console.log("sau khi update", data)
             $('#confirmModalLabel').html("Update person confirm");
             $('#confirm-content').html("Update success!");
         }
@@ -767,7 +765,6 @@ function editPerson(){
 // create new person
 function deletePerson(){
     let id = $('#add-person-id').val();
-    // console.log("data tao tu obj",data)
     $.ajax({
         async: false,
         headers: {
@@ -777,7 +774,6 @@ function deletePerson(){
         url: "http://localhost:8080/persons/"+id,
         type: 'PUT',
         success: function (data) {
-            // console.log("sau khi update", data)
             $('#confirmModalLabel').html("Delete person confirm");
             $('#confirm-content').html("Delete success!");
         }

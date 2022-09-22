@@ -151,7 +151,7 @@
     <div id="order-content" >
         <table class="table table-striped">
             <form class="form-inline">
-                <input class="form-control mr-sm-2" type="search" name="key" placeholder="Search by name or book id" aria-label="Search">
+                <input class="form-control mr-sm-2" type="search" name="key" placeholder="Search by person name or id" aria-label="Search">
             </form>
 
             <thead>
@@ -219,7 +219,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editbookModalLabel">Update book confirm</h5>
+                <h5 class="modal-title" id="editbookModalLabel">Return book confirm</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -240,7 +240,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deletebookModalLabel">Delete book confirm</h5>
+                <h5 class="modal-title" id="deletebookModalLabel">Delete order confirm</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -323,7 +323,6 @@
                     '        </tr>\n' +
                     '        </thead>\n'
                 $.each(personList, function (index, items){
-                    // console.log("items laa ra", items.id)
                     if (items.gender){
                         gender = "Male";
                     }else {
@@ -374,7 +373,6 @@
                     '        </tr>\n' +
                     '        </thead>\n'
                 $.each(getBookList, function (index, items){
-                    // console.log("items laa ra", items.id)
                     html +=  '        <tr>\n' +
                         '            <td><input name="add-order-book-id" id="add-order-book-id-'+items.id+'" type="checkbox" value="'+items.id+'"></td>\n' +
                         '            <td>'+items.code+'</td>\n' +
@@ -382,8 +380,6 @@
                         '            <td>'+items.author+'</td>\n' +
                         '            <td>'+items.category.category+'</td>\n' +
                         '            <td>'+items.inStock+'</td>\n' +
-                        '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-primary">Edit</a></td>-->\n' +
-                        '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-danger" id="deleteButton">Delete</a></td>-->\n' +
                         '        </tr>\n'
                 })
                 html += '        </tbody>\n' +
@@ -410,11 +406,8 @@
         }else {
             href = 'http://localhost:8080/persons/free?key='
         }
-        // console.log("key search", key)
         $.get(href,function (person, status){
             let personList = person.slice();
-            // console.log(list)
-            // console.log("list lay ra", personList)
             let html = "";
             html += '<table class="table">\n' +
                 '        <thead>\n'+
@@ -427,11 +420,9 @@
                 '            <th scope="col">Classify</th>\n' +
                 '            <th scope="col">Phone number</th>\n' +
                 '            <th scope="col">Address</th>\n' +
-                '<!--            <th colspan="2" scope="col">Action</th>-->\n' +
                 '        </tr>\n' +
                 '        </thead>\n'
             $.each(personList, function (index, items){
-                // console.log("items laa ra", items.id)
                 if (items.gender){
                     gender = "Male";
                 }else {
@@ -446,8 +437,6 @@
                     '            <td>'+items.classify.classify+'</td>\n' +
                     '            <td>'+items.phone+'</td>\n' +
                     '            <td>'+items.address+'</td>\n' +
-                    '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-primary">Edit</a></td>-->\n' +
-                    '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-danger" id="deleteButton">Delete</a></td>-->\n' +
                     '        </tr>\n'
             })
             html += '        </tbody>\n' +
@@ -463,10 +452,8 @@
         }else {
             href = 'http://localhost:8080/books/free?key='
         }
-        // console.log("key search", key)
         $.get(href,function (book, status){
             let getBookList = book.slice();
-            // console.log(person)
             let html = "";
             html += '<table class="table">\n' +
                 '        <thead>\n'+
@@ -480,16 +467,13 @@
                 '        </tr>\n' +
                 '        </thead>\n'
             $.each(getBookList, function (index, items){
-                // console.log("items laa ra", items.id)
-                html +=  '>\n' +
+                html +=  '<tr>\n' +
                     '            <td><input name="add-order-book-id" id="add-order-book-id-'+items.id+'" type="checkbox" value="'+items.id+'"></td>\n' +
                     '            <td>'+items.code+'</td>\n' +
                     '            <td>'+items.name+'</td>\n'+
                     '            <td>'+items.author+'</td>\n' +
                     '            <td>'+items.category.category+'</td>\n' +
                     '            <td>'+items.inStock+'</td>\n' +
-                    '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-primary">Edit</a></td>-->\n' +
-                    '<!--            <td><a th:href="@{/persons/findById/(id=${person.id})}" class="btn btn-danger" id="deleteButton">Delete</a></td>-->\n' +
                     '        </tr>\n'
             })
             html += '        </tbody>\n' +
@@ -569,7 +553,6 @@
             method: 'GET',
             dataType: 'json',
             success: function (data) {
-                // console.log(data)
                 str +=
                     '  <div class="container">\n' +
                     '    <div class="row">\n' +
@@ -606,7 +589,6 @@
                     '        <td>Book code</td>\n' +
                     '        <td>Book name</td>\n' +
                     '    </tr>\n'
-                    // '            <input disabled type="text" id="add-book-author" value="'+data.author+'" class="form-control">\n' +
                     let bookList = data.book.slice();
                     $.each(bookList, function (index, items){
                         str +=
@@ -667,7 +649,7 @@
             "                        <input type='text' id='add-order-person-code' disabled value='' >\n" +
             "                        <input type='text' id='add-order-person-name' disabled value='' >\n" +
             "                    </div>"
-        $.get(href_person,function (person, status) {
+                $.get(href_person,function (person, status) {
             let personList = person.slice();
             $.each(personList, function (index, items) {
                 if (document.getElementById('add-order-person-id-'+items.id).checked){
@@ -678,17 +660,34 @@
         })
         str +=  "<div class=\"form-group\">\n" +
             "                        <label class=\"col-form-label\">Book List:</label><br>\n"+
-            '<div id="order-book-list"></div>'
-        $.get(href_book,function (book, status) {
-            let bookList = book.slice();
-            let html = "";
-            $.each(bookList, function (index, items) {
-                if (document.getElementById('add-order-book-id-'+items.id).checked){
-                   html += "<input type='text' disabled value='"+items.name+"' ><br>"
-                }
-            })
-            $('#order-book-list').html(html);
-        })
+            '<div id="order-book-list"></div>'+
+            '<table class="table">\n' +
+            '    <tr>\n' +
+            '        <td>Book code</td>\n' +
+            '        <td>Book name</td>\n' +
+            '    </tr>\n'
+
+        $.ajax({
+            async: false,
+            url: href_book,
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                // console.log(data)
+                let bookList = data.slice();
+                $.each(bookList, function (index, items){
+                    if (document.getElementById('add-order-book-id-'+items.id).checked) {
+                        str +=
+                            '    <tr>\n' +
+                            '        <td>' + items.code + '</td>\n' +
+                            '        <td>' + items.name + '</td>\n' +
+                            '    </tr>\n'
+                    }
+
+                })
+                str +=  '</table>';
+            }
+        });
            str+= "                    </div>";
         $('#add-order-show-modal').html(str)
     }
@@ -702,8 +701,6 @@ let id = $('#add-order-id').val();
             method: 'GET',
             dataType: 'json',
             success: function (data) {
-                // console.log(data)
-
                 str +=
                     '          <div class="form-label-group">\n' +
                     '            <label class="text-secondary">Person Code</label>\n' +
@@ -723,7 +720,6 @@ let id = $('#add-order-id').val();
                     '        <td>Book code</td>\n' +
                     '        <td>Book name</td>\n' +
                     '    </tr>\n'
-                // '            <input disabled type="text" id="add-book-author" value="'+data.author+'" class="form-control">\n' +
                 let bookList = data.book.slice();
                 $.each(bookList, function (index, items){
                     str +=
@@ -748,8 +744,6 @@ let id = $('#add-order-id').val();
             method: 'GET',
             dataType: 'json',
             success: function (data) {
-                // console.log(data)
-
                 str +=
                     '          <div class="form-label-group">\n' +
                     '            <label class="text-secondary">Person Code</label>\n' +
@@ -769,7 +763,6 @@ let id = $('#add-order-id').val();
                     '        <td>Book code</td>\n' +
                     '        <td>Book name</td>\n' +
                     '    </tr>\n'
-                // '            <input disabled type="text" id="add-book-author" value="'+data.author+'" class="form-control">\n' +
                 let bookList = data.book.slice();
                 $.each(bookList, function (index, items){
                     str +=
@@ -827,14 +820,11 @@ let id = $('#add-order-id').val();
                 })
             }
         })
-        // console.log("obj"+person_info+book_info)
         let obj = {
             "person": person_info,
             "book": book_info
         }
-        // console.log("type",typeof(obj))
         let data = JSON.stringify(obj)
-        // console.log("data tao tu obj",data)
         $.ajax({
             async: false,
             headers: {
@@ -845,7 +835,6 @@ let id = $('#add-order-id').val();
             type: 'POST',
             data: data,
             success: function (data) {
-                // console.log("data lay ra", data)
             }
         })
     }
@@ -868,7 +857,6 @@ let id = $('#add-order-id').val();
             "book": book,
             "person": person
         }
-        // console.log("type",typeof(obj))
         let data = JSON.stringify(obj)
         console.log("data tao tu obj",data)
         $.ajax({
@@ -890,7 +878,6 @@ let id = $('#add-order-id').val();
     // create new book
     function deleteOrder(){
         let id = $('#add-order-id').val();
-        // console.log("data tao tu obj",data)
         $.ajax({
             async: false,
             headers: {
@@ -900,7 +887,6 @@ let id = $('#add-order-id').val();
             url: "http://localhost:8080/orders/"+id,
             type: 'PUT',
             success: function (data) {
-                // console.log("sau khi update", data)
                 $('#confirmModalLabel').html("Delete order confirm");
                 $('#confirm-content').html("Delete success!");
             }

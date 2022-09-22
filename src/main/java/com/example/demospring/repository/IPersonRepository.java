@@ -15,10 +15,10 @@ public interface IPersonRepository extends JpaRepository<Person, Long> {
     @Query(value = "select * from person where status = true and type_action= false order by id desc", nativeQuery = true)
     Iterable<Person> findAllPersonInFree();
     Page<Person> findAllByStatusIsTrueOrderByIdDesc(Pageable pageable);
-    @Query(value = "select * from person where status = true and concat(name,code) like :key order by id desc",nativeQuery = true)
-    Page<Person> findAllWithKey(String key, Pageable pageable);
-    @Query(value = "select * from person where status = true and concat(name,code) like :key order by id desc",nativeQuery = true)
-    Iterable<Person> findPersonWithKey(String key);
+    @Query(value = "select * from person where status = true and concat(name,code,phone) like :key and date_of_birth between :from and :to order by id desc",nativeQuery = true)
+    Page<Person> findAllWithKey(String key, String from, String to, Pageable pageable);
+    @Query(value = "select * from person where status = true and concat(name,code,phone) like :key and date_of_birth between :from and :to order by id desc",nativeQuery = true)
+    Iterable<Person> findPersonWithKey(String key, String from, String to);
     @Query(value = "select * from person where id = (select max(id) from person)", nativeQuery = true)
     Optional<Person> getLastestPerson();
     Optional<Person> findPersonByPhone(String phone);
