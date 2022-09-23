@@ -38,6 +38,7 @@ public class PersonController {
                                     @RequestParam(required = false, name = "to") String to,
                                     @PageableDefault(value = 5) Pageable pageable){
         model.addAttribute("classifies", iClassifyService.findAll());
+
         model.addAttribute("persons", iPersonService.findAllWithKey(key, from, to, pageable));
         return "test";
     }
@@ -47,6 +48,19 @@ public class PersonController {
                                 @RequestParam(required = false, name = "to") String to,
                                 @PageableDefault(value = 5) Pageable pageable){
         model.addAttribute("classifies", iClassifyService.findAll());
+        if (key==null){
+            key="";
+        }
+        if (from==null){
+            from="";
+        }
+        if (to==null){
+            to="";
+        }
+        System.out.println("key-from"+key+from);
+        model.addAttribute("from", from);
+        model.addAttribute("key", key);
+        model.addAttribute("to",to);
         model.addAttribute("persons", iPersonService.findAllWithKey(key, from, to, pageable));
         return "person/peopleList";
     }
@@ -132,7 +146,7 @@ public class PersonController {
 
     @PutMapping
     public ResponseEntity<?> editPerson(@RequestParam Long id, @RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult){
-        if (!iPersonService.findById(id).isPresent()){
+        if (!iPersonService.findById(id).isPresent()||!iPersonService.findById(id).get().isStatus()){
             return new ResponseEntity<>("not found", HttpStatus.NOT_FOUND);
         }
         Person personOptional = iPersonService.findById(id).get();

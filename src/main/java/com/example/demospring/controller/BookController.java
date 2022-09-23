@@ -35,15 +35,25 @@ public class BookController {
     IOrderService iOrderService;
     @GetMapping
     public String getListBook(@RequestParam(required = false, name = "key") String key,
-                              @RequestParam(required = false, name = "category_id") Long category_id,
+                              @RequestParam(required = false, name = "category_id") String category_id,
                               Model model,
                               @PageableDefault(value = 5) Pageable pageable){
+        if (key==null){
+            key="";
+        }
+        if (category_id==null||category_id.equals("0")){
+            category_id="0";
+        }
+        model.addAttribute("categories", iBookCategoryService.findAll());
+        model.addAttribute("key", key);
+        model.addAttribute("category_id", category_id);
         model.addAttribute("books", iBookService.findAllWithKeyAndCategory(key, category_id, pageable));
         return "book/bookList";
+//        return new ResponseEntity<>(iBookService.findAllWithKeyAndCategory(key, category_id, pageable),HttpStatus.OK);
     }
     @GetMapping("/listBook")
     public ResponseEntity<?> getListBookWithKey(@RequestParam(required = false, name = "key") String key,
-                                                @RequestParam(required = false, name = "category_id") Long category_id){
+                                                @RequestParam(required = false, name = "category_id") String category_id){
         if (!iBookService.findBookWithKeyAndCategory(key, category_id).iterator().hasNext()){
             return new ResponseEntity<>("not found", HttpStatus.NOT_FOUND);
         }
@@ -110,7 +120,7 @@ public class BookController {
     }
     @PutMapping
     public ResponseEntity<?> editBook(@RequestParam Long id,@RequestBody @Valid BookDTO book, BindingResult bindingResult){
-        if (!iBookService.findById(id).isPresent()){
+        if (!iBookService.findById(id).isPresent()||!iBookService.findById(id).get().isStatus()){
             return new ResponseEntity<>("not found", HttpStatus.NOT_FOUND);
         }
         Book bookOptional = iBookService.findById(id).get();

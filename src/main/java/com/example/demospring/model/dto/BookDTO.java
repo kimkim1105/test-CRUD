@@ -13,11 +13,11 @@ public class BookDTO {
     @Column(unique = true)
     private String code;
     @NotEmpty(message = "Name can't blank")
-    @Pattern(regexp = "^([a-vxyA-Zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ\\s]+)$", message = "name without special character")
+    @Pattern(regexp = "^([a-vxyA-Z1-9ỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ\\s]+)$", message = "name without special character")
     @Column(unique = true)
     private String name;
     @NotEmpty(message = "author can't blank")
-    @Pattern(regexp = "^([a-vxyA-Zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ\\s]+)$", message = "author name without special character")
+    @Pattern(regexp = "^([a-vxyA-Z1-9ỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ\\s]+)$", message = "author name without special character")
     private String author;
     @NotNull(message = "category can't null")
     private BookCategory category;

@@ -2,24 +2,21 @@ package com.example.demospring.model;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Collection;
 
 @Entity
-@Table(name = "orders")
-public class Order {
+public class OrderDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "order_book", joinColumns = @JoinColumn(name = "order_id"), inverseJoinColumns = @JoinColumn(name = "book_id"))
-    private Collection<Book> book;
-    @OneToOne
-    private Person person;
+    @ManyToOne
+    private Order order;
+    @ManyToOne
+    private Book book;
     private LocalDate dateOn;
     private LocalDate dateOff;
     private boolean status;
 
-    public Order() {
+    public OrderDetail() {
     }
 
     public Long getId() {
@@ -30,20 +27,20 @@ public class Order {
         this.id = id;
     }
 
-    public Collection<Book> getBook() {
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public Book getBook() {
         return book;
     }
 
-    public void setBook(Collection<Book> book) {
+    public void setBook(Book book) {
         this.book = book;
-    }
-
-    public Person getPerson() {
-        return person;
-    }
-
-    public void setPerson(Person person) {
-        this.person = person;
     }
 
     public LocalDate getDateOn() {

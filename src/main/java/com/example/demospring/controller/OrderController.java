@@ -15,10 +15,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 
 @Controller
@@ -44,36 +48,52 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrderById(@PathVariable Long id){
         if (iOrderService.findById(id).isPresent()){
+            if (!iOrderService.findById(id).get().isStatus()){
+                return new ResponseEntity<>("Not found",HttpStatus.NOT_FOUND);
+            }
             return new ResponseEntity<>(iOrderService.findById(id).get(),HttpStatus.OK);
         }
         return new ResponseEntity<>("Not found",HttpStatus.NOT_FOUND);
     }
-    @PostMapping
-    public ResponseEntity<?> addNewOrder(@RequestBody OrderDTO orderDTO){
-        Order order = new Order();
-        Person person = iPersonService.findById(orderDTO.getPerson().getId()).get();
-        if (!person.isStatus()){
-            return new ResponseEntity<>("person not valid", HttpStatus.OK);
-        }else if (person.isTypeAction()){
-            return new ResponseEntity<>("person in borrowing", HttpStatus.OK);
-        }
-        person.setTypeAction(true);
-        iPersonService.save(person);
-        Iterator<Book> bookIterator = orderDTO.getBook().iterator();
-        while (bookIterator.hasNext()){
-            Book book = iBookService.findById(bookIterator.next().getId()).get();
-            if (book.getInStock()<=0){
-                return new ResponseEntity<>("out of stock", HttpStatus.OK);
-            }
-            book.setInStock(book.getInStock()-1);
-            iBookService.save(book);
-        }
-        order.setBook(orderDTO.getBook());
-        order.setPerson(orderDTO.getPerson());
-        order.setDateOn(LocalDate.now());
-        order.setStatus(true);
-        return new ResponseEntity<>(iOrderService.save(order), HttpStatus.OK);
-    }
+//    @PostMapping
+//    public ResponseEntity<?> addNewOrder(@RequestBody @Valid OrderDTO orderDTO, BindingResult bindingResult){
+//        if (bindingResult.hasErrors()){
+//            Map<String, String> errors= new HashMap<>();
+//
+//            bindingResult.getFieldErrors().forEach(
+//                    error -> errors.put(error.getField(), error.getDefaultMessage())
+//            );
+//            String errorMsg= "";
+//
+//            for(String key: errors.keySet()){
+//                errorMsg+= "error in: " + key + ", by: " + errors.get(key) + "\n";
+//            }
+//            return new ResponseEntity<>(errorMsg,HttpStatus.OK);
+//        }
+//        Order order = new Order();
+//        Person person = iPersonService.findById(orderDTO.getPerson().getId()).get();
+//        if (!person.isStatus()){
+//            return new ResponseEntity<>("person not valid", HttpStatus.OK);
+//        }else if (person.isTypeAction()){
+//            return new ResponseEntity<>("person in borrowing", HttpStatus.OK);
+//        }
+//        person.setTypeAction(true);
+//        iPersonService.save(person);
+//        Iterator<Book> bookIterator = orderDTO.getBook().iterator();
+//        while (bookIterator.hasNext()){
+//            Book book = iBookService.findById(bookIterator.next().getId()).get();
+//            if (book.getInStock()<=0){
+//                return new ResponseEntity<>("out of stock", HttpStatus.OK);
+//            }
+//            book.setInStock(book.getInStock()-1);
+//            iBookService.save(book);
+//        }
+//        order.setBook(orderDTO.getBook());
+//        order.setPerson(orderDTO.getPerson());
+//        order.setDateOn(LocalDate.now());
+//        order.setStatus(true);
+//        return new ResponseEntity<>(iOrderService.save(order), HttpStatus.OK);
+//    }
     @PutMapping
     public ResponseEntity<?> returnBook(@RequestBody Order order){
         Order orderOptional = iOrderService.findById(order.getId()).get();

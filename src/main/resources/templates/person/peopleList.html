@@ -23,6 +23,12 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
     <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        .record-hover:hover {
+            box-shadow: 0 0 11px rgba(33,33,33,.2);
+            background-color: darkgray;
+        }
+    </style>
 </head>
 <body>
 <th:block th:replace="share/header :: header"></th:block>
@@ -35,13 +41,13 @@
     <br>
     <br>
     <div id="person-content">
-    <table class="table table-striped">
+    <table class="table">
         <form class="form-inline">
-            <input class="form-control mr-sm-2" type="search" name="key" placeholder="Search by name, person id or phone number" aria-label="Search">
+            <input class="form-control mr-sm-2" th:value="${key}" type="search" name="key" placeholder="Search by name, person id or phone number" aria-label="Search">
             <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">
                 <label class="text-secondary">Date from</label>
-                <input type="date"  class="form-control datepicker" name="from" >
-                <input type="date" class="form-control datepicker" name="to">
+                <input type="date" id="date-search-from" oninput="getFromDate()" max="" th:value="${from}" class="form-control datepicker" name="from" >
+                <input type="date" id="date-search-to" max="" min="" th:value="${to}" class="form-control datepicker" name="to">
             </div>
             <input type="submit" value="search">
         </form>
@@ -66,7 +72,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each ="person, s : ${persons}" th:onclick="'showDetail('+${person.id}+')'">
+        <tr class="record-hover" th:each ="person, s : ${persons}" th:onclick="'showDetail('+${person.id}+')'">
             <td th:utext="${s.index +1}"></td>
             <td th:utext="${person.code}"></td>
             <td th:utext="${person.name}"></td>
@@ -79,9 +85,10 @@
         </tbody>
     </table>
     <div>
-        <ul class="nav nav-pills">
-            <li class="nav-item" th:each="i:${#numbers.sequence(0,persons.totalPages-1)}">
-                <a th:href="@{'/persons'(page=${i})}" th:text="${i+1}" class="nav-link" th:classappend="${persons.number}==${i}?'active':''"></a>
+        <p th:if="${persons.content.size()<=0}">No Result</p>
+        <ul class="nav nav-pills" >
+            <li class="nav-item" th:if="${persons.content.size()>0}" th:each="i:${#numbers.sequence(0,persons.totalPages-1)}">
+                <a th:href="@{'/persons?key='+${key}+'&from='+${from}+'&to='+${to}(page=${i})}" th:text="${i+1}" class="nav-link" th:classappend="${persons.number}==${i}?'active':''"></a>
             </li>
         </ul>
     </div>
@@ -176,25 +183,33 @@
 
 <script th:inline="javascript">
 let checkPhoneInput;
-let checkDob;
+let checkPersonName;
+let checkPersonDob;
+let today = new Date();
+let year = today.getFullYear();
+let month = today.getMonth()+1;
+if (month<10){
+    month = "0"+month
+}
+let day =today.getDate();
+var maxDate = '' + year + '-' + month + '-' + day;
+
     function reload(){
         window.location.reload();
     }
+let fromDate
+function getFromDate(){
+    fromDate = $('#date-search-from').val();
+    $('.datepicker #date-search-to').attr("min", fromDate)
+}
 $(document).ready(function () {
+    $('.datepicker #date-search-from').attr("max", maxDate)
+    $('.datepicker #date-search-to').attr("min", [[${from}]])
+    $('.datepicker #date-search-to').attr("max", maxDate)
     // show form add person
-    let today = new Date();
-    console.log("today", today)
-    let year = today.getFullYear();
-    let month = today.getMonth()+1;
-    if (month<10){
-        month = "0"+month
-    }
-    let day =today.getDate();
-    const maxDate = '' + year + '-' + month + '-' + day;
-    // $('#add-person-dob').attr("max",maxDate)
     $('#add-person').on('click', function (event) {
         $('#add-person-dob').attr("max", today)
-        let str = '<div class=login d-flex align-items-center py-5>\n ' +
+        let str = '<div class="login d-flex align-items-center py-5">\n ' +
             ' <div class=container>\n' +
             '   <div class="row">\n' +
             '    <div class="col-md-9 col-lg-8 mx-auto pl-5 pr-5">\n' +
@@ -257,9 +272,15 @@ $(document).ready(function () {
     })
 })
 
+
 function checkPhone(){
         let id = $('#add-person-id').val();
         let phone = $('#add-person-phone').val();
+        if (phone==""){
+            $('#check-add-person-phone').html("Phone number cannot blank")
+            checkPhoneInput = false
+            return;
+        }
         let href = "http://localhost:8080/persons/phone/"+phone
     if (id){
         $.ajax({
@@ -278,13 +299,16 @@ function checkPhone(){
                            if (!phone.match("(0[3|5|7|8|9])+([0-9]{8})\\b")){
                                checkPhoneInput = false
                                $('#check-add-person-phone').html("Phone number not correct format, phone contains 10 numbers begin with 0")
+                               return
                            }else if (data=="existed"){
                                checkPhoneInput = false
                                $('#check-add-person-phone').html("Phone number existed,Pls try again")
+                               return;
                            }
                            else {
                                $('#check-add-person-phone').html("")
                                checkPhoneInput = true
+                               return;
                            }
                        }
                    })
@@ -300,103 +324,84 @@ function checkPhone(){
                 if (!phone.match("(0[3|5|7|8|9])+([0-9]{8})\\b")){
                     checkPhoneInput = false
                     $('#check-add-person-phone').html("Phone number not correct format, phone contains 10 numbers begin with 0")
+                    return
                 }else if (data=="existed"){
                     checkPhoneInput = false
                     $('#check-add-person-phone').html("Phone number existed,Pls try again")
+                    return;
                 }
                 else {
                     $('#check-add-person-phone').html("")
                     checkPhoneInput = true
+                    return;
                 }
             }
         })
     }
 }
 
-function checkDobInput(){
-            let dob = $('#add-person-dob').val();
-            let check = new Date(dob)
-            if (check.getTime()<=today.getTime()){
-                console.log("date ok")
-                $('#check-add-person-dob').html("")
-                checkDob = true;
+function checkNameInput(){
+            let name = $('#add-person-name').val();
+            if (name==""){
+                $('#check-add-person-name').html("Name cannot blank")
+                checkPersonName = false;
+                return
+            }
+            if (!name.match("^([a-vxyA-Zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ]+)((\\s{1}[a-vxyA-Zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ]+){1,})$")){
+                $('#check-add-person-name').html("Name least 2 word with space seperate, without special character")
+                checkPersonName = false;
+                return;
             }else {
-                $('#check-add-person-dob').html("Date cannot after today")
-                checkDob = false;
+                $('#check-add-person-name').html("")
+                checkPersonName = true;
+                return;
             }
 }
 
-function checkInput(){
-    let code = $('#add-person-code').val();
-    let id = $('#add-person-id').val();
-    let name = $('#add-person-name').val();
+function checkDob(){
     let dob = $('#add-person-dob').val();
-    let phone = $('#add-person-phone').val();
-    checkPhone()
-    console.log("check phone", checkDob)
-    if (name==""||name==null){
-        $('#check-add-person-name').html("Name cannot blank");
-        $('#function-btn').attr("data-target","");
-        $('#function-btn').attr("data-toggle","");
-    }else {
-        $('#check-add-person-name').html("");
-        if (code){
-            $('#function-btn').attr("data-toggle","modal");
-            $('#function-btn').attr("data-target","#editPersonModal");
-            getEditPersonInfo();
-        }else {
-            $('#function-btn').attr("data-toggle","modal");
-            $('#function-btn').attr("data-target","#showModal");
-            getNewPersonInfo();
-        }
+    console.log("dob", dob)
+    if (dob==""){
+        $('#check-add-person-dob').html("Date of birth cannot blank")
+        checkPersonDob = false;
+        return
     }
-    if (dob==""||dob==null){
-        $('#check-add-person-dob').html("Date of birth cannot blank");
-        $('#function-btn').attr("data-target","");
-        $('#function-btn').attr("data-toggle","");
-    }else {
-        if (checkPhoneInput){
-        $('#check-add-person-dob').html("");
-        if (code){
-            $('#function-btn').attr("data-toggle","modal");
-            $('#function-btn').attr("data-target","#editPersonModal");
-            getEditPersonInfo();
-        }else {
-            $('#function-btn').attr("data-toggle","modal");
-            $('#function-btn').attr("data-target","#showModal");
-            getNewPersonInfo();
-        }
-    }else {
-        checkDobInput()
-        $('#function-btn').attr("data-target","");
-        $('#function-btn').attr("data-toggle","");
+    if (dob.match("^(0?[1-9]|[12][0-9]|3[01])[\\/\\-](0?[1-9]|1[012])[\\/\\-]\\d{4}$")){
+        $('#check-add-person-dob').html("date incorrect format")
+        checkPersonDob = false;
+        return
     }
-    }
-    if (phone==""||phone==null){
-        $('#check-add-person-phone').html("Phone cannot blank");
-        $('#function-btn').attr("data-target","");
-        $('#function-btn').attr("data-toggle","");
-    }else {
-if (checkPhoneInput){
-    $('#check-add-person-phone').html("");
-    if (code){
-        $('#function-btn').attr("data-toggle","modal");
-        $('#function-btn').attr("data-target","#editPersonModal");
-        getEditPersonInfo();
-    }else {
-        // console.log("name lay ra", name)
-        $('#function-btn').attr("data-toggle","modal");
-        $('#function-btn').attr("data-target","#showModal");
-        getNewPersonInfo();
-    }
-}else {
-    checkPhone();
-    $('#function-btn').attr("data-target","");
-    $('#function-btn').attr("data-toggle","");
-}
+    else {
+        $('#check-add-person-dob').html("")
+        checkPersonDob = true;
+        return
     }
 }
 
+function checkInput(){
+   checkNameInput()
+   checkPhone()
+    checkDob()
+    let id = $('#add-person-id').val();
+    console.log("check", checkPhoneInput, checkPersonName, checkPersonDob)
+    if (checkPhoneInput&&checkPersonName&&checkPersonDob){
+        if (id){
+            $('#function-btn').attr("data-toggle","modal");
+            $('#function-btn').attr("data-target","#editPersonModal");
+            getEditPersonInfo();
+        }else {
+            $('#function-btn').attr("data-toggle","modal");
+            $('#function-btn').attr("data-target","#showModal");
+            getNewPersonInfo();
+        }
+    }else {
+        $('#function-btn').attr("data-target","");
+        $('#function-btn').attr("data-toggle","");
+        checkNameInput()
+        checkPhone()
+        checkDob()
+    }
+}
 
     // show detail person form
     function showDetail(id){
@@ -442,7 +447,7 @@ if (checkPhoneInput){
                         '          <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">\n' +
                         '            <label class="text-secondary">Date of birth</label>\n' +
                            '<small style="color: red" id="check-add-person-dob"></small>'+
-                           '            <input disabled type="date" oninput="checkDobInput()" id="add-person-dob" value="'+data.dateOfBirth+'" class="form-control">\n' +
+                           '            <input disabled type="date" max="'+maxDate+'" oninput="checkDobInput()" id="add-person-dob" value="'+data.dateOfBirth+'" class="form-control">\n' +
                     '          </div>\n' +
                         '          <div class="form-label-group mb-4">\n' +
                         '            <label class="text-secondary">Phone number</label>\n' +
@@ -722,6 +727,9 @@ function getDeletePersonInfo(){
             type: 'POST',
             data: data,
             success: function (data) {
+            },
+            error: function (data){
+                console.log("error", data)
             }
         })
     }
@@ -735,7 +743,6 @@ function editPerson(){
     let phone = $('#add-person-phone').val();
     let address = $('#add-person-address').val();
     let obj = {
-        "id": id,
         "name": name,
         "gender": genderId,
         "address":address,
@@ -753,12 +760,15 @@ function editPerson(){
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        url: "http://localhost:8080/persons",
+        url: "http://localhost:8080/persons?id="+id,
         type: 'PUT',
         data: data,
         success: function (data) {
             $('#confirmModalLabel').html("Update person confirm");
             $('#confirm-content').html("Update success!");
+        },
+        error:function (data){
+            console.log("error", data)
         }
     })
 }
@@ -776,6 +786,9 @@ function deletePerson(){
         success: function (data) {
             $('#confirmModalLabel').html("Delete person confirm");
             $('#confirm-content').html("Delete success!");
+        },
+        error: function (data){
+            console.log("error", data)
         }
     })
 }
