@@ -1,10 +1,12 @@
 package com.example.demospring.controller;
 
 import com.example.demospring.model.Classify;
+import com.example.demospring.model.Order;
 import com.example.demospring.model.Person;
 import com.example.demospring.model.dto.PersonDTO;
 import com.example.demospring.model.dto.Validation;
 import com.example.demospring.service.IClassifyService;
+import com.example.demospring.service.IOrderService;
 import com.example.demospring.service.IPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +32,7 @@ public class PersonController {
     @Autowired
     IClassifyService iClassifyService;
     @Autowired
-    Validation validation;
+    IOrderService iOrderService;
 
     @GetMapping("/test")
     public String getListPersontest(@RequestParam(required = false, name = "key") String key, Model model,
@@ -141,6 +143,9 @@ public class PersonController {
         personCode.append(classifyCode);
         personCode.append(format);
         person.setCode(personCode.toString());
+        Order order = new Order();
+        order.setPerson(iPersonService.save(person));
+        iOrderService.save(order);
         return new ResponseEntity<>(iPersonService.save(person),HttpStatus.OK);
     }
 

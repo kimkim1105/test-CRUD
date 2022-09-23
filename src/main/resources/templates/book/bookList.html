@@ -82,7 +82,7 @@
             </tbody>
         </table>
         <div>
-            <p th:if="${books.content.size()<=0}">No Result</p>
+            <p th:if="${books.content.size()<=0}">No Result, Incorrect information or not existed</p>
             <ul class="nav nav-pills">
                 <li class="nav-item" th:if="${books.content.size()>0}" th:each="i:${#numbers.sequence(0,books.totalPages-1)}">
                     <a th:href="@{'/books?key='+${key}+'&category_id='+${category_id}(page=${i})}" th:text="${i+1}" class="nav-link" th:classappend="${books.number}==${i}?'active':''"></a>

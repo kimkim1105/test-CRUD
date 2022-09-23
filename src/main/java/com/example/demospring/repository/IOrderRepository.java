@@ -10,13 +10,14 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IOrderRepository extends JpaRepository<Order, Long> {
-    Iterable<Order> findOrderByPersonAndStatusIsTrue(Person person);
-    Iterable<Order> findAllByStatusIsTrueOrderByIdDesc();
-    Page<Order> findAllByStatusIsTrueOrderByIdDesc(Pageable pageable);
-    @Query(value = "select * from orders where status = true and ((person_id in (select id from person where concat(name,code) like :key)) or(id in (select order_id from order_book where book_id in (select id from book where concat(name, code) like :key))))",nativeQuery = true)
+//    Iterable<Order> findOrderByPersonAndStatusIsTrue(Person person);
+//    Iterable<Order> findAllByStatusIsTrueOrderByIdDesc();
+//    @Query(value = "select * from orders where id in (select order_id from order_detail where status = true)", nativeQuery = true)
+//    Page<Order> findAllByStatusIsTrueOrderByIdDesc(Pageable pageable);
+    @Query(value = "select * from orders where (person_id in (select id from person where concat(name,code) like :key)) and id in (select order_id from order_detail where status = true)",nativeQuery = true)
     Page<Order> findAllWithKey(String key, Pageable pageable);
-    @Query(value = "select * from orders where status = true and date_off is null and person_id = :id", nativeQuery = true)
-    Iterable<Order> findAllByPersonAndDateOffNull(Long id);
-    @Query(value = " select * from orders where status = true and date_off is null and id in (select order_id from order_book where book_id = :id)", nativeQuery = true)
-    Iterable<Order> findAllByBookAndDateOffNull(Long id);
+//    @Query(value = "select * from orders where status = true and date_off is null and person_id = :id", nativeQuery = true)
+//    Iterable<Order> findAllOrderWithKey(String key);
+//    @Query(value = " select * from orders where status = true and date_off is null and id in (select order_id from order_book where book_id = :id)", nativeQuery = true)
+//    Iterable<Order> findAllByBookAndDateOffNull(Long id);
 }

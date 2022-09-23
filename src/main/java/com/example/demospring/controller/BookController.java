@@ -124,9 +124,9 @@ public class BookController {
             return new ResponseEntity<>("not found", HttpStatus.NOT_FOUND);
         }
         Book bookOptional = iBookService.findById(id).get();
-        if (iOrderService.findAllByBookAndDateOffNull(id).iterator().hasNext()){
-            return new ResponseEntity<>("Book in borrowing, can't edit",HttpStatus.OK);
-        }
+//        if (iOrderService.findAllByBookAndDateOffNull(id).iterator().hasNext()){
+//            return new ResponseEntity<>("Book in borrowing, can't edit",HttpStatus.OK);
+//        }
         if (bindingResult.hasErrors()){
             Map<String, String> errors= new HashMap<>();
 
@@ -161,9 +161,9 @@ public class BookController {
     @PutMapping("/{id}")
     public ResponseEntity<?> deleteBook(@PathVariable Long id){
         Book bookOptional = iBookService.findById(id).get();
-        if (iOrderService.findAllByBookAndDateOffNull(id).iterator().hasNext()){
-            return new ResponseEntity<>("Book in borrowing, can't edit",HttpStatus.OK);
-        }
+//        if (iOrderService.findAllByBookAndDateOffNull(id).iterator().hasNext()){
+//            return new ResponseEntity<>("Book in borrowing, can't edit",HttpStatus.OK);
+//        }
         iBookService.remove(bookOptional.getId());
         return new ResponseEntity<>(iBookService.save(bookOptional),HttpStatus.OK);
     }
