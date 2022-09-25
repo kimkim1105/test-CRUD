@@ -15,8 +15,17 @@ public class OrderDetail {
     private LocalDate dateOn;
     private LocalDate dateOff;
     private boolean status;
+    private Integer overDay;
 
     public OrderDetail() {
+    }
+
+    public Integer getOverDay() {
+        return overDay;
+    }
+
+    public void setOverDay(Integer overDay) {
+        this.overDay = overDay;
     }
 
     public Long getId() {

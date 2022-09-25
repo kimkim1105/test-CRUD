@@ -29,6 +29,6 @@ public interface IBookRepository extends JpaRepository<Book,Long> {
     Optional<Book> findBookByName(String name);
     Optional<Book> findBookByCode(String code);
     Iterable<Book> findAllByNameContainingAndStatusIsTrue(String name);
-    @Query(value = "select * from book where status = true and in_stock>0 and concat(name,code) like :key order by id desc",nativeQuery = true)
+    @Query(value = "select * from book where status = true and in_stock>0 and concat(name,code,author) like :key order by id desc",nativeQuery = true)
     Iterable<Book> findBookWithKeyBorroed(String key);
 }

@@ -2,9 +2,6 @@ package com.example.demospring.model.dto;
 
 import com.example.demospring.model.Book;
 import com.example.demospring.model.Order;
-import com.example.demospring.model.Person;
-
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 

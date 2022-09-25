@@ -36,7 +36,7 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
     }
 
     @Override
-    public Iterable<OrderDetail> findAllInBorrowing(String orderId) {
+    public Iterable<OrderDetail> findAllInBorrowing(Long orderId) {
         return iOrderDetailRepository.findAllInBorrowing(Long.valueOf(orderId));
     }
 

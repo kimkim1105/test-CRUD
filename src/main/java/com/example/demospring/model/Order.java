@@ -1,6 +1,10 @@
 package com.example.demospring.model;
 
+import net.bytebuddy.implementation.bind.annotation.Default;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Collection;
 

@@ -47,6 +47,11 @@ public class OrderServiceImpl implements IOrderService {
             return iOrderRepository.findAllWithKey("%%",pageable);
         }
     }
+
+    @Override
+    public Optional<Order> findOrderByPerson(Person person) {
+        return iOrderRepository.findOrderByPerson(person);
+    }
 //
 //    @Override
 //    public Page<Order> findAll(Pageable pageable) {
