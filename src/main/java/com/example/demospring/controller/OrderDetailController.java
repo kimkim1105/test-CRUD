@@ -93,6 +93,7 @@ public class OrderDetailController {
         iBookService.save(book);
         Order order = orderDetail.getOrder();
         order.setBookSize(order.getBookSize()-1);
+        order.setBookReturn(order.getBookReturn()+1);
         iOrderService.save(order);
         orderDetail.setBook(book);
         orderDetail.setOrder(order);

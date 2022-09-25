@@ -145,6 +145,7 @@ public class PersonController {
         person.setCode(personCode.toString());
         Order order = new Order();
         order.setBookSize(0);
+        order.setBookReturn(0);
         order.setPerson(iPersonService.save(person));
         iOrderService.save(order);
         return new ResponseEntity<>(iPersonService.save(person),HttpStatus.OK);

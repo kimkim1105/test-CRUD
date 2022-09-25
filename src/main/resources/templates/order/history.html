@@ -163,7 +163,6 @@
             <thead>
             <th colspan="3">Order Information</th>
             <th>
-                <button type="button" id="add-order" class="btn btn-success">Add new order</button>
             </th>
             </thead>
             <thead>
@@ -175,11 +174,11 @@
             </tr>
             </thead>
             <tbody>
-            <tr class="record-hover" th:each="b, s : ${orders}" th:onclick="'showDetail('+${b.id}+')'">
+            <tr class="record-hover" th:each="b, s : ${orders}">
                 <td th:utext="${s.index +1}"></td>
-                <td th:utext="${b.person.code}"></td>
-                <td th:utext="${b.person.name}"></td>
-                <td th:utext="${b.bookSize}"></td>
+                <td><a style="color: black; text-decoration: none" th:utext="${b.person.code}" th:href="@{/orders/history-detail}"></a></td>
+                <td><a style="color: black; text-decoration: none" th:utext="${b.person.name}" th:href="@{/orders/history-detail}"></a></td>
+                <td th:utext="${b.bookReturn}"></td>
             </tr>
             </tbody>
         </table>
@@ -232,7 +231,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <a type="button" data-toggle="modal" id="return-modal-btn" data-target="#confirmModal" onclick="returnOrder()"
+                <a type="button" data-toggle="modal" data-target="#confirmModal" onclick="returnOrder()"
                    data-dismiss="modal" class="btn btn-primary">Confirm</a>
             </div>
         </div>
@@ -256,7 +255,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <a type="button" data-toggle="modal" data-target="#confirmModal" onclick="deleteOrder()"
-                   data-dismiss="modal" id="delete-modal-btn" class="btn btn-primary">Confirm</a>
+                   data-dismiss="modal" class="btn btn-primary">Confirm</a>
             </div>
         </div>
     </div>
@@ -296,247 +295,7 @@
     }
 
     $(document).ready(function () {
-        getlistBookReturnOrDelete()
-        //show form add book
-        $('#add-order').on('click', function (event) {
-            bookList = [];
-            // event.preventDefault();
-            let str = '<div>\n ' +
-                ' <div class=container>\n' +
-                '   <div class="row">\n' +
-                '    <div class="mx-auto">\n' +
-                '       <h3 class="login-heading mb-4">Add new order</h3>\n' +
-                '       <form id="form">\n' +
-                '         <div class="form-label-group">\n' +
-                '            <label for="add-order-person-key" class="text-secondary">Enter name or person code<i style="color: red">* </i></label>\n' +
-                '<small style="color: red" id="check-add-order-person-key"></small>' +
-                '           <input oninput="personSearch()" type="text" name="add-order-person-key" id="add-order-person-key" required class="form-control" >\n' +
-                '          </div>\n' +
-                '<br><br>' +
-                '<div class="card example-1 scrollbar-ripe-malinka">\n' +
-                '      <div class="card-body" id="add-order-person">\n';
-            var getPersonLink = 'http://localhost:8080/persons/listPerson?key=&from=&to=';
-            $.get(getPersonLink, function (person, status) {
-                let personList = person.slice();
-                // console.log(person)
-                let html = "";
-                html += '<table class="table">\n' +
-                    '        <thead>\n' +
-                    '        <tr>\n' +
-                    '            <th scope="col">#</th>\n' +
-                    '            <th scope="col">ID</th>\n' +
-                    '            <th scope="col">Name</th>\n' +
-                    '            <th scope="col">Gender</th>\n' +
-                    '            <th scope="col">Date of birth</th>\n' +
-                    '            <th scope="col">Classify</th>\n' +
-                    '            <th scope="col">Phone number</th>\n' +
-                    '            <th scope="col">Address</th>\n' +
-                    '        </tr>\n' +
-                    '        </thead>\n'
-                $.each(personList, function (index, items) {
-                    if (items.gender) {
-                        gender = "Male";
-                    } else {
-                        gender = "Female"
-                    }
-                    html += '        <tr class="record-hover">\n' +
-                        '            <td><input name="add-order-person-id" id="add-order-person-id-' + items.id + '" type="radio" value="' + items.id + '"></td>\n' +
-                        '            <td>' + items.code + '</td>\n' +
-                        '            <td>' + items.name + '</td>\n' +
-                        '            <td>' + gender + '</td>\n' +
-                        '            <td>' + items.dateOfBirth + '</td>\n' +
-                        '            <td>' + items.classify.classify + '</td>\n' +
-                        '            <td>' + items.phone + '</td>\n' +
-                        '            <td>' + items.address + '</td>\n' +
-                        '        </tr>\n'
-                })
-                html += '        </tbody>\n' +
-                    '    </table>';
-                $('#add-order-person').append(html);
-            })
-            str += '     </div>\n' +
-                '     </div>\n' + '<br><br>'
-
-            str += '         <div class="form-label-group">\n' +
-                '            <label for="add-order-book-key" class="text-secondary">Enter name or book code</label>\n' +
-                '<small style="color: red" id="check-add-order-book-key"></small>' +
-                '           <input oninput="bookSearch()" type="text" name="add-order-book-key" id="add-order-book-key" required class="form-control" >\n' +
-                '          </div>\n' +
-                '<br><br>' +
-                '<div class="card example-1 scrollbar-ripe-malinka">\n' +
-                '      <div class="card-body" id="add-order-book">\n';
-            var getBookLink = 'http://localhost:8080/books/free?key=';
-            $.get(getBookLink, function (book, status) {
-                let getBookList = book.slice();
-                // console.log(person)
-                let html = "";
-                html += '<table class="table">\n' +
-                    '        <thead>\n' +
-                    '        <tr>\n' +
-                    '            <th scope="col">#</th>\n' +
-                    '            <th scope="col">Code</th>\n' +
-                    '            <th scope="col">Name</th>\n' +
-                    '            <th scope="col">Author</th>\n' +
-                    '            <th scope="col">Category</th>\n' +
-                    '                 <th scope="col">Quantity</th>' +
-                    '        </tr>\n' +
-                    '        </thead>\n'
-                $.each(getBookList, function (index, items) {
-                    html += '        <tr class="record-hover">\n'
-                    html += '<td><input onchange="getChosenBookList()" name="add-order-book-id" id="add-order-book-id-' + items.id + '" type="checkbox" value="' + items.id + '"></td>\n'
-                    html += '            <td>' + items.code + '</td>\n' +
-                        '            <td>' + items.name + '</td>\n' +
-                        '            <td>' + items.author + '</td>\n' +
-                        '            <td>' + items.category.category + '</td>\n' +
-                        '            <td>' + items.inStock + '</td>\n' +
-                        '        </tr>\n'
-                })
-                html += '        </tbody>\n' +
-                    '    </table>';
-                $('#add-order-book').append(html);
-            })
-            str += '     </div>\n' +
-                '     </div>\n'
-            str += '<br><br>' +
-                '         <a data-toggle="modal" id="function-btn" data-target="#showModal" onclick="ShowInputInfo()" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Add new</a>\n' +
-                '         <a onclick="reload()" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Back</a>\n' +
-                '       </form>\n' +
-                '   </div>\n' +
-                '   </div>\n' +
-                '</div>'
-            $('#order-content').html(str);
-        })
     })
-
-    function personSearch() {
-        let key = $('#add-order-person-key').val();
-        let href;
-        if (key) {
-            href = 'http://localhost:8080/persons/listPerson?key=' + key + '&from=&to='
-        } else {
-            href = 'http://localhost:8080/persons/listPerson?key=&from=&to='
-        }
-        $.get(href, function (person, status) {
-            let personList = person.slice();
-            let html = "";
-            html += '<table class="table">\n' +
-                '        <thead>\n' +
-                '        <tr>\n' +
-                '            <th scope="col">#</th>\n' +
-                '            <th scope="col">ID</th>\n' +
-                '            <th scope="col">Name</th>\n' +
-                '            <th scope="col">Gender</th>\n' +
-                '            <th scope="col">Date of birth</th>\n' +
-                '            <th scope="col">Classify</th>\n' +
-                '            <th scope="col">Phone number</th>\n' +
-                '            <th scope="col">Address</th>\n' +
-                '        </tr>\n' +
-                '        </thead>\n'
-            $.each(personList, function (index, items) {
-                if (items.gender) {
-                    gender = "Male";
-                } else {
-                    gender = "Female"
-                }
-                html += '        <tr class="record-hover">\n' +
-                    '            <td><input name="add-order-person-id" id="add-order-person-id-' + items.id + '" type="radio" value="' + items.id + '"></td>\n' +
-                    '            <td>' + items.code + '</td>\n' +
-                    '            <td>' + items.name + '</td>\n' +
-                    '            <td>' + gender + '</td>\n' +
-                    '            <td>' + items.dateOfBirth + '</td>\n' +
-                    '            <td>' + items.classify.classify + '</td>\n' +
-                    '            <td>' + items.phone + '</td>\n' +
-                    '            <td>' + items.address + '</td>\n' +
-                    '        </tr>\n'
-            })
-            html += '        </tbody>\n' +
-                '    </table>';
-            $('#add-order-person').html(html);
-        })
-    }
-
-    function bookSearch() {
-        let key = $('#add-order-book-key').val();
-        let href;
-        if (key) {
-            href = 'http://localhost:8080/books/free?key=' + key
-        } else {
-            href = 'http://localhost:8080/books/free?key='
-        }
-        $.ajax({
-            async: false,
-            url: href,
-            type: 'GET',
-            success: function (book) {
-                let getBookList = book.slice();
-                let html = "";
-                html += '<table class="table">\n' +
-                    '        <thead>\n' +
-                    '        <tr>\n' +
-                    '            <th scope="col">#</th>\n' +
-                    '            <th scope="col">Code</th>\n' +
-                    '            <th scope="col">Name</th>\n' +
-                    '            <th scope="col">Author</th>\n' +
-                    '            <th scope="col">Category</th>\n' +
-                    '                 <th scope="col">Quantity</th>' +
-                    '        </tr>\n' +
-                    '        </thead>\n'
-                $.each(getBookList, function (index, items) {
-                    html += '<tr class="record-hover">\n'
-                    if (JSON.stringify(bookList).includes(JSON.stringify(items))){
-                        html += '<td><input checked oninput="getChosenBookList()" name="add-order-book-id" id="add-order-book-id-' + items.id + '" type="checkbox" value="' + items.id + '"></td>\n'
-                    }else {
-                        html += '<td><input  oninput="getChosenBookList()" name="add-order-book-id" id="add-order-book-id-' + items.id + '" type="checkbox" value="' + items.id + '"></td>\n'
-                    }
-                    html += '            <td>' + items.code + '</td>\n' +
-                        '            <td>' + items.name + '</td>\n' +
-                        '            <td>' + items.author + '</td>\n' +
-                        '            <td>' + items.category.category + '</td>\n' +
-                        '            <td>' + items.inStock + '</td>\n' +
-                        '        </tr>\n'
-                })
-                html += '        </tbody>\n' +
-                    '    </table>';
-                $('#add-order-book').html(html);
-            }
-        })
-    }
-
-    function getChosenBookList() {
-        let key_book = $('#add-order-book-key').val();
-        let href_book;
-        if (key_book) {
-            href_book = 'http://localhost:8080/books/free?key=' + key_book
-        } else {
-            href_book = 'http://localhost:8080/books/free?key='
-        }
-        $.ajax({
-            async: false,
-            url: href_book,
-            type: 'GET',
-            success: function (data) {
-                let personList = data.slice();
-                $.each(personList, function (index, items) {
-                        if (document.getElementById('add-order-book-id-' + items.id).checked) {
-                            if (!JSON.stringify(bookList).includes(JSON.stringify(items))) {
-                                bookList.push(items);
-                            }
-                        }
-                        else {
-                            if (JSON.stringify(bookList).includes(JSON.stringify(items))) {
-                                for (let i = 0; i < bookList.length; i++) {
-                                    if (JSON.stringify(bookList[i])===(JSON.stringify(items))){
-                                        console.log("index", i)
-                                        bookList.splice(i,1);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                )
-            }
-        })
-    }
 
     function ShowInputInfo() {
         let person_info;
@@ -606,7 +365,7 @@
                     '<small style="color: red" id="check-add-order-person-name"></small>' +
                     '            <input type="text" disabled value="' + data.person.name + '" id="add-order-person-name" class="form-control" >\n' +
                     '          </div>\n'
-                    str +=   '<table class="table">\n' +
+                str +=   '<table class="table">\n' +
                     '    <tr>\n' +
                     '        <td><input onclick="getlistBookReturnOrDelete()" type="checkbox" class="check" id="checkAll"></td>\n' +
                     '        <td>Book code</td>\n' +
@@ -627,7 +386,7 @@
                                 '        <td>'+items.book.code+'</td>\n' +
                                 '        <td>'+items.book.name+'</td>\n' +
                                 '        <td>'+items.dateOn+'</td>\n'
-                                str += '<td>--</td>\n'
+                            str += '<td>--</td>\n'
                             str +=    '</tr>\n'
                         })
                     }
@@ -635,13 +394,13 @@
                 str += '</table>' +
                     '          <div class="form-label-group mb-4">\n' +
                     '         </div>\n' +
-                '       </form>\n'
-                    str += '<div class="row">' + '<div class="col-md">' +
-                        '         <a data-toggle="modal" id="function-btn-return" onclick="getEditOrderInfo()" data-target="#editbookModal" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Return</a>\n' +
-                        '</div>' +
-                        '<div class="col-md">' +
-                        '         <a data-toggle="modal" id="function-btn-delete" onclick="getDeleteOrderInfo()" data-target="#deletebookModal" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Delete</a>\n' +
-                        '</div>' + '</div>'
+                    '       </form>\n'
+                str += '<div class="row">' + '<div class="col-md">' +
+                    '         <a data-toggle="modal" id="function-btn-return" onclick="getEditOrderInfo()" data-target="#editbookModal" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Return</a>\n' +
+                    '</div>' +
+                    '<div class="col-md">' +
+                    '         <a data-toggle="modal" id="function-btn-delete" onclick="getDeleteOrderInfo()" data-target="#deletebookModal" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Delete</a>\n' +
+                    '</div>' + '</div>'
                 str +=
                     '        <a onclick="reload()" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Back</a>\n' +
                     '      </div>\n' +
@@ -673,7 +432,7 @@
         let person_info;
         let book_info = [];
         let href_book;
-            href_book = 'http://localhost:8080/books/free?key='
+        href_book = 'http://localhost:8080/books/free?key='
         str += "<div class=\"form-group\">\n" +
             "                        <label class=\"col-form-label\">Person Info</label>\n" +
             "                        <input type='text' id='add-order-person-code' disabled value='' >\n" +
@@ -724,7 +483,6 @@
 
     // get edit book info
     function getEditOrderInfo() {
-        let returnBookList = [];
         let str = "";
         let id = $('#add-order-id').val();
         $.ajax({
@@ -761,7 +519,6 @@
                         let listBook = detail.slice();
                         $.each(listBook, function (index, items) {
                             if (document.getElementById('order-detail-id-'+items.id).checked){
-                                returnBookList.push(items)
                                 str +=     '    <tr>\n' +
                                     '        <td>'+items.book.code+'</td>\n' +
                                     '        <td>'+items.book.name+'</td>\n'
@@ -770,20 +527,23 @@
                         })
                     }
                 })
+                // let bookList = data.book.slice();
+                // $.each(bookList, function (index, items) {
+                //     str +=
+                //         '    <tr>\n' +
+                //         '        <td>' + items.code + '</td>\n' +
+                //         '        <td>' + items.name + '</td>\n' +
+                //         '    </tr>\n'
+                //
+                // })
                 str += '</table>';
             }
         })
-        if (returnBookList.length ==0 ){
-            $('#edit-book-show-modal').html(" no book was chosen");
-            $('#return-modal-btn').hide();
-        }else {
-            $('#edit-book-show-modal').html(str)
-        }
+        $('#edit-book-show-modal').html(str)
     }
 
     //get delet book info
     function getDeleteOrderInfo() {
-        let returnBookList = [];
         let str = "";
         let id = $('#add-order-id').val();
         $.ajax({
@@ -820,7 +580,6 @@
                         let listBook = detail.slice();
                         $.each(listBook, function (index, items) {
                             if (document.getElementById('order-detail-id-'+items.id).checked){
-                                returnBookList.push(items)
                                 str +=     '    <tr>\n' +
                                     '        <td>'+items.book.code+'</td>\n' +
                                     '        <td>'+items.book.name+'</td>\n'
@@ -832,12 +591,7 @@
                 str += '</table>';
             }
         })
-        if (returnBookList.length ==0 ){
-            $('#delete-book-show-modal').html(" no book was chosen");
-            $('#delete-modal-btn').hide();
-        }else {
-            $('#delete-book-show-modal').html(str)
-        }
+        $('#delete-book-show-modal').html(str)
     }
 
     // create new book
@@ -936,7 +690,7 @@
                     str += "return success "+data.book.name + "<br>"
                 }, error: function (data){
                     // console.log("error", data)
-                   str += data.responseText + "<br>";
+                    str += data.responseText + "<br>";
                 }
             })
         }

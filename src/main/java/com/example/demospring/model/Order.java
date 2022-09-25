@@ -17,8 +17,17 @@ public class Order {
     @OneToOne
     private Person person;
     private Integer bookSize;
+    private Integer bookReturn;
 
     public Order() {
+    }
+
+    public Integer getBookReturn() {
+        return bookReturn;
+    }
+
+    public void setBookReturn(Integer bookReturn) {
+        this.bookReturn = bookReturn;
     }
 
     public Integer getBookSize() {

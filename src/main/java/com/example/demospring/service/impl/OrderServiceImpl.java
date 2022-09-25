@@ -49,6 +49,19 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
+    public Page<Order> findAllHistoryWithKey(String key, Pageable pageable) {
+        try {
+            if (!key.isEmpty()){
+                return iOrderRepository.findAllHistoryWithKey('%'+key+'%', pageable);
+            }else {
+                return iOrderRepository.findAllHistoryWithKey("%%",pageable);
+            }
+        }catch (Exception e){
+            return iOrderRepository.findAllHistoryWithKey("%%",pageable);
+        }
+    }
+
+    @Override
     public Optional<Order> findOrderByPerson(Person person) {
         return iOrderRepository.findOrderByPerson(person);
     }

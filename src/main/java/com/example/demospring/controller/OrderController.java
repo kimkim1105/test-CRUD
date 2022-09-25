@@ -44,6 +44,16 @@ public class OrderController {
         model.addAttribute("orders", iOrderService.findAllWithKey(key, pageable));
         return "order/orderList";
     }
+    @GetMapping("/history")
+    public String getListOrderHistory(@RequestParam(required = false, name = "key") String key, Model model, @PageableDefault(value = 5) Pageable pageable) {
+        model.addAttribute("orders", iOrderService.findAllHistoryWithKey(key, pageable));
+        return "order/history";
+    }
+    @GetMapping("/history-detail")
+    public String getListOrderHistoryDetail(@RequestParam(required = false, name = "key") String key, Model model, @PageableDefault(value = 5) Pageable pageable) {
+        model.addAttribute("orders", iOrderService.findAllHistoryWithKey(key, pageable));
+        return "order/history-detail";
+    }
 
     @GetMapping("/listOrder")
     public ResponseEntity<?> getOrderList(@RequestParam(required = false, name = "key") String key) {
