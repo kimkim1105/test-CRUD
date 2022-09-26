@@ -184,8 +184,9 @@
             </tbody>
         </table>
         <div>
+            <p th:if="${orders.content.size()<=0}">No Result, Incorrect information or not existed</p>
             <ul class="nav nav-pills">
-                <li class="nav-item" th:each="i:${#numbers.sequence(0,orders.totalPages-1)}">
+                <li class="nav-item"  th:if="${orders.content.size()>0}" th:each="i:${#numbers.sequence(0,orders.totalPages-1)}">
                     <a th:href="@{'/orders'(page=${i})}" th:text="${i+1}" class="nav-link"
                        th:classappend="${orders.number}==${i}?'active':''"></a>
                 </li>

@@ -5,6 +5,8 @@ import com.example.demospring.model.OrderDetail;
 import com.example.demospring.repository.IOrderDetailRepository;
 import com.example.demospring.service.IOrderDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -43,5 +45,10 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
     @Override
     public Optional<OrderDetail> findOrderDetaiByBookAndPerson(Long book_id, Long order_id) {
         return iOrderDetailRepository.findOrderDetaiByBookAndPerson(book_id, order_id);
+    }
+
+    @Override
+    public Page<OrderDetail> findAllByOrderCompleted(Long orderId, Pageable pageable) {
+        return iOrderDetailRepository.findAllByOrderCompleted(orderId, pageable);
     }
 }

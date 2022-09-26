@@ -44,14 +44,21 @@ public class OrderController {
         model.addAttribute("orders", iOrderService.findAllWithKey(key, pageable));
         return "order/orderList";
     }
+
     @GetMapping("/history")
     public String getListOrderHistory(@RequestParam(required = false, name = "key") String key, Model model, @PageableDefault(value = 5) Pageable pageable) {
-        model.addAttribute("orders", iOrderService.findAllHistoryWithKey(key, pageable));
+        model.addAttribute("key", key);
+        model.addAttribute("ordersHistory", iOrderService.findAllHistoryWithKey(key, pageable));
         return "order/history";
     }
-    @GetMapping("/history-detail")
-    public String getListOrderHistoryDetail(@RequestParam(required = false, name = "key") String key, Model model, @PageableDefault(value = 5) Pageable pageable) {
-        model.addAttribute("orders", iOrderService.findAllHistoryWithKey(key, pageable));
+
+    @GetMapping("/history-detail/")
+    public String getListOrderHistoryDetail(@RequestParam(required = false, name = "key") String key,
+                                            @RequestParam(required = false) Long id,
+                                            Model model, @PageableDefault(value = 5) Pageable pageable) {
+        model.addAttribute("id", id);
+        model.addAttribute("person", iOrderService.findById(id).get().getPerson());
+        model.addAttribute("ordersDetail", iOrderDetailService.findAllByOrderCompleted(id, pageable));
         return "order/history-detail";
     }
 
@@ -62,22 +69,23 @@ public class OrderController {
 
 
     @GetMapping("/person/{id}")
-    public ResponseEntity<?> getOrderByPerson(@PathVariable Long id){
-        if (!iPersonService.findById(id).isPresent()){
+    public ResponseEntity<?> getOrderByPerson(@PathVariable Long id) {
+        if (!iPersonService.findById(id).isPresent()) {
             return new ResponseEntity<>("person not found", HttpStatus.NOT_FOUND);
         }
         Person person = iPersonService.findById(id).get();
-        if (!iOrderService.findOrderByPerson(person).isPresent()){
+        if (!iOrderService.findOrderByPerson(person).isPresent()) {
             return new ResponseEntity<>("order not found", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(iOrderService.findOrderByPerson(person), HttpStatus.OK);
     }
-        @GetMapping("/{id}")
-    public ResponseEntity<?> getOrderById(@PathVariable Long id){
-        if (!iOrderService.findById(id).isPresent()){
-                return new ResponseEntity<>("Not found",HttpStatus.NOT_FOUND);
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getOrderById(@PathVariable Long id) {
+        if (!iOrderService.findById(id).isPresent()) {
+            return new ResponseEntity<>("Not found", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(iOrderService.findById(id).get(),HttpStatus.OK);
+        return new ResponseEntity<>(iOrderService.findById(id).get(), HttpStatus.OK);
     }
 
 }
