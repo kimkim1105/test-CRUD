@@ -27,6 +27,7 @@ public interface IBookRepository extends JpaRepository<Book,Long> {
     @Query(value = "select * from book where id = (select max(id) from book)", nativeQuery = true)
     Optional<Book> getLastestBook();
     Optional<Book> findBookByName(String name);
+    Iterable<Book> findAllByName(String string);
     Optional<Book> findBookByCode(String code);
     Iterable<Book> findAllByNameContainingAndStatusIsTrue(String name);
     @Query(value = "select * from book where status = true and in_stock>0 and concat(name,code,author) like :key order by id desc",nativeQuery = true)

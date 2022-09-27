@@ -5,6 +5,7 @@ import com.example.demospring.model.BookCategory;
 import com.example.demospring.model.Person;
 import com.example.demospring.model.dto.BookDTO;
 import com.example.demospring.model.dto.Validation;
+import com.example.demospring.repository.IBookRepository;
 import com.example.demospring.service.IBookCategoryService;
 import com.example.demospring.service.IBookService;
 import com.example.demospring.service.IOrderService;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.naming.Binding;
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
@@ -33,6 +35,8 @@ public class BookController {
     IBookCategoryService iBookCategoryService;
     @Autowired
     IOrderService iOrderService;
+    @Autowired
+    IBookRepository bookRepository;
     @GetMapping
     public String getListBook(@RequestParam(required = false, name = "key") String key,
                               @RequestParam(required = false, name = "category_id") String category_id,
@@ -65,9 +69,18 @@ public class BookController {
     }
     @GetMapping("/name/{name}")
     public ResponseEntity<?> getBookByName(@PathVariable String name){
-        if (iBookService.findBookByName(name).isPresent()){
-            return new ResponseEntity<>("existed", HttpStatus.OK);
+        Iterable<Book> books = bookRepository.findAllByName(name);
+        Iterator<Book> bookIterator = books.iterator();
+        if (books.iterator().hasNext()){
+            while (bookIterator.hasNext()){
+                if (bookIterator.next().getName().equals(name)&&bookIterator.next().getName().compareTo(name)==0){
+                    return new ResponseEntity<>("existed", HttpStatus.OK);
+                }
+            }
         }
+//        if (iBookService.findBookByName(name).isPresent()){
+//            return new ResponseEntity<>("existed", HttpStatus.OK);
+//        }
         return new ResponseEntity<>("ok",HttpStatus.OK);
     }
     @GetMapping("/code/{code}")
@@ -102,11 +115,20 @@ public class BookController {
             }
             return new ResponseEntity<>(errorMsg,HttpStatus.OK);
         }
-        if (iBookService.findBookByName(bookDTO.getName()).isPresent()){
-            return  new ResponseEntity<>("bookname existed", HttpStatus.OK);
+//        if (iBookService.findBookByName(bookDTO.getName()).isPresent()){
+//            return  new ResponseEntity<>("bookname existed", HttpStatus.OK);
+//        }
+        Iterable<Book> books = bookRepository.findAllByName(bookDTO.getName());
+        Iterator<Book> bookIterator = books.iterator();
+        if (books.iterator().hasNext()){
+            while (bookIterator.hasNext()){
+                if (bookIterator.next().getName().equals(bookDTO.getName())&&bookIterator.next().getName().compareTo(bookDTO.getName())==0){
+                    return new ResponseEntity<>("bookname existed", HttpStatus.OK);
+                }
+            }
         }
         if (iBookService.findBookByCode(bookDTO.getCode()).isPresent()){
-            return  new ResponseEntity<>("code existed", HttpStatus.OK);
+            return  new ResponseEntity<>("bookcode existed", HttpStatus.OK);
         }
         Book book = new Book();
         book.setName(bookDTO.getName());
@@ -124,9 +146,9 @@ public class BookController {
             return new ResponseEntity<>("not found", HttpStatus.NOT_FOUND);
         }
         Book bookOptional = iBookService.findById(id).get();
-//        if (iOrderService.findAllByBookAndDateOffNull(id).iterator().hasNext()){
-//            return new ResponseEntity<>("Book in borrowing, can't edit",HttpStatus.OK);
-//        }
+        if (iOrderService.findAllByBookAndDateOffNull(id).iterator().hasNext()){
+            return new ResponseEntity<>("Book in borrowing, can't edit",HttpStatus.OK);
+        }
         if (bindingResult.hasErrors()){
             Map<String, String> errors= new HashMap<>();
 
@@ -144,7 +166,7 @@ public class BookController {
             bookOptional.setName(book.getName());
         }else {
             if (iBookService.findBookByName(book.getName()).isPresent()){
-                return new ResponseEntity<>("bookname existed, pls try again",HttpStatus.OK);
+                return new ResponseEntity<>("bookname existed",HttpStatus.OK);
             }
         }
         if (!bookOptional.getCode().equals(book.getCode())){
@@ -161,9 +183,9 @@ public class BookController {
     @PutMapping("/{id}")
     public ResponseEntity<?> deleteBook(@PathVariable Long id){
         Book bookOptional = iBookService.findById(id).get();
-//        if (iOrderService.findAllByBookAndDateOffNull(id).iterator().hasNext()){
-//            return new ResponseEntity<>("Book in borrowing, can't edit",HttpStatus.OK);
-//        }
+        if (iOrderService.findAllByBookAndDateOffNull(id).iterator().hasNext()){
+            return new ResponseEntity<>("Book in borrowing, can't edit",HttpStatus.OK);
+        }
         iBookService.remove(bookOptional.getId());
         return new ResponseEntity<>(iBookService.save(bookOptional),HttpStatus.OK);
     }

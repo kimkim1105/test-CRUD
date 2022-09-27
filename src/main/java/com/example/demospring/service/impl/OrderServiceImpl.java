@@ -71,13 +71,13 @@ public class OrderServiceImpl implements IOrderService {
 //        return iOrderRepository.findAllByStatusIsTrueOrderByIdDesc(pageable);
 //    }
 
-//    @Override
-//    public Iterable<Order> findAllByPersonAndDateOffNull(Long id) {
-//        return iOrderRepository.findAllByPersonAndDateOffNull(id);
-//    }
-//
-//    @Override
-//    public Iterable<Order> findAllByBookAndDateOffNull(Long id) {
-//        return iOrderRepository.findAllByBookAndDateOffNull(id);
-//    }
+    @Override
+    public Iterable<Order> findAllByPersonAndDateOffNull(Long id) {
+        return iOrderRepository.findAllByPersonAndDateOffNull(id);
+    }
+
+    @Override
+    public Iterable<Order> findAllByBookAndDateOffNull(Long id) {
+        return iOrderRepository.findAllByBookAndDateOffNull(id);
+    }
 }

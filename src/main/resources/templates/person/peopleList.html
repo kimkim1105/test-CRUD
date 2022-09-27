@@ -42,20 +42,34 @@
     <br>
     <div id="person-content">
     <table class="table">
+        <div class="row">
         <form class="form-inline">
-            <input class="form-control mr-sm-2" th:value="${key}" type="search" name="key" placeholder="Search by name, person id or phone number" aria-label="Search">
-            <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">
-                <label class="text-secondary">Date from</label>
-                <input type="date" id="date-search-from" oninput="getFromDate()" max="" th:value="${from}" class="form-control datepicker" name="from" >
-                <input type="date" id="date-search-to" max="" min="" th:value="${to}" class="form-control datepicker" name="to">
+            <input class="form-control col-md-8 mr-sm-2" th:value="${key}" type="search" name="key" placeholder="Search by name, person id or phone number" aria-label="Search"><br><br>
+            <div class="form-label-group col-md-8 md-form md-outline input-with-post-icon datepicker">
+                <label class="text-secondary">Search by date of birth</label>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Start Date</label>
+                    <div class="col-sm-9">
+                        <input type="date" class="form-control datepicker" name="from" id="date-search-from" oninput="getFromDate()" max="" th:value="${from}">
+                    </div>
+                    <label class="col-sm-3 col-form-label">End Date</label>
+                    <div class="col-sm-9">
+                        <input type="date" class="form-control datepicker" id="date-search-to" max="" min="" th:value="${to}" name="to">
+                    </div>
+                </div>
+<!--                <input type="date" id="date-search-from" oninput="getFromDate()" max="" th:value="${from}" class=" col-md-4 mr-sm-2 datepicker" name="from" >-->
+<!--                <input type="date" id="date-search-to" max="" min="" th:value="${to}" class=" col-md-4 datepicker" name="to">-->
             </div>
-            <input type="submit" value="search">
+            <br>
+            <input type="submit" class="btn btn-danger col-md-8" value="search">
         </form>
+        </div>
+        <br>
         <thead>
-        <th colspan="3">Person Information</th>
+        <th colspan="6">Person Information</th>
         <th></th>
         <th>
-            <button type="button" id="add-person" class="btn btn-success" >Add new person</button>
+            <button type="button" id="add-person" class="btn btn-lg btn-success" >Add new person</button>
         </th>
         </thead>
         <thead>
@@ -181,6 +195,7 @@
 <th:block th:replace="share/footer :: footer"></th:block>
 
 
+
 <script th:inline="javascript">
 let checkPhoneInput;
 let checkPersonName;
@@ -225,8 +240,8 @@ $(document).ready(function () {
             '           <label for="add-person-gender" class="text-secondary">Gender<i style="color: red">* </i></label>\n' +
             '<small style="color: red" id="check-add-person-gender"></small>' +
             '<select id="add-person-gender" class="form-control">\n' +
-            '   <option value="true">Male</option>\n' +
-            '   <option value="false">Female</option>\n' +
+            '   <option value="1">Male</option>\n' +
+            '   <option value="0">Female</option>\n' +
             ' </select>' +
             '         </div>\n' +
             '          <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">\n' +
@@ -256,7 +271,7 @@ $(document).ready(function () {
             '       </div>\n' +
             '        <div class="form-label-group mb-4">\n' +
             '           <label class="text-secondary">Address</label>\n' +
-            '           <input  type="text" id="add-person-address" class="form-control">\n' +
+            '           <textarea  type="text" id="add-person-address" class="form-control"></textarea>\n' +
             '         </div>\n' +
             '          <div class="form-label-group mb-4">\n' +
             '         </div>\n' +
@@ -280,8 +295,12 @@ function checkPhone(){
             $('#check-add-person-phone').html("Phone number cannot blank")
             checkPhoneInput = false
             return;
-        }
-        let href = "http://localhost:8080/persons/phone/"+phone
+        }else
+        if (!phone.match("(0[3|5|7|8|9])+([0-9]{8})\\b")){
+            checkPhoneInput = false
+            $('#check-add-person-phone').html("Phone number not correct format, phone contains 10 numbers begin with 0")
+            return
+        }else
     if (id){
         $.ajax({
             async: false,
@@ -293,14 +312,10 @@ function checkPhone(){
                }else {
                    $.ajax({
                        async: false,
-                       url: href,
+                       url: "http://localhost:8080/persons/phone/"+phone,
                        type: 'GET',
                        success: function (data) {
-                           if (!phone.match("(0[3|5|7|8|9])+([0-9]{8})\\b")){
-                               checkPhoneInput = false
-                               $('#check-add-person-phone').html("Phone number not correct format, phone contains 10 numbers begin with 0")
-                               return
-                           }else if (data=="existed"){
+                            if (data=="existed"){
                                checkPhoneInput = false
                                $('#check-add-person-phone').html("Phone number existed,Pls try again")
                                return;
@@ -318,14 +333,10 @@ function checkPhone(){
     }else {
         $.ajax({
             async: false,
-            url: href,
+            url: "http://localhost:8080/persons/phone/"+phone,
             type: 'GET',
             success: function (data) {
-                if (!phone.match("(0[3|5|7|8|9])+([0-9]{8})\\b")){
-                    checkPhoneInput = false
-                    $('#check-add-person-phone').html("Phone number not correct format, phone contains 10 numbers begin with 0")
-                    return
-                }else if (data=="existed"){
+                 if (data=="existed"){
                     checkPhoneInput = false
                     $('#check-add-person-phone').html("Phone number existed,Pls try again")
                     return;
@@ -346,9 +357,9 @@ function checkNameInput(){
                 $('#check-add-person-name').html("Name cannot blank")
                 checkPersonName = false;
                 return
-            }
-            if (!name.match("^([a-vxyA-Zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ]+)((\\s{1}[a-vxyA-Zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ]+){1,})$")){
-                $('#check-add-person-name').html("Name least 2 word with space seperate, without special character")
+            }else
+            if (!name.match("^([a-zA-Zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ]+)((\\s{1}[a-zA-Zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ]+){1,})$")){
+                $('#check-add-person-name').html("Name least 2 word with space seperate, without special character or number")
                 checkPersonName = false;
                 return;
             }else {
@@ -360,12 +371,11 @@ function checkNameInput(){
 
 function checkDob(){
     let dob = $('#add-person-dob').val();
-    console.log("dob", dob)
     if (dob==""){
         $('#check-add-person-dob').html("Date of birth cannot blank")
         checkPersonDob = false;
         return
-    }
+    } else
     if (dob.match("^(0?[1-9]|[12][0-9]|3[01])[\\/\\-](0?[1-9]|1[012])[\\/\\-]\\d{4}$")){
         $('#check-add-person-dob').html("date incorrect format")
         checkPersonDob = false;
@@ -420,7 +430,7 @@ function checkInput(){
                         '<div class="row no-gutters">\n' +
                         '            <input type="text" disabled value="'+data.id+'" hidden id="add-person-id" class="form-control" >\n' +
                         '  <div class="col-12 col-sm-6 col-md-10"><h3 class=" mb-4" >Person Information</h3></div>\n' +
-                        '  <div class="col-6 col-md-2"><a type="button" class="btn btn-primary" style="margin-inline-end: auto; text-align: right" data-toggle="" data-target="" id="showEdit" onclick="showEditForm()"><i class="far fa-edit">Edit</i></a></div>\n' +
+                        '  <div class="col-6 col-md-2"><a type="button" class="btn btn-primary" style="margin-inline-end: auto; text-align: right" data-toggle="" data-target="" id="showEdit" onclick="showEditForm()">Edit</a></div>\n' +
                         '</div>'+
                         '        <form>\n' +
                         '          <div class="form-label-group">\n' +
@@ -437,11 +447,11 @@ function checkInput(){
                         '<small style="color: red" id="check-add-person-gender"></small>'+
                         '<select disabled id="add-person-gender" class="form-control">\n'
                     if (data.gender){
-                        str +='   <option selected value="true">Male</option>\n' +
-                            '   <option value="false">Female</option>\n'
+                        str +='   <option selected value="1">Male</option>\n' +
+                            '   <option value="0">Female</option>\n'
                     }else {
-                        str +='   <option  value="true">Male</option>\n' +
-                            '   <option selected value="false">Female</option>\n'
+                        str +='   <option  value="1">Male</option>\n' +
+                            '   <option selected value="0">Female</option>\n'
                     }
                        str += ' </select>'+
                         '          <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">\n' +
@@ -476,7 +486,8 @@ function checkInput(){
                         '       </div>\n' +
                         '        <div class="form-label-group mb-4">\n' +
                         '           <label class="text-secondary">Address</label>\n' +
-                        '           <input disabled type="text" value="'+data.address+'" id="add-person-address"  class="form-control">\n' +
+                        // '           <input disabled type="text" value="'+data.address+'" id="add-person-address"  class="form-control">\n' +
+                        '<textarea disabled type="text" id="add-person-address" value="'+data.address+'" class="form-control"></textarea>'+
                         '         </div>\n' +
                         '          <div class="form-label-group mb-4">\n' +
                         '         </div>\n' +
@@ -496,8 +507,9 @@ function checkInput(){
     function getNewPersonInfo(){
         let name = $('#add-person-name').val();
         let genderId = $('#add-person-gender').val();
+        console.log(genderId, "gender")
         let gender;
-        if (genderId){
+        if (genderId==1){
             gender = "Male";
         }else {
             gender = "Female"
@@ -508,37 +520,39 @@ function checkInput(){
         let phone = $('#add-person-phone').val();
         let address = $('#add-person-address').val();
         let str = "";
-
-        str += "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Name:</label>\n" +
-            "                        <input type='text' disabled value='"+name+"' >\n" +
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Gender:</label>\n" +
-            "                        <input type='text' disabled value='"+gender+"' >\n" +
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Date of birth:</label>\n" +
-            "                        <input type='text' disabled value='"+dob+"' >\n" +
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Phone:</label>\n" +
-            "                        <input type='text' disabled value='"+phone+"' >\n" +
-            "                    </div>"+
-            "<div class=\"form-group\">\n" +
-            "                        <label class=\"col-form-label\">Address:</label>\n" +
-            "                        <input type='text' disabled value='"+address+"' >\n" +
-            "                    </div>"+
-        "<div class=\"form-group\">\n" +
-        "                        <label id='classify' class=\"col-form-label\">Classify:</label>\n"+
-            "<input id='classifyShow' type='text' disabled value='' >"
+        str+= '<table class="table">\n' +
+            '    <tr>\n' +
+            '        <td>Name:</td>\n' +
+            '        <td>'+name+'</td>\n' +
+            '    </tr>\n' +
+            '    <tr>\n' +
+            '        <td>Gender:</td>\n' +
+            '        <td>'+gender+'</td>\n' +
+            '    </tr>\n' +
+            '    <tr>\n' +
+            '        <td>Date of birth:</td>\n' +
+            '        <td>'+dob+'</td>\n' +
+            '    </tr>\n' +
+            '    <tr>\n' +
+            '        <td>Phone:</td>\n' +
+            '        <td>'+phone+'</td>\n' +
+            '    </tr>\n' +
+            '    <tr>\n' +
+            '        <td>Address:</td>\n' +
+            '        <td>'+address+'</td>\n' +
+            '    </tr>\n' +
+            '    <tr>\n' +
+            '        <td>Classify:</td>\n'
         let href = "http://localhost:8080/classifies/"+classifyId;
-        $.get(href,function (data,status){
-            classify = data.classify;
-            $('#classifyShow').val(classify);
+        $.ajax({
+            async: false,
+            url: href,
+            type: 'GET',
+            success: function (data) {
+                str+=    '<td>'+data.classify+'</td>\n'
+            }
         })
-           str +=
-            "                    </div>";
+         str +=   '</tr></table>\n'
         $('#add-person-show-modal').html(str)
     }
 // get edit person info
@@ -548,7 +562,7 @@ function getEditPersonInfo(){
     let code = $('#add-person-code').val();
     let genderId = $('#add-person-gender').val();
     let gender;
-    if (genderId){
+    if (genderId==1){
         gender = "Male";
     }else {
         gender = "Female"
@@ -560,41 +574,39 @@ function getEditPersonInfo(){
     let address = $('#add-person-address').val();
     let str = "";
 
-    str +=
-        "<div class=\"form-group\">\n" +
-        "                        <label class=\"col-form-label\">ID:</label>\n" +
-        "                        <input type='text' disabled value='"+code+"' >\n" +
-        "                    </div>"+
-        "<div class=\"form-group\">\n" +
-        "                        <label class=\"col-form-label\">Name:</label>\n" +
-        "                        <input type='text' disabled value='"+name+"' >\n" +
-        "                    </div>"+
-        "<div class=\"form-group\">\n" +
-        "                        <label class=\"col-form-label\">Gender:</label>\n" +
-        "                        <input type='text' disabled value='"+gender+"' >\n" +
-        "                    </div>"+
-        "<div class=\"form-group\">\n" +
-        "                        <label class=\"col-form-label\">Date of birth:</label>\n" +
-        "                        <input type='text' disabled value='"+dob+"' >\n" +
-        "                    </div>"+
-        "<div class=\"form-group\">\n" +
-        "                        <label class=\"col-form-label\">Phone:</label>\n" +
-        "                        <input type='text' disabled value='"+phone+"' >\n" +
-        "                    </div>"+
-        "<div class=\"form-group\">\n" +
-        "                        <label class=\"col-form-label\">Address:</label>\n" +
-        "                        <input type='text' disabled value='"+address+"' >\n" +
-        "                    </div>"+
-        "<div class=\"form-group\">\n" +
-        "                        <label id='classify' class=\"col-form-label\">Classify:</label>\n"+
-        "<input id='classifyShow' type='text' disabled value='' >"
+    str+= '<table class="table">\n' +
+        '    <tr>\n' +
+        '        <td>Name:</td>\n' +
+        '        <td>'+name+'</td>\n' +
+        '    </tr>\n' +
+        '    <tr>\n' +
+        '        <td>Gender:</td>\n' +
+        '        <td>'+gender+'</td>\n' +
+        '    </tr>\n' +
+        '    <tr>\n' +
+        '        <td>Date of birth:</td>\n' +
+        '        <td>'+dob+'</td>\n' +
+        '    </tr>\n' +
+        '    <tr>\n' +
+        '        <td>Phone:</td>\n' +
+        '        <td>'+phone+'</td>\n' +
+        '    </tr>\n' +
+        '    <tr>\n' +
+        '        <td>Address:</td>\n' +
+        '        <td>'+address+'</td>\n' +
+        '    </tr>\n' +
+        '    <tr>\n' +
+        '        <td>Classify:</td>\n'
     let href = "http://localhost:8080/classifies/"+classifyId;
-    $.get(href,function (data,status){
-        classify = data.classify;
-        $('#classifyShow').val(classify);
+    $.ajax({
+        async: false,
+        url: href,
+        type: 'GET',
+        success: function (data) {
+            str+=    '<td>'+data.classify+'</td>\n'
+        }
     })
-    str +=
-        "                    </div>";
+    str +=   '</tr></table>\n'
     $('#edit-person-show-modal').html(str)
 }
 //get delet person info
@@ -616,7 +628,7 @@ function getDeletePersonInfo(){
     let code = $('#add-person-code').val();
     let genderId = $('#add-person-gender').val();
     let gender;
-    if (genderId){
+    if (genderId==1){
         gender = "Male";
     }else {
         gender = "Female"
@@ -627,42 +639,39 @@ function getDeletePersonInfo(){
     let phone = $('#add-person-phone').val();
     let address = $('#add-person-address').val();
     let str = "";
-    str +=
-        "<div class=\"form-group\">\n" +
-        "                        <label class=\"col-form-label\">ID:</label>\n" +
-        "                        <input type='text' disabled value='"+code+"' >\n" +
-        "                    </div>"+
-        "<div class=\"form-group\">\n" +
-        "                        <label class=\"col-form-label\">Name:</label>\n" +
-        "                        <input type='text' disabled value='"+name+"' >\n" +
-        "                    </div>"+
-        "<div class=\"form-group\">\n" +
-        "                        <label class=\"col-form-label\">Gender:</label>\n" +
-        "                        <input type='text' disabled value='"+gender+"' >\n" +
-        "                    </div>"+
-        "<div class=\"form-group\">\n" +
-        "                        <label class=\"col-form-label\">Date of birth:</label>\n" +
-        "                        <input type='text' disabled value='"+dob+"' >\n" +
-        "                    </div>"+
-        "<div class=\"form-group\">\n" +
-        "                        <label class=\"col-form-label\">Phone:</label>\n" +
-        "                        <input type='text' disabled value='"+phone+"' >\n" +
-        "                    </div>"+
-        "<div class=\"form-group\">\n" +
-        "                        <label class=\"col-form-label\">Address:</label>\n" +
-        "                        <input type='text' disabled value='"+address+"' >\n" +
-        "                    </div>"+
-        "<div class=\"form-group\">\n" +
-        "                        <label id='classify' class=\"col-form-label\">Classify:</label>\n"
-    let href = "http://localhost:8080/classifies/"+classifyId;
-    $.get(href,function (data,status){
-        // console.log("data",data)
-        classify = data.classify;
-        let html = "<input type='text' disabled value='"+classify+"' >"
-        $('#classify').append(html);
-    })
-    str +=
-        "                    </div>";
+                str+= '<table class="table">\n' +
+                    '    <tr>\n' +
+                    '        <td>Name:</td>\n' +
+                    '        <td>'+name+'</td>\n' +
+                    '    </tr>\n' +
+                    '    <tr>\n' +
+                    '        <td>Gender:</td>\n' +
+                    '        <td>'+gender+'</td>\n' +
+                    '    </tr>\n' +
+                    '    <tr>\n' +
+                    '        <td>Date of birth:</td>\n' +
+                    '        <td>'+dob+'</td>\n' +
+                    '    </tr>\n' +
+                    '    <tr>\n' +
+                    '        <td>Phone:</td>\n' +
+                    '        <td>'+phone+'</td>\n' +
+                    '    </tr>\n' +
+                    '    <tr>\n' +
+                    '        <td>Address:</td>\n' +
+                    '        <td>'+address+'</td>\n' +
+                    '    </tr>\n' +
+                    '    <tr>\n' +
+                    '        <td>Classify:</td>\n'
+                let href = "http://localhost:8080/classifies/"+classifyId;
+                $.ajax({
+                    async: false,
+                    url: href,
+                    type: 'GET',
+                    success: function (data) {
+                        str+=    '<td>'+data.classify+'</td>\n'
+                    }
+                })
+                str +=   '</tr></table>\n'
     $('#delete-person-show-modal').html(str)
             }
         }
@@ -674,7 +683,7 @@ function getDeletePersonInfo(){
         let id = $('#add-person-id').val();
         $.ajax({
             async: false,
-            url: "http://localhost:8080/orders/person/" + id,
+            url: "http://localhost:8080/orders/person-borrow/" + id,
             type: 'GET',
             success: function (data) {
                 if (data == "existed") {
@@ -701,17 +710,23 @@ function getDeletePersonInfo(){
     function addNewPerson(){
         let name = $('#add-person-name').val();
         let genderId = $('#add-person-gender').val();
+        let gender;
+        if (genderId==1){
+            gender = true
+        }else {
+            gender = false
+        }
         let classifyId = $('#add-person-classify').val();
         let dob = $('#add-person-dob').val();
         let phone = $('#add-person-phone').val();
         let address = $('#add-person-address').val();
         let obj = {
             "name": name,
-            "gender": genderId,
+            "gender": gender,
             "address":address,
             "phone": phone,
             "dateOfBirth": dob,
-            "avatar":null,
+            "avatar":"",
             "classify": {
                 "id": classifyId
             }
@@ -727,9 +742,12 @@ function getDeletePersonInfo(){
             type: 'POST',
             data: data,
             success: function (data) {
+                console.log("data", data)
             },
             error: function (data){
                 console.log("error", data)
+                $('#confirmModalLabel').html("Add new person confirm");
+                $('#confirm-content').html("Add unsuccess because "+data.responseText+"! please check again");
             }
         })
     }
@@ -738,13 +756,19 @@ function editPerson(){
     let id = $('#add-person-id').val();
     let name = $('#add-person-name').val();
     let genderId = $('#add-person-gender').val();
+    let gender;
+    if (genderId==1){
+        gender = true
+    }else {
+        gender = false
+    }
     let classifyId = $('#add-person-classify').val();
     let dob = $('#add-person-dob').val();
     let phone = $('#add-person-phone').val();
     let address = $('#add-person-address').val();
     let obj = {
         "name": name,
-        "gender": genderId,
+        "gender": gender,
         "address":address,
         "phone": phone,
         "dateOfBirth": dob,
@@ -769,6 +793,8 @@ function editPerson(){
         },
         error:function (data){
             console.log("error", data)
+            $('#confirmModalLabel').html("Update person confirm");
+            $('#confirm-content').html("Update unsuccess because "+data.responseText+"! please check again");
         }
     })
 }
@@ -789,6 +815,8 @@ function deletePerson(){
         },
         error: function (data){
             console.log("error", data)
+            $('#confirmModalLabel').html("Delete person confirm");
+            $('#confirm-content').html("Delete unsuccess because "+data.responseText+"! please check again");
         }
     })
 }

@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface IOrderDetailService extends IGeneralService<OrderDetail> {
     Iterable<OrderDetail> findAllInBorrowing(Long orderId);
     Optional<OrderDetail> findOrderDetaiByBookAndPerson(Long book_id, Long order_id);
-    Page<OrderDetail> findAllByOrderCompleted(Long orderId, Pageable pageable);
+    Page<OrderDetail> findAllByOrderCompleted(Long orderId, Pageable pageable, String key, String from, String to);
 }

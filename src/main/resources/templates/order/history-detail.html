@@ -42,20 +42,47 @@
     <br>
     <div id="book-content" >
         <table class="table">
-            <form class="form-inline">
-                <input class="form-control mr-sm-2" type="search" th:value="${key}" name="key" placeholder="Search by name or book code" aria-label="Search">
-                <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">
-                    <label class="text-secondary">Date from</label>
-                    <input type="date" id="date-search-from" oninput="getFromDate()" max="" th:value="${from}" class="form-control datepicker" name="from" >
-                    <input type="date" id="date-search-to" max="" min="" th:value="${to}" class="form-control datepicker" name="to">
-                </div>
-                <input type="submit" value="search">
-            </form>
+            <div class="row">
+                <form class="form-inline">
+                    <input type="text" th:value="${id}" hidden name="id">
+                    <input class="form-control col-md-8 mr-sm-2" th:value="${key}" type="search" name="key" placeholder="Search by name, book code or author" aria-label="Search"><br><br>
+                    <div class="form-label-group col-md-8 md-form md-outline input-with-post-icon datepicker">
+                        <label class="text-secondary">Search by date on borrowing book</label>
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Start Date</label>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control datepicker" name="from" id="date-search-from" oninput="getFromDate()" max="" th:value="${from}">
+                            </div>
+                            <label class="col-sm-3 col-form-label">End Date</label>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control datepicker" id="date-search-to" max="" min="" th:value="${to}" name="to">
+                            </div>
+                        </div>
+                        <!--                <input type="date" id="date-search-from" oninput="getFromDate()" max="" th:value="${from}" class=" col-md-4 mr-sm-2 datepicker" name="from" >-->
+                        <!--                <input type="date" id="date-search-to" max="" min="" th:value="${to}" class=" col-md-4 datepicker" name="to">-->
+                    </div>
+                    <br>
+                    <input type="submit" class="btn btn-danger col-md-8" value="search">
+                </form>
+            </div>
+            <br>
+<!--            <form class="form-inline">-->
+<!--                <input type="text" th:value="${id}" hidden name="id">-->
+<!--                <input class="form-control mr-sm-2" type="search" th:value="${key}" name="key" placeholder="Search by name or book code" aria-label="Search">-->
+<!--                <div class="form-label-group mb-4 md-form md-outline input-with-post-icon datepicker">-->
+<!--                    <label class="text-secondary">Date from</label>-->
+<!--                    <input type="date" id="date-search-from" oninput="getFromDate()" max="" th:value="${from}" class="form-control datepicker" name="from" >-->
+<!--                    <input type="date" id="date-search-to" max="" min="" th:value="${to}" class="form-control datepicker" name="to">-->
+<!--                </div>-->
+<!--                <input type="submit" class="btn btn-danger" value="search">-->
+<!--            </form>-->
 
             <thead>
             <th colspan="3">Order Detail Information</th>
-            <th colspan="2" th:utext="${person.code}"></th>
-            <th colspan="2" th:utext="${person.name}"></th>
+            <th>Person code:</th>
+            <th th:utext="${person.code}"></th>
+            <th>Person name: </th>
+            <th th:utext="${person.name}"></th>
             </thead>
             <thead>
             <tr>
@@ -84,7 +111,7 @@
             <p th:if="${ordersDetail.content.size()<=0}">No Result, Incorrect information or not existed</p>
             <ul class="nav nav-pills">
                 <li class="nav-item" th:if="${ordersDetail.content.size()>0}" th:each="i:${#numbers.sequence(0,ordersDetail.totalPages-1)}">
-                    <a th:href="@{'/orders/history-detail/?id='+${id}(page=${i})}" th:text="${i+1}" class="nav-link" th:classappend="${ordersDetail.number}==${i}?'active':''"></a>
+                    <a th:href="@{'/orders/history-detail/?id='+${id}+'&key='+${key}+'&from='+${from}+'&to='+${to}(page=${i})}" th:text="${i+1}" class="nav-link" th:classappend="${ordersDetail.number}==${i}?'active':''"></a>
                 </li>
             </ul>
         </div>

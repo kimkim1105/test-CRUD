@@ -59,7 +59,6 @@ public class PersonController {
         if (to==null){
             to="";
         }
-        System.out.println("key-from"+key+from);
         model.addAttribute("from", from);
         model.addAttribute("key", key);
         model.addAttribute("to",to);
@@ -133,7 +132,12 @@ public class PersonController {
         person.setClassify(classifyOptional.get());
         Optional<Person> personOptional = iPersonService.getLastestPerson();
         StringBuffer personCode = new StringBuffer();
-        Long lastId = personOptional.get().getId();
+        Long lastId;
+        if (personOptional.isPresent()){
+            lastId = personOptional.get().getId();
+        }else {
+            lastId = 0L;
+        }
         String format = String.format("%05d",(lastId+1));
         String month = String.format("%02d",LocalDate.now().getMonth().getValue());
         String year = String.valueOf(LocalDate.now().getYear()).substring(2);

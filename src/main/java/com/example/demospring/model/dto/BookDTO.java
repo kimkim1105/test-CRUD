@@ -10,14 +10,15 @@ import javax.validation.constraints.Pattern;
 
 public class BookDTO {
     @NotEmpty(message = "code can't blank")
+    @Pattern(regexp = "^([a-zA-Z0-9.#$%&*-+/\\s]+)$", message = "Code without Vietnamese character")
     @Column(unique = true)
     private String code;
     @NotEmpty(message = "Name can't blank")
-    @Pattern(regexp = "^([a-vxyA-Z1-9ỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ\\s]+)$", message = "name without special character")
-    @Column(unique = true)
+    @Pattern(regexp = "^([a-zA-Z0-9'.#*+-ỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ\\s]+)$", message = "Name without special character or number")
+//    @Column(unique = true)
     private String name;
     @NotEmpty(message = "author can't blank")
-    @Pattern(regexp = "^([a-vxyA-Z1-9ỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ\\s]+)$", message = "author name without special character")
+    @Pattern(regexp = "^([a-zA-Z'ỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđ\\s]+)$", message = "Author name without special character or number")
     private String author;
     @NotNull(message = "category can't null")
     private BookCategory category;

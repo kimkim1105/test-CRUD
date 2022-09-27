@@ -155,15 +155,19 @@
     <br>
     <div id="order-content">
         <table class="table">
-            <form class="form-inline">
-                <input class="form-control mr-sm-2" type="search" name="key" placeholder="Search by person name or id"
-                       aria-label="Search">
-            </form>
+            <div class="row">
+                <form class="form-inline">
+                    <input class="form-control col-md-8 mr-sm-2" th:value="${key}" type="search" name="key" placeholder="Search by name or person id" aria-label="Search"><br><br>
+                    <br>
+                    <input type="submit" class="btn btn-danger form-control col-md-3" value="search">
+                </form>
+            </div>
+            <br>
 
             <thead>
             <th colspan="3">Order Information</th>
             <th>
-                <button type="button" id="add-order" class="btn btn-success">Add new order</button>
+                <button type="button" id="add-order" class="btn btn-lg btn-success">Add new order</button>
             </th>
             </thead>
             <thead>
@@ -187,7 +191,7 @@
             <p th:if="${orders.content.size()<=0}">No Result, Incorrect information or not existed</p>
             <ul class="nav nav-pills">
                 <li class="nav-item"  th:if="${orders.content.size()>0}" th:each="i:${#numbers.sequence(0,orders.totalPages-1)}">
-                    <a th:href="@{'/orders'(page=${i})}" th:text="${i+1}" class="nav-link"
+                    <a th:href="@{'/orders?key='+${key}(page=${i})}" th:text="${i+1}" class="nav-link"
                        th:classappend="${orders.number}==${i}?'active':''"></a>
                 </li>
             </ul>
@@ -892,11 +896,11 @@
                 data: data,
                 success: function (data) {
                     console.log("add success", data)
-                    str += "add success "+data.book.name + '<br>';
+                    str += '<p style="color: black">add success '+data.book.name+'</p>' + '<br>';
                 }, error: function (data){
                     // console.log("error", data)
                     console.log(data.responseText)
-                    str += data.responseText + '<br>';
+                    str += '<p style="color: red">'+data.responseText+'</p>' + '<br>';
                 }
             })
         }
@@ -934,10 +938,12 @@
                 type: 'PUT',
                 success: function (data) {
                     // console.log("sau khi update", data)
-                    str += "return success "+data.book.name + "<br>"
+                    // str += "return success "+data.book.name + "<br>"
+                    str += '<p style="color: black">return success '+data.book.name+'</p>' + '<br>';
                 }, error: function (data){
                     // console.log("error", data)
-                   str += data.responseText + "<br>";
+                   // str += data.responseText + "<br>";
+                    str += '<p style="color: red">return fail because '+data.responseText+'</p>' + '<br>';
                 }
             })
         }
@@ -975,10 +981,12 @@
                 type: 'PUT',
                 success: function (data) {
                     // console.log("sau khi update", data)
-                    str += "delete success "+data.book.name + "<br>"
+                    // str += "delete success "+data.book.name + "<br>"
+                    str += '<p style="color: black">delete order success'+data.book.name+'</p>' + '<br>';
                 }, error: function (data){
                     // console.log("error", data)
-                    str += data.responseText + "<br>";
+                    // str += data.responseText + "<br>";
+                    str += '<p style="color: red">delete order fail because'+data.responseText+'</p>' + '<br>';
                 }
             })
         }

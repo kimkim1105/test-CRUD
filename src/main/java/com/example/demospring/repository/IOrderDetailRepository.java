@@ -12,8 +12,8 @@ import java.util.Optional;
 
 @Repository
 public interface IOrderDetailRepository extends JpaRepository<OrderDetail,Long> {
-    @Query(value = "select * from order_detail where status = true and order_id = :orderId and date_off is not null", nativeQuery = true)
-    Page<OrderDetail> findAllByOrderCompleted(Long orderId, Pageable pageable);
+    @Query(value = "select * from order_detail where status = true and order_id = :orderId and book_id in (select id from book where concat(name, author,code) like :key) and date_on between :from and :to and date_off is not null", nativeQuery = true)
+    Page<OrderDetail> findAllByOrderCompleted(Long orderId, Pageable pageable, String key, String from, String to);
     @Query(value = "select * from order_detail where status = true and order_id = :orderId and date_off is null", nativeQuery = true)
     Iterable<OrderDetail> findAllInBorrowing(Long orderId);
     @Query(value = "select * from order_detail where date_off is null and status = true and book_id = :book_id and order_id  = :order_id", nativeQuery = true)

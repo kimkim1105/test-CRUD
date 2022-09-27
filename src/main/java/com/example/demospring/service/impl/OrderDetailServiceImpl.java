@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -48,7 +49,18 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
     }
 
     @Override
-    public Page<OrderDetail> findAllByOrderCompleted(Long orderId, Pageable pageable) {
-        return iOrderDetailRepository.findAllByOrderCompleted(orderId, pageable);
+    public Page<OrderDetail> findAllByOrderCompleted(Long orderId, Pageable pageable, String key, String from, String to) {
+        try {
+            key = '%'+key+'%';
+            if (from.isEmpty()){
+                from = "1900-01-01";
+            }
+            if (to.isEmpty()){
+                to = LocalDate.now().toString();
+            }
+            return iOrderDetailRepository.findAllByOrderCompleted(orderId, pageable, key, from, to);
+        }catch (Exception e){
+            return iOrderDetailRepository.findAllByOrderCompleted(orderId, pageable, key, from, to);
+        }
     }
 }

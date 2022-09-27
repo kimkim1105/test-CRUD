@@ -41,12 +41,19 @@ public class OrderController {
 
     @GetMapping
     public String getListOrder(@RequestParam(required = false, name = "key") String key, Model model, @PageableDefault(value = 5) Pageable pageable) {
+        if (key==null){
+            key="";
+        }
+        model.addAttribute("key", key);
         model.addAttribute("orders", iOrderService.findAllWithKey(key, pageable));
         return "order/orderList";
     }
 
     @GetMapping("/history")
     public String getListOrderHistory(@RequestParam(required = false, name = "key") String key, Model model, @PageableDefault(value = 5) Pageable pageable) {
+        if (key==null){
+            key="";
+        }
         model.addAttribute("key", key);
         model.addAttribute("ordersHistory", iOrderService.findAllHistoryWithKey(key, pageable));
         return "order/history";
@@ -55,10 +62,24 @@ public class OrderController {
     @GetMapping("/history-detail/")
     public String getListOrderHistoryDetail(@RequestParam(required = false, name = "key") String key,
                                             @RequestParam(required = false) Long id,
+                                            @RequestParam(required = false, name = "from") String from,
+                                            @RequestParam(required = false, name = "to") String to,
                                             Model model, @PageableDefault(value = 5) Pageable pageable) {
+        if (key==null){
+            key="";
+        }
+        if (from==null){
+            from="";
+        }
+        if (to==null){
+            to="";
+        }
         model.addAttribute("id", id);
+        model.addAttribute("key", key);
+        model.addAttribute("from", from);
+        model.addAttribute("to", to);
         model.addAttribute("person", iOrderService.findById(id).get().getPerson());
-        model.addAttribute("ordersDetail", iOrderDetailService.findAllByOrderCompleted(id, pageable));
+        model.addAttribute("ordersDetail", iOrderDetailService.findAllByOrderCompleted(id,pageable,key,from,to));
         return "order/history-detail";
     }
 
@@ -86,6 +107,20 @@ public class OrderController {
             return new ResponseEntity<>("Not found", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(iOrderService.findById(id).get(), HttpStatus.OK);
+    }
+        @GetMapping("/person-borrow/{id}")
+    public ResponseEntity<?> findAllByPersonAndDateOffNull(@PathVariable Long id){
+        if (iOrderService.findAllByPersonAndDateOffNull(id).iterator().hasNext()){
+            return new ResponseEntity<>("existed", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("ok", HttpStatus.OK);
+    }
+    @GetMapping("/book/{id}")
+    public ResponseEntity<?> findAllByBookAndDateOffNull(@PathVariable Long id){
+        if (iOrderService.findAllByBookAndDateOffNull(id).iterator().hasNext()){
+            return new ResponseEntity<>("existed", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 
 }

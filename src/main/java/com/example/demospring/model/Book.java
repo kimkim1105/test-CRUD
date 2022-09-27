@@ -10,9 +10,9 @@ import javax.persistence.*;
         @UniqueConstraint(columnNames = {
                 "code"
         }),
-        @UniqueConstraint(columnNames = {
-                "name"
-        })
+//        @UniqueConstraint(columnNames = {
+//                "name"
+//        })
 })
 public class Book {
     @Id

@@ -148,17 +148,25 @@
 <th:block th:replace="share/header :: header"></th:block>
 <div class="container" th:fragment="content">
     <div>
-        <h1 style="text-align: center; margin: 0">Manage Order Information</h1>
+        <h1 style="text-align: center; margin: 0">Manage Order History Information</h1>
     </div>
     <hr>
     <br>
     <br>
     <div id="order-content">
         <table class="table">
-            <form class="form-inline">
-                <input class="form-control mr-sm-2" type="search" name="key" placeholder="Search by person name or id"
-                       aria-label="Search">
-            </form>
+            <div class="row">
+                <form class="form-inline">
+                    <input class="form-control col-md-8 mr-sm-2" th:value="${key}" type="search" name="key" placeholder="Search by name or person id" aria-label="Search"><br><br>
+                    <br>
+                    <input type="submit" class="btn btn-danger form-control col-md-3" value="search">
+                </form>
+            </div>
+            <br>
+<!--            <form class="form-inline">-->
+<!--                <input class="form-control mr-sm-2" type="search" name="key" placeholder="Search by person name or id"-->
+<!--                       aria-label="Search">-->
+<!--            </form>-->
 
             <thead>
             <th colspan="3">Order Information</th>
@@ -185,7 +193,7 @@
         <div>
             <p th:if="${ordersHistory.content.size()<=0}">No Result, Incorrect information or not existed</p>
             <ul class="nav nav-pills">
-                <li class="nav-item" th:each="i:${#numbers.sequence(0,ordersHistory.totalPages-1)}">
+                <li class="nav-item"  th:if="${ordersHistory.content.size()>0}" th:each="i:${#numbers.sequence(0,ordersHistory.totalPages-1)}">
                     <a th:href="@{'/orders/history?key='+${key}(page=${i})}" th:text="${i+1}" class="nav-link"
                        th:classappend="${ordersHistory.number}==${i}?'active':''"></a>
                 </li>
