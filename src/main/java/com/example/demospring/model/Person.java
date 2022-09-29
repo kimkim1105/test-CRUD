@@ -19,6 +19,8 @@ public class Person {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
+//    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "id_Sequence")
+//    @SequenceGenerator(name = "id_Sequence", sequenceName = "ID_SEQ")
     private Long id;
     @NotNull
     @NotEmpty
@@ -38,7 +40,7 @@ public class Person {
     private LocalDate dateOfBirth;
     @Lob
     private String avatar;
-    private boolean typeAction;
+//    private boolean typeAction;
     @ManyToOne
     @NotNull
     private Classify classify;
@@ -118,13 +120,13 @@ public class Person {
         this.avatar = avatar;
     }
 
-    public boolean isTypeAction() {
-        return typeAction;
-    }
-
-    public void setTypeAction(boolean typeAction) {
-        this.typeAction = typeAction;
-    }
+//    public boolean isTypeAction() {
+//        return typeAction;
+//    }
+//
+//    public void setTypeAction(boolean typeAction) {
+//        this.typeAction = typeAction;
+//    }
 
     public Classify getClassify() {
         return classify;

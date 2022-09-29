@@ -10,13 +10,15 @@ import javax.persistence.*;
         @UniqueConstraint(columnNames = {
                 "code"
         }),
-//        @UniqueConstraint(columnNames = {
-//                "name"
-//        })
+        @UniqueConstraint(columnNames = {
+                "name"
+        })
 })
 public class Book {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
+//    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "id_Sequence")
+//    @SequenceGenerator(name = "id_Sequence", sequenceName = "ID_SEQ")
     private Long id;
     @NotNull
     private String code;

@@ -13,6 +13,8 @@ import java.util.Collection;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "id_Sequence")
+//    @SequenceGenerator(name = "id_Sequence", sequenceName = "ID_SEQ")
     private Long id;
     @OneToOne
     private Person person;

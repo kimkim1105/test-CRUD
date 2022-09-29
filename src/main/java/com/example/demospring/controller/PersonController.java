@@ -127,7 +127,7 @@ public class PersonController {
         person.setPhone(personDTO.getPhone());
         person.setDateOfBirth(personDTO.getDateOfBirth());
         person.setAvatar("");
-        person.setTypeAction(false);
+//        person.setTypeAction(false);
         Optional<Classify> classifyOptional = iClassifyService.findById(personDTO.getClassify().getId());
         person.setClassify(classifyOptional.get());
         Optional<Person> personOptional = iPersonService.getLastestPerson();
@@ -161,9 +161,9 @@ public class PersonController {
             return new ResponseEntity<>("not found", HttpStatus.NOT_FOUND);
         }
         Person personOptional = iPersonService.findById(id).get();
-        if (personOptional.isTypeAction()){
-            return new ResponseEntity<>("Person in borrowing, can't edit",HttpStatus.OK);
-        }
+//        if (personOptional.isTypeAction()){
+//            return new ResponseEntity<>("Person in borrowing, can't edit",HttpStatus.OK);
+//        }
         if (bindingResult.hasErrors()){
             Map<String, String> errors= new HashMap<>();
 
@@ -193,7 +193,7 @@ public class PersonController {
         personOptional.setPhone(personDTO.getPhone());
         personOptional.setDateOfBirth(personDTO.getDateOfBirth());
         personOptional.setAvatar("");
-        personOptional.setTypeAction(false);
+//        personOptional.setTypeAction(false);
         Optional<Classify> classifyOptional = iClassifyService.findById(personDTO.getClassify().getId());
         personOptional.setClassify(classifyOptional.get());
         return new ResponseEntity<>(iPersonService.save(personOptional),HttpStatus.OK);
@@ -202,9 +202,9 @@ public class PersonController {
     @PutMapping("/{id}")
     public ResponseEntity<?> deletePerson(@PathVariable Long id){
         Person personOptional = iPersonService.findById(id).get();
-        if (personOptional.isTypeAction()){
-            return new ResponseEntity<>("Person in borrowing, can't delete",HttpStatus.OK);
-        }
+//        if (personOptional.isTypeAction()){
+//            return new ResponseEntity<>("Person in borrowing, can't delete",HttpStatus.OK);
+//        }
         iPersonService.remove(personOptional.getId());
         return new ResponseEntity<>(iPersonService.save(personOptional),HttpStatus.OK);
     }
