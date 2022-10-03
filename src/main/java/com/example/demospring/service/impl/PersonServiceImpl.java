@@ -1,6 +1,7 @@
 package com.example.demospring.service.impl;
 
 import com.example.demospring.model.Person;
+import com.example.demospring.model.dto.PersonDTO;
 import com.example.demospring.repository.IPersonRepository;
 import com.example.demospring.service.IPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -68,6 +70,23 @@ public class PersonServiceImpl implements IPersonService {
     @Override
     public Iterable<Person> findAllPersonInFree() {
         return iPersonRepository.findAllPersonInFree();
+    }
+
+    @Override
+    public String addNewPerson(PersonDTO personDTO) {
+        return iPersonRepository.addNewPerson(personDTO.getAddress(), personDTO.getAvatar(), personDTO.getDateOfBirth(),
+                personDTO.isGender(),personDTO.getName(),personDTO.getPhone(), personDTO.getClassify().getId());
+    }
+
+    @Override
+    public String updatePerson(Long id, PersonDTO personDTO) {
+        return iPersonRepository.updatePerson(personDTO.getAddress(), personDTO.getAvatar(), personDTO.getDateOfBirth(),
+                personDTO.isGender(),personDTO.getName(),personDTO.getPhone(), personDTO.getClassify().getId(), id);
+    }
+
+    @Override
+    public String deletPerson(Long id) {
+        return iPersonRepository.deletePerson(id);
     }
 
     @Override

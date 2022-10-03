@@ -1,9 +1,12 @@
 package com.example.demospring.service;
 
 import com.example.demospring.model.Person;
+import com.example.demospring.model.dto.PersonDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Optional;
 
 public interface IPersonService extends IGeneralService<Person> {
@@ -15,4 +18,7 @@ public interface IPersonService extends IGeneralService<Person> {
     Iterable<Person> findAllByNameContainingAndStatusIsTrue(String name);
     Iterable<Person> findPersonWithKeyBorroed(String key);
     Iterable<Person> findAllPersonInFree();
+    String addNewPerson(PersonDTO personDTO);
+    String updatePerson(Long id, PersonDTO personDTO);
+    String deletPerson(Long id);
 }

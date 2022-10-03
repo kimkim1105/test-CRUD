@@ -74,4 +74,15 @@ public class BookDTO {
     public void setCategory(BookCategory category) {
         this.category = category;
     }
+
+    @Override
+    public String toString() {
+        return "BookDTO{" +
+                "code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", author='" + author + '\'' +
+                ", category=" + category.getId() +
+                ", inStock='" + inStock + '\'' +
+                '}';
+    }
 }

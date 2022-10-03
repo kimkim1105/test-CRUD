@@ -2,6 +2,7 @@ package com.example.demospring.model;
 
 
 import com.sun.istack.NotNull;
+import jdk.jfr.Enabled;
 
 import javax.persistence.*;
 
@@ -9,10 +10,38 @@ import javax.persistence.*;
 @Table(name = "book", uniqueConstraints = {
         @UniqueConstraint(columnNames = {
                 "code"
-        }),
-        @UniqueConstraint(columnNames = {
-                "name"
         })
+//        @UniqueConstraint(columnNames = {
+//                "name"
+//        })
+})
+@NamedStoredProcedureQueries({
+        @NamedStoredProcedureQuery(name = "addNewBook",
+                procedureName = "BOOK_CRUD_PKG.addNewBook",
+                parameters = {
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_author", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_code", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_inStock", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_name", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_category_id", type = Long.class),
+                        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "v_result", type = String.class),
+                }),
+        @NamedStoredProcedureQuery(name = "updateBook",
+                procedureName = "BOOK_CRUD_PKG.updateBook",
+                parameters = {
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_author", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_name", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_category_id", type = Long.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_book_id", type = Long.class),
+                        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "v_result", type = String.class),
+                }),
+        @NamedStoredProcedureQuery(name = "deleteBook",
+                procedureName = "BOOK_CRUD_PKG.deleteBook",
+                parameters = {
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_book_id", type = Long.class),
+                        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "v_result", type = String.class),
+                })
+
 })
 public class Book {
     @Id

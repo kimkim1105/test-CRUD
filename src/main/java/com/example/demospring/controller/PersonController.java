@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -75,6 +76,7 @@ public class PersonController {
         }
         return new ResponseEntity<>(iPersonService.findPersonWithKey(key,from,to),HttpStatus.OK);
     }
+
     @GetMapping("/free")
     public ResponseEntity<?> getAllPersonInFree(@RequestParam(required = false, name = "key") String key){
         return new ResponseEntity<>(iPersonService.findPersonWithKeyBorroed(key),HttpStatus.OK);
@@ -97,115 +99,142 @@ public class PersonController {
         }
         return new ResponseEntity<>(iPersonService.findById(id),HttpStatus.OK);
     }
-    @PostMapping
-    public ResponseEntity<?> addNewPerson(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
-            Map<String, String> errors= new HashMap<>();
-
-            bindingResult.getFieldErrors().forEach(
-                    error -> errors.put(error.getField(), error.getDefaultMessage())
-            );
-
-            String errorMsg= "";
-
-            for(String key: errors.keySet()){
-                errorMsg+= "error in: " + key + ", by: " + errors.get(key) + "\n";
-            }
-//            if (iPersonService.findPersonByPhone(personDTO.getPhone()).isPresent()){
-//                errorMsg+= "phone existed";
+//    @PostMapping
+//    public ResponseEntity<?> addNewPerson(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult){
+//        if (bindingResult.hasErrors()){
+//            Map<String, String> errors= new HashMap<>();
+//
+//            bindingResult.getFieldErrors().forEach(
+//                    error -> errors.put(error.getField(), error.getDefaultMessage())
+//            );
+//
+//            String errorMsg= "";
+//
+//            for(String key: errors.keySet()){
+//                errorMsg+= "error in: " + key + ", by: " + errors.get(key) + "\n";
 //            }
-            return new ResponseEntity<>(errorMsg,HttpStatus.OK);
+////            if (iPersonService.findPersonByPhone(personDTO.getPhone()).isPresent()){
+////                errorMsg+= "phone existed";
+////            }
+//            return new ResponseEntity<>(errorMsg,HttpStatus.OK);
+//        }
+//        if (iPersonService.findPersonByPhone(personDTO.getPhone()).isPresent()){
+//            return new ResponseEntity<>("phone existed", HttpStatus.OK);
+//        }
+//        Person person = new Person();
+//        person.setName(personDTO.getName());
+//        person.setGender(personDTO.isGender());
+//        person.setStatus(true);
+//        person.setAddress(personDTO.getAddress());
+//        person.setPhone(personDTO.getPhone());
+//        person.setDateOfBirth(personDTO.getDateOfBirth());
+//        person.setAvatar("");
+////        person.setTypeAction(false);
+//        Optional<Classify> classifyOptional = iClassifyService.findById(personDTO.getClassify().getId());
+//        person.setClassify(classifyOptional.get());
+//        Optional<Person> personOptional = iPersonService.getLastestPerson();
+//        StringBuffer personCode = new StringBuffer();
+//        Long lastId;
+//        if (personOptional.isPresent()){
+//            lastId = personOptional.get().getId();
+//        }else {
+//            lastId = 0L;
+//        }
+//        String format = String.format("%05d",(lastId+1));
+//        String month = String.format("%02d",LocalDate.now().getMonth().getValue());
+//        String year = String.valueOf(LocalDate.now().getYear()).substring(2);
+//        String classifyCode = classifyOptional.get().getCode();
+//        personCode.append(year);
+//        personCode.append(month);
+//        personCode.append(classifyCode);
+//        personCode.append(format);
+//        person.setCode(personCode.toString());
+//        Order order = new Order();
+//        order.setBookSize(0);
+//        order.setBookReturn(0);
+//        order.setPerson(iPersonService.save(person));
+//        iOrderService.save(order);
+//        return new ResponseEntity<>(iPersonService.save(person),HttpStatus.OK);
+//    }
+
+    @PostMapping
+    public ResponseEntity<?> addNewPerson (@RequestBody PersonDTO personDTO){
+        String rs = iPersonService.addNewPerson(personDTO);
+        if (rs.equalsIgnoreCase("success")){
+            return new ResponseEntity<>(iPersonService.findPersonByPhone(personDTO.getPhone()),HttpStatus.OK);
         }
-        if (iPersonService.findPersonByPhone(personDTO.getPhone()).isPresent()){
-            return new ResponseEntity<>("phone existed", HttpStatus.OK);
-        }
-        Person person = new Person();
-        person.setName(personDTO.getName());
-        person.setGender(personDTO.isGender());
-        person.setStatus(true);
-        person.setAddress(personDTO.getAddress());
-        person.setPhone(personDTO.getPhone());
-        person.setDateOfBirth(personDTO.getDateOfBirth());
-        person.setAvatar("");
-//        person.setTypeAction(false);
-        Optional<Classify> classifyOptional = iClassifyService.findById(personDTO.getClassify().getId());
-        person.setClassify(classifyOptional.get());
-        Optional<Person> personOptional = iPersonService.getLastestPerson();
-        StringBuffer personCode = new StringBuffer();
-        Long lastId;
-        if (personOptional.isPresent()){
-            lastId = personOptional.get().getId();
-        }else {
-            lastId = 0L;
-        }
-        String format = String.format("%05d",(lastId+1));
-        String month = String.format("%02d",LocalDate.now().getMonth().getValue());
-        String year = String.valueOf(LocalDate.now().getYear()).substring(2);
-        String classifyCode = classifyOptional.get().getCode();
-        personCode.append(year);
-        personCode.append(month);
-        personCode.append(classifyCode);
-        personCode.append(format);
-        person.setCode(personCode.toString());
-        Order order = new Order();
-        order.setBookSize(0);
-        order.setBookReturn(0);
-        order.setPerson(iPersonService.save(person));
-        iOrderService.save(order);
-        return new ResponseEntity<>(iPersonService.save(person),HttpStatus.OK);
+        return new ResponseEntity<>(rs,HttpStatus.OK);
     }
 
     @PutMapping
-    public ResponseEntity<?> editPerson(@RequestParam Long id, @RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult){
-        if (!iPersonService.findById(id).isPresent()||!iPersonService.findById(id).get().isStatus()){
-            return new ResponseEntity<>("not found", HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> editPerson(@RequestParam Long id, @RequestBody PersonDTO personDTO){
+        String rs = iPersonService.updatePerson(id, personDTO);
+        if (rs.equalsIgnoreCase("success")){
+            return new ResponseEntity<>(iPersonService.findById(id),HttpStatus.OK);
         }
-        Person personOptional = iPersonService.findById(id).get();
-//        if (personOptional.isTypeAction()){
-//            return new ResponseEntity<>("Person in borrowing, can't edit",HttpStatus.OK);
-//        }
-        if (bindingResult.hasErrors()){
-            Map<String, String> errors= new HashMap<>();
-
-            bindingResult.getFieldErrors().forEach(
-                    error -> errors.put(error.getField(), error.getDefaultMessage())
-            );
-
-            String errorMsg= "";
-
-            for(String key: errors.keySet()){
-                errorMsg+= "error in: " + key + ", by: " + errors.get(key) + "\n";
-            }
-
-            return new ResponseEntity<>(errorMsg,HttpStatus.OK);
-        }
-        if (personOptional.getPhone().equals(personDTO.getPhone())){
-            personOptional.setPhone(personDTO.getPhone());
-        }else {
-            if (iPersonService.findPersonByPhone(personDTO.getPhone()).isPresent()){
-                return new ResponseEntity<>(" phone existed", HttpStatus.OK);
-            }
-        }
-        personOptional.setName(personDTO.getName());
-        personOptional.setGender(personDTO.isGender());
-        personOptional.setStatus(true);
-        personOptional.setAddress(personDTO.getAddress());
-        personOptional.setPhone(personDTO.getPhone());
-        personOptional.setDateOfBirth(personDTO.getDateOfBirth());
-        personOptional.setAvatar("");
-//        personOptional.setTypeAction(false);
-        Optional<Classify> classifyOptional = iClassifyService.findById(personDTO.getClassify().getId());
-        personOptional.setClassify(classifyOptional.get());
-        return new ResponseEntity<>(iPersonService.save(personOptional),HttpStatus.OK);
+        return new ResponseEntity<>(rs,HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> deletePerson(@PathVariable Long id){
-        Person personOptional = iPersonService.findById(id).get();
-//        if (personOptional.isTypeAction()){
-//            return new ResponseEntity<>("Person in borrowing, can't delete",HttpStatus.OK);
-//        }
-        iPersonService.remove(personOptional.getId());
-        return new ResponseEntity<>(iPersonService.save(personOptional),HttpStatus.OK);
+        String rs = iPersonService.deletPerson(id);
+        if (rs.equalsIgnoreCase("success")){
+            return new ResponseEntity<>(iPersonService.findById(id),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(rs,HttpStatus.OK);
     }
+
+//    @PutMapping
+//    public ResponseEntity<?> editPerson(@RequestParam Long id, @RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult){
+//        if (!iPersonService.findById(id).isPresent()||!iPersonService.findById(id).get().isStatus()){
+//            return new ResponseEntity<>("not found", HttpStatus.NOT_FOUND);
+//        }
+//        Person personOptional = iPersonService.findById(id).get();
+////        if (personOptional.isTypeAction()){
+////            return new ResponseEntity<>("Person in borrowing, can't edit",HttpStatus.OK);
+////        }
+//        if (bindingResult.hasErrors()){
+//            Map<String, String> errors= new HashMap<>();
+//
+//            bindingResult.getFieldErrors().forEach(
+//                    error -> errors.put(error.getField(), error.getDefaultMessage())
+//            );
+//
+//            String errorMsg= "";
+//
+//            for(String key: errors.keySet()){
+//                errorMsg+= "error in: " + key + ", by: " + errors.get(key) + "\n";
+//            }
+//
+//            return new ResponseEntity<>(errorMsg,HttpStatus.OK);
+//        }
+//        if (personOptional.getPhone().equals(personDTO.getPhone())){
+//            personOptional.setPhone(personDTO.getPhone());
+//        }else {
+//            if (iPersonService.findPersonByPhone(personDTO.getPhone()).isPresent()){
+//                return new ResponseEntity<>(" phone existed", HttpStatus.OK);
+//            }
+//        }
+//        personOptional.setName(personDTO.getName());
+//        personOptional.setGender(personDTO.isGender());
+//        personOptional.setStatus(true);
+//        personOptional.setAddress(personDTO.getAddress());
+//        personOptional.setPhone(personDTO.getPhone());
+//        personOptional.setDateOfBirth(personDTO.getDateOfBirth());
+//        personOptional.setAvatar("");
+////        personOptional.setTypeAction(false);
+//        Optional<Classify> classifyOptional = iClassifyService.findById(personDTO.getClassify().getId());
+//        personOptional.setClassify(classifyOptional.get());
+//        return new ResponseEntity<>(iPersonService.save(personOptional),HttpStatus.OK);
+//    }
+
+//    @PutMapping("/{id}")
+//    public ResponseEntity<?> deletePerson(@PathVariable Long id){
+//        Person personOptional = iPersonService.findById(id).get();
+////        if (personOptional.isTypeAction()){
+////            return new ResponseEntity<>("Person in borrowing, can't delete",HttpStatus.OK);
+////        }
+//        iPersonService.remove(personOptional.getId());
+//        return new ResponseEntity<>(iPersonService.save(personOptional),HttpStatus.OK);
+//    }
 }

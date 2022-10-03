@@ -2,6 +2,8 @@ package com.example.demospring.service.impl;
 
 import com.example.demospring.model.Order;
 import com.example.demospring.model.OrderDetail;
+import com.example.demospring.model.Person;
+import com.example.demospring.model.dto.OrderDetailDTO;
 import com.example.demospring.repository.IOrderDetailRepository;
 import com.example.demospring.service.IOrderDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,5 +64,25 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
         }catch (Exception e){
             return iOrderDetailRepository.findAllByOrderCompleted(orderId, pageable, key, from, to);
         }
+    }
+
+    @Override
+    public String addNewOrderDetail(OrderDetailDTO orderDetailDTO) {
+        return iOrderDetailRepository.addNewOrderDetail(orderDetailDTO.getBook().getId(), orderDetailDTO.getOrder().getId());
+    }
+
+    @Override
+    public String returnOrderDetail(Long id) {
+        return iOrderDetailRepository.returnOrderDetail(id);
+    }
+
+    @Override
+    public String deleteOrderDetail(Long id) {
+        return iOrderDetailRepository.deleteOrderDetail(id);
+    }
+
+    @Override
+    public Optional<Person> getLastestOrderDetail() {
+        return iOrderDetailRepository.getLastestOrderDetail();
     }
 }

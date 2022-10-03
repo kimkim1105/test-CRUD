@@ -5,12 +5,31 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
 
 @Repository
 public interface IPersonRepository extends JpaRepository<Person, Long> {
+    @Procedure(name = "addNewPerson")
+    String addNewPerson(@Param("v_address") String v_address, @Param("v_avatar") String v_avatar, @Param("v_dob") LocalDate v_dob,
+                      @Param("v_gender") Boolean v_gender, @Param("v_name") String v_name,
+                      @Param("v_phone") String v_phone, @Param("v_classify_id") Long v_classify_id);
+
+    @Procedure(name = "updatePerson")
+    String updatePerson(@Param("v_address") String v_address, @Param("v_avatar") String v_avatar, @Param("v_dob") LocalDate v_dob,
+                      @Param("v_gender") Boolean v_gender, @Param("v_name") String v_name,
+                      @Param("v_phone") String v_phone, @Param("v_classify_id") Long v_classify_id,@Param("v_person_id") Long v_person_id);
+
+    @Procedure(name = "deletePerson")
+    String deletePerson(@Param("v_person_id") Long v_person_id);
+
+
     Iterable<Person> findAllByStatusIsTrueOrderByIdDesc();
     @Query(value = "select * from person where status = true and type_action= false order by id desc", nativeQuery = true)
     Iterable<Person> findAllPersonInFree();

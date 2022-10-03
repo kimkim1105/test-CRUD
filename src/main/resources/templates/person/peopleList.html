@@ -32,6 +32,7 @@
 </head>
 <body>
 <th:block th:replace="share/header :: header"></th:block>
+
 <div class="container" th:fragment="content">
     <div>
         <h1 style="text-align: center; margin: 0">Manage Person Information</h1>
@@ -710,19 +711,20 @@ function getDeletePersonInfo(){
     function addNewPerson(){
         let name = $('#add-person-name').val();
         let genderId = $('#add-person-gender').val();
-        let gender;
-        if (genderId==1){
-            gender = true
-        }else {
-            gender = false
-        }
+        // let gender;
+        // if (genderId==1){
+        //     gender = true
+        // }else {
+        //     gender = false
+        // }
         let classifyId = $('#add-person-classify').val();
         let dob = $('#add-person-dob').val();
         let phone = $('#add-person-phone').val();
         let address = $('#add-person-address').val();
         let obj = {
             "name": name,
-            "gender": gender,
+            // "gender": gender,
+            "gender": genderId,
             "address":address,
             "phone": phone,
             "dateOfBirth": dob,
@@ -756,19 +758,20 @@ function editPerson(){
     let id = $('#add-person-id').val();
     let name = $('#add-person-name').val();
     let genderId = $('#add-person-gender').val();
-    let gender;
-    if (genderId==1){
-        gender = true
-    }else {
-        gender = false
-    }
+    // let gender;
+    // if (genderId==1){
+    //     gender = true
+    // }else {
+    //     gender = false
+    // }
     let classifyId = $('#add-person-classify').val();
     let dob = $('#add-person-dob').val();
     let phone = $('#add-person-phone').val();
     let address = $('#add-person-address').val();
     let obj = {
         "name": name,
-        "gender": gender,
+        // "gender": gender,
+        "gender": genderId,
         "address":address,
         "phone": phone,
         "dateOfBirth": dob,

@@ -1,6 +1,7 @@
 package com.example.demospring.service.impl;
 
 import com.example.demospring.model.Book;
+import com.example.demospring.model.dto.BookDTO;
 import com.example.demospring.repository.IBookRepository;
 import com.example.demospring.service.IBookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,5 +104,20 @@ iBookRepository.findById(id).get().setStatus(false);
     @Override
     public Iterable<Book> findAllBookInFree() {
         return iBookRepository.findAllBookInFree();
+    }
+
+    @Override
+    public String addNewBook(BookDTO bookDTO) {
+        return iBookRepository.addNewBook(bookDTO.getAuthor(),bookDTO.getCode(),bookDTO.getInStock(),bookDTO.getName(),bookDTO.getCategory().getId());
+    }
+
+    @Override
+    public String updateBook(Long id, BookDTO bookDTO) {
+        return iBookRepository.updateBook(bookDTO.getAuthor(), bookDTO.getName(),bookDTO.getCategory().getId(),id );
+    }
+
+    @Override
+    public String deleteBook(Long id) {
+        return iBookRepository.deletBook(id);
     }
 }

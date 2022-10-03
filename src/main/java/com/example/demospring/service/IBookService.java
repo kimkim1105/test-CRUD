@@ -1,6 +1,7 @@
 package com.example.demospring.service;
 
 import com.example.demospring.model.Book;
+import com.example.demospring.model.dto.BookDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,4 +17,7 @@ public interface IBookService extends IGeneralService<Book> {
     Iterable<Book> findAllByNameContainingAndStatusIsTrue(String name);
     Iterable<Book> findBookWithKeyBorroed(String key);
     Iterable<Book> findAllBookInFree();
+    String addNewBook(BookDTO bookDTO);
+    String updateBook(Long id, BookDTO bookDTO);
+    String deleteBook(Long id);
 }
