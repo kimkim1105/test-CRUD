@@ -74,13 +74,13 @@ public class PersonServiceImpl implements IPersonService {
 
     @Override
     public String addNewPerson(PersonDTO personDTO) {
-        return iPersonRepository.addNewPerson(personDTO.getAddress(), personDTO.getAvatar(), personDTO.getDateOfBirth(),
+        return iPersonRepository.addNewPerson(personDTO.getAddress(), personDTO.getDateOfBirth(),
                 personDTO.isGender(),personDTO.getName(),personDTO.getPhone(), personDTO.getClassify().getId());
     }
 
     @Override
     public String updatePerson(Long id, PersonDTO personDTO) {
-        return iPersonRepository.updatePerson(personDTO.getAddress(), personDTO.getAvatar(), personDTO.getDateOfBirth(),
+        return iPersonRepository.updatePerson(personDTO.getAddress(), personDTO.getDateOfBirth(),
                 personDTO.isGender(),personDTO.getName(),personDTO.getPhone(), personDTO.getClassify().getId(), id);
     }
 
@@ -110,16 +110,19 @@ public class PersonServiceImpl implements IPersonService {
     }
 
     @Override
-    public Page<Person> findAllWithKey(String key, String from, String to, Pageable pageable) {
+    public Page<Person> findAllWithKey(String key, String fromDate, String toDate, Pageable pageable) {
         try {
             key = '%'+key+'%';
-            if (from.isEmpty()){
-                from = "1900-01-01";
+            if (fromDate.isEmpty()){
+                fromDate = "1900-01-01";
             }
-            if (to.isEmpty()){
-                to = LocalDate.now().toString();
+            if (toDate.isEmpty()){
+                toDate = LocalDate.now().toString();
             }
-                return iPersonRepository.findAllWithKey(key, from, to, pageable);
+
+            System.out.println("fromDate: "+ fromDate);
+            System.out.println("toDate: "+ toDate);
+                return iPersonRepository.findAllWithKey(key, fromDate, toDate, pageable);
         }catch (Exception e){
             return iPersonRepository.findAllByStatusIsTrueOrderByIdDesc(pageable);
         }

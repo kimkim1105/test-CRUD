@@ -29,18 +29,21 @@ public interface IBookRepository extends JpaRepository<Book,Long> {
 //    Integer addNewBook(String v_author, String v_code, String v_inStock, String v_name, Long v_category_id);
 
     Iterable<Book> findAllByStatusIsTrueOrderByIdDesc();
-    @Query(value = "select * from book where status = true and in_stock>0 order by id desc", nativeQuery = true)
+    @Query(value = "select * from book where status = 1 and in_stock>0 order by id desc", nativeQuery = true)
 
     Iterable<Book> findAllBookInFree();
     Page<Book> findAllByStatusIsTrueOrderByIdDesc(Pageable pageable);
-    @Query(value = "select * from book where status = true and concat(name,code,author) like :key order by id desc",nativeQuery = true)
+//    @Query(value = "select * from book where status = true and concat(name,code,author) like :key order by id desc",nativeQuery = true)
+    @Query(value = "select * from book where status = 1 and lower(concat(concat(name,code),author)) like lower(:key) order by id desc",nativeQuery = true)
     Page<Book> findAllWithKey(String key, Pageable pageable);
-    @Query(value = "select * from book where status = true and concat(name,code,author) like :key and category_id = :category_id order by id desc",nativeQuery = true)
+//    @Query(value = "select * from book where status = true and concat(name,code,author) like :key and category_id = :category_id order by id desc",nativeQuery = true)
+    @Query(value = "select * from book where status = 1 and lower(concat(concat(name,code),author)) like lower(:key) and category_id = :category_id order by id desc",nativeQuery = true)
     Page<Book> findAllWithKeyAndCategory(String key,Long category_id, Pageable pageable);
 //    @Query(value = "select * from book where status = true and concat(name,code,author) like :key order by id desc",nativeQuery = true)
-    @Query(value = "SELECT * FROM BOOK WHERE STATUS =1 AND CODE LIKE (:key) ORDER BY ID DESC",nativeQuery = true)
+    @Query(value = "SELECT * FROM BOOK WHERE STATUS =1 AND lower(concat(concat(name,code),author)) LIKE lower(:key) ORDER BY ID DESC",nativeQuery = true)
     Iterable<Book> findBookWithKey(String key);
-    @Query(value = "select * from book where status = true and concat(name,code,author) like :key and category_id = :category_id order by id desc",nativeQuery = true)
+//    @Query(value = "select * from book where status = true and concat(name,code,author) like :key and category_id = :category_id order by id desc",nativeQuery = true)
+    @Query(value = "select * from book where status = true and lower(concat(concat(name,code),author)) like lower(:key) and category_id = :category_id order by id desc",nativeQuery = true)
     Iterable<Book> findBookWithKeyAndCategory(String key,Long category_id);
     @Query(value = "select * from book where id = (select max(id) from book)", nativeQuery = true)
     Optional<Book> getLastestBook();
@@ -48,6 +51,7 @@ public interface IBookRepository extends JpaRepository<Book,Long> {
     Iterable<Book> findAllByName(String string);
     Optional<Book> findBookByCode(String code);
     Iterable<Book> findAllByNameContainingAndStatusIsTrue(String name);
-    @Query(value = "select * from book where status = true and in_stock>0 and concat(name,code,author) like :key order by id desc",nativeQuery = true)
+//    @Query(value = "select * from book where status = true and in_stock>0 and concat(name,code,author) like :key order by id desc",nativeQuery = true)
+    @Query(value = "select * from book where status = 1 and in_stock>0 and lower(concat(concat(name,code),author)) like lower(:key) order by id desc",nativeQuery = true)
     Iterable<Book> findBookWithKeyBorroed(String key);
 }

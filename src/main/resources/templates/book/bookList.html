@@ -79,7 +79,7 @@
             <thead>
             <th colspan="5">Book Information</th>
             <th>
-                <button type="button" id="add-book" class="btn btn-lg btn-success">Add new book</button>
+                <button type="button" id="add-book"  data-toggle="modal" data-target="#addBookModal" onclick="addNewBookForm()" class="btn btn-lg btn-success">Add new book</button>
             </th>
             </thead>
             <thead>
@@ -90,6 +90,7 @@
                 <th scope="col">Author</th>
                 <th scope="col">Category</th>
                 <th scope="col">Quantity</th>
+                <th colspan="2" scope="col">Action</th>
             </tr>
             </thead>
             <tbody>
@@ -100,8 +101,8 @@
                 <td th:utext="${b.author}"></td>
                 <td th:utext="${b.category.category}"></td>
                 <td th:utext="${b.inStock}"></td>
-                <!--                            <td><a class="btn btn-primary">Quick act</a></td>-->
-
+                <td><a data-toggle="modal" data-target="#viewBookModal" th:onclick="'showDetail('+${b.id}+')'"  class="btn btn-primary">View/Edit</a></td>
+                <td><a data-toggle="modal" data-target="#deletebookModal" th:onclick="'getDeletebookInfo('+${b.id}+')'"  class="btn btn-danger">Delete</a></td>
                 <!--            <td><a th:href="@{/books/findById/(id=${book.id})}" class="btn btn-danger" id="deleteButton">Delete</a></td>-->
             </tr>
             </tbody>
@@ -115,6 +116,22 @@
                        class="nav-link" th:classappend="${books.number}==${i}?'active':''"></a>
                 </li>
             </ul>
+        </div>
+    </div>
+</div>
+
+<!-- add Modal -->
+<div class="modal fade" id="addBookModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBookModalLabel">Add new book form</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="add-book-add-modal"></div>
         </div>
     </div>
 </div>
@@ -140,6 +157,23 @@
         </div>
     </div>
 </div>
+
+<!-- view Modal -->
+<div class="modal fade" id="viewBookModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewBookModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="add-book-view-modal"></div>
+        </div>
+    </div>
+</div>
+
 
 <!-- show edit Modal -->
 <div class="modal fade" id="editbookModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -180,7 +214,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <a type="button" data-toggle="modal" data-target="#confirmModal" onclick="deletebook()"
+                <a type="button" id="delete-book-cf-btn" data-toggle="modal" data-target="#confirmModal" onclick="deletebook()"
                    data-dismiss="modal" class="btn btn-primary">Confirm</a>
             </div>
         </div>
@@ -214,6 +248,7 @@
 
 
 <script th:inline="javascript">
+    let id_action;
     let checkBookCode;
     let checkBookName;
     let checkBookInStock;
@@ -224,9 +259,10 @@
         document.getElementsByName("category_id").selected = false;
     }
 
-    $(document).ready(function () {
+    $(document).ready(function () {   })
         //show form add book
-        $('#add-book').on('click', function (event) {
+    function addNewBookForm() {
+        // $('#add-book').on('click', function (event) {
             let str = "";
             // event.preventDefault();
             str += '<div class="login d-flex align-items-center py-5">\n ' +
@@ -282,9 +318,9 @@
                 '   </div>\n' +
                 '  </div>\n' +
                 '</div>'
-            $('#book-content').html(str);
-        })
-    })
+            $('#add-book-add-modal').html(str);
+    }
+
 
     // show detail book form
     function showDetail(id) {
@@ -303,7 +339,7 @@
                     '            <input type="text" disabled value="' + data.id + '" hidden id="add-book-id" class="form-control" >\n' +
                     '<div class="row no-gutters">\n' +
                     '  <div class="col-12 col-sm-6 col-md-10"><h3 class="login-heading mb-4">Book Information</h3></div>\n' +
-                    '  <div class="col-6 col-md-2"><a type="button" class="btn btn-primary" style="margin-inline-end: auto; text-align: right" data-toggle="" data-target="" id="showEdit" onclick="showEditForm()">Edit</a></div>\n' +
+                    '  <div class="col-6 col-md-2"></div>\n' +
                     '</div>' +
                     '        <form>\n' +
                     '          <div class="form-label-group">\n' +
@@ -347,13 +383,13 @@
                     '<small style="color: red" id="check-add-book-inStock"></small>' +
                     '            <input disabled type="number" id="add-book-inStock" value="' + data.inStock + '" class="form-control">\n' +
                     '          </div>\n' +
-                    '         <a data-toggle="modal" id="function-btn-book" onclick="getDeletebookInfo()" data-target="#deletebookModal" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Delete</a>\n' +
-                    '        <a onclick="reload()" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Back</a>\n' +
+                    '         <a id="function-btn-book" data-toggle="" data-target="" onclick="showEditForm(' + data.id + ')" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Edit</a>\n' +
+                    '        <button type="button" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2" data-dismiss="modal">Close</button>\n' +
                     '       </form>\n' +
                     '      </div>\n' +
                     '    </div>\n' +
                     '</div>';
-                $('#book-content').html(str);
+                $('#add-book-view-modal').html(str);
             }
         })
     }
@@ -517,7 +553,8 @@
     }
 
     function checkBookInput() {
-        let id = $('#add-book-id').val()
+        let id = $('#add-book-id').val();
+
         checkName();
         checkCode();
         checkQuantity();
@@ -525,11 +562,12 @@
         console.log("data", checkBookAuthor, checkBookName, checkBookCode, checkBookInStock)
         if (checkBookInStock && checkBookName && checkBookCode && checkBookAuthor) {
             if (id) {
-
+                $('#addBookModal').hide();
                 $('#function-btn-book').attr("data-toggle", "modal");
                 $('#function-btn-book').attr("data-target", "#editbookModal");
                 getEditBookInfo();
             } else {
+                $('#addBookModal').hide();
                 $('#function-btn-book').attr("data-toggle", "modal");
                 $('#function-btn-book').attr("data-target", "#showBookModal");
                 getNewBookInfo();
@@ -589,6 +627,9 @@
 
     // get edit book info
     function getEditBookInfo() {
+        $('#viewBookModal').hide();
+        let id = $('#add-book-id').val();
+        id_action = id;
         let name = $('#add-book-name').val();
         let categoryId = $('#add-book-category').val();
         let author = $('#add-book-author').val();
@@ -629,54 +670,66 @@
     }
 
     //get delet book info
-    function getDeletebookInfo() {
-        let id = $('#add-book-id').val();
+    function getDeletebookInfo(id) {
+        id_action = id;
         $.ajax({
             async: false,
             url: "http://localhost:8080/orders/book/" + id,
             type: 'GET',
             success: function (data) {
+                console.log(data)
                 if (data == "existed") {
-                    $('#function-btn-book').attr("data-target", "#confirmModal");
-                    $('#function-btn-book').attr("data-toggle", "modal");
-                    $('#confirmModalLabel').html("Action error")
-                    $('#confirm-content').html("Book's in borrowing, can't delete")
+                    $('#viewBookModal').hide();
+                    $('#deletebookModalLabel').html("Action error")
+                    $('#delete-book-show-modal').html("Book's in borrowing, can't delete")
+                    $('#delete-book-cf-btn').hide();
                 } else {
-                    // console.log("lay ra duoc id hien tai k", id)
-                    let name = $('#add-book-name').val();
-                    let code = $('#add-book-code').val();
-                    let categoryId = $('#add-book-category').val();
-                    let author = $('#add-book-author').val();
-                    let inStock = $('#add-book-inStock').val();
-                    let str = "";
-                    // console.log("lay id xoa",id)
-                    str += '<table class="table">\n' +
-                        '    <tr>\n' +
-                        '        <td>Book code:</td>\n' +
-                        '        <td>'+ code + '</td>\n' +
-                        '    </tr>\n' +
-                        '    <tr>\n' +
-                        '        <td>Book Name</td>\n' +
-                        '        <td>'+ name +'</td>\n' +
-                        '    </tr>\n' +
-                        '    <tr>\n' +
-                        '        <td>Author:</td>\n' +
-                        '        <td>'+ author +'</td>\n' +
-                        '    </tr>\n' +
-                        '    <tr>\n' +
-                        '        <td>Category:</td>\n'
-                    let href = "http://localhost:8080/categories/" + categoryId;
+                    $('#delete-book-cf-btn').show();
+                    // console.log("sach dang muon")
                     $.ajax({
                         async: false,
-                        url: href,
+                        url: "http://localhost:8080/books/" + id,
                         type: 'GET',
-                        success: function (data) {
-                            str+= '<td>'+data.category+'</td>\n'
-                        }})
-                    str+=
-                        '    </tr>\n' +
-                        '</table>';
-                    $('#delete-book-show-modal').html(str)
+                        success: function (book) {
+                            console.log(book)
+                            // console.log("lay ra duoc id hien tai k", id)
+                            let name = book.name;
+                            let code = book.code;
+                            let categoryId = book.category.id;
+                            let author = book.author;
+                            let inStock = book.inStock;
+                            let str = "";
+                            // console.log("lay id xoa",id)
+                            str += '<table class="table">\n' +
+                                '    <tr>\n' +
+                                '        <td>Book code:</td>\n' +
+                                '        <td>' + code + '</td>\n' +
+                                '    </tr>\n' +
+                                '    <tr>\n' +
+                                '        <td>Book Name</td>\n' +
+                                '        <td>' + name + '</td>\n' +
+                                '    </tr>\n' +
+                                '    <tr>\n' +
+                                '        <td>Author:</td>\n' +
+                                '        <td>' + author + '</td>\n' +
+                                '    </tr>\n' +
+                                '    <tr>\n' +
+                                '        <td>Category:</td>\n'
+                            let href = "http://localhost:8080/categories/" + categoryId;
+                            $.ajax({
+                                async: false,
+                                url: href,
+                                type: 'GET',
+                                success: function (data) {
+                                    str += '<td>' + data.category + '</td>\n'
+                                }
+                            })
+                            str +=
+                                '    </tr>\n' +
+                                '</table>';
+                            $('#delete-book-show-modal').html(str)
+                        }
+                    })
 
                 }
             }
@@ -684,18 +737,18 @@
     }
 
     // show edit form
-    function showEditForm() {
-        let id = $('#add-book-id').val();
+    function showEditForm(id) {
         $.ajax({
             async: false,
             url: "http://localhost:8080/orders/book/" + id,
             type: 'GET',
             success: function (data) {
                 if (data == "existed") {
+                    $('#viewBookModal').hide();
                     $('#confirmModalLabel').html("Action error")
                     $('#confirm-content').html("Book's in borrowing, can't edit")
-                    $('#showEdit').attr("data-toggle", "modal");
-                    $('#showEdit').attr("data-target", "#confirmModal");
+                    $('#function-btn-book').attr("data-toggle", "modal");
+                    $('#function-btn-book').attr("data-target", "#confirmModal");
                 } else {
                     $('#add-book-name').attr("disabled", false);
                     $('#add-book-category').attr("disabled", false);
@@ -710,6 +763,7 @@
 
     // create new book
     function addNewBook() {
+        let str ="";
         let name = $('#add-book-name').val();
         let categoryId = $('#add-book-category').val();
         let author = $('#add-book-author').val();
@@ -737,19 +791,21 @@
             type: 'POST',
             data: data,
             success: function (data) {
-                // console.log("data tao tu obj",data)
+                str += '<p style="color: black">Add new book success</p>' + '<br>';
             },
             error: function (data) {
                 console.log("error", data)
-                $('#confirmModalLabel').html("Add new book confirm");
-                $('#confirm-content').html("Add unsuccess because "+data.responseText+"! please check again");
+                str += '<p style="color: red">Add unsuccess because '+data.responseText+'! please check again</p>' + '<br>';
             }
         })
+        $('#confirmModalLabel').html("Add new book confirm");
+        $('#confirm-content').html(str);
     }
 
     // create new book
     function editBook() {
-        let id = $('#add-book-id').val();
+        let str = "";
+        let id = id_action;
         let name = $('#add-book-name').val();
         let code = $('#add-book-code').val();
         let categoryId = $('#add-book-category').val();
@@ -778,20 +834,20 @@
             data: data,
             success: function (data) {
                 // console.log("sau khi update", data)
-                $('#confirmModalLabel').html("Update book confirm");
-                $('#confirm-content').html("Update success!");
+                str += '<p style="color: black">Update book success</p>' + '<br>';
             },
             error: function (data) {
                 console.log("error", data)
-                $('#confirmModalLabel').html("Update book confirm");
-                $('#confirm-content').html("Update unsuccess because "+data.responseText+"! please check again");
+                str += '<p style="color: red">Update unsuccess because '+data.responseText+'! please check again</p>' + '<br>';
             }
         })
+        $('#confirmModalLabel').html("Update book confirm");
+        $('#confirm-content').html(str);
     }
 
     // create new book
     function deletebook() {
-        let id = $('#add-book-id').val();
+        let id = id_action;
         // console.log("data tao tu obj",data)
         $.ajax({
             async: false,

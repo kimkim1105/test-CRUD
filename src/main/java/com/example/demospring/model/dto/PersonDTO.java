@@ -20,7 +20,7 @@ public class PersonDTO {
     @NotNull(message = "Date can't blank")
     @PastOrPresent(message = "date of birth must be in past")
     private LocalDate dateOfBirth;
-    private String avatar;
+//    private String avatar;
     @NotNull
     private Classify classify;
 
@@ -67,13 +67,13 @@ public class PersonDTO {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
+//    public String getAvatar() {
+//        return avatar;
+//    }
+//
+//    public void setAvatar(String avatar) {
+//        this.avatar = avatar;
+//    }
 
     public Classify getClassify() {
         return classify;

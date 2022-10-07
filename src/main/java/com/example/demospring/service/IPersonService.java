@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.Optional;
 
 public interface IPersonService extends IGeneralService<Person> {
-    Page<Person> findAllWithKey(String key, String from, String to, Pageable pageable);
+    Page<Person> findAllWithKey(String key, String fromDate, String toDate, Pageable pageable);
     Page<Person> findAll(Pageable pageable);
     Optional<Person> getLastestPerson();
     Optional<Person> findPersonByPhone(String phone);

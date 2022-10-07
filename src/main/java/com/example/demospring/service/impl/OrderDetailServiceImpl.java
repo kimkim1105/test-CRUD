@@ -51,18 +51,23 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
     }
 
     @Override
-    public Page<OrderDetail> findAllByOrderCompleted(Long orderId, Pageable pageable, String key, String from, String to) {
+    public Page<OrderDetail> findAllByOrderCompleted(Long orderId, Pageable pageable, String key, String fromDate, String toDate) {
+        String toDatefinal = new String();
         try {
             key = '%'+key+'%';
-            if (from.isEmpty()){
-                from = "1900-01-01";
+            if (fromDate.isEmpty()){
+                fromDate = "1900-01-01";
             }
-            if (to.isEmpty()){
-                to = LocalDate.now().toString();
+            if (toDate.isEmpty()){
+                toDatefinal = LocalDate.now().plusDays(1).toString();
+            }else {
+                LocalDate toDateLocal = LocalDate.parse(toDate);
+                toDateLocal = toDateLocal.plusDays(1);
+                toDatefinal = toDateLocal.toString();
             }
-            return iOrderDetailRepository.findAllByOrderCompleted(orderId, pageable, key, from, to);
+            return iOrderDetailRepository.findAllByOrderCompleted(orderId, pageable, key, fromDate, toDatefinal);
         }catch (Exception e){
-            return iOrderDetailRepository.findAllByOrderCompleted(orderId, pageable, key, from, to);
+            return iOrderDetailRepository.findAllByOrderCompleted(orderId, pageable, key, fromDate, toDatefinal);
         }
     }
 
@@ -82,7 +87,7 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
     }
 
     @Override
-    public Optional<Person> getLastestOrderDetail() {
+    public Optional<OrderDetail> getLastestOrderDetail() {
         return iOrderDetailRepository.getLastestOrderDetail();
     }
 }

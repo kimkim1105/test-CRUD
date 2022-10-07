@@ -26,12 +26,18 @@ public interface IOrderDetailRepository extends JpaRepository<OrderDetail,Long> 
     @Procedure(name = "deleteBookOrder")
     String deleteOrderDetail(@Param("v_order_detail_id") Long v_order_detail_id);
 
-    @Query(value = "select * from order_detail where status = true and order_id = :orderId and book_id in (select id from book where concat(name, author,code) like :key) and date_on between :from and :to and date_off is not null", nativeQuery = true)
-    Page<OrderDetail> findAllByOrderCompleted(Long orderId, Pageable pageable, String key, String from, String to);
-    @Query(value = "select * from order_detail where status = true and order_id = :orderId and date_off is null", nativeQuery = true)
+//    @Query(value = "select * from order_detail where status = true and order_id = :orderId and book_id in (select id from book where concat(name, author,code) like :key) and date_on between :from and :to and date_off is not null", nativeQuery = true)
+    @Query(value = "select * from order_detail \n" +
+            "where status = 1 and order_id = :orderId \n" +
+            "and book_id in (select id from book where lower(concat(concat(name,code),author)) like lower(:key)) \n" +
+            "and date_on >= to_date(:fromDate,'yyyy-mm-dd') and  date_on <=  to_date(:toDate,'yyyy-mm-dd') and date_off is not null", nativeQuery = true)
+    Page<OrderDetail> findAllByOrderCompleted(Long orderId, Pageable pageable, String key, String fromDate, String toDate);
+//    @Query(value = "select * from order_detail where status = true and order_id = :orderId and date_off is null", nativeQuery = true)
+    @Query(value = "select * from order_detail where status = 1 and order_id = :orderId and date_off is null", nativeQuery = true)
     Iterable<OrderDetail> findAllInBorrowing(Long orderId);
-    @Query(value = "select * from order_detail where date_off is null and status = true and book_id = :book_id and order_id  = :order_id", nativeQuery = true)
+//    @Query(value = "select * from order_detail where date_off is null and status = true and book_id = :book_id and order_id  = :order_id", nativeQuery = true)
+    @Query(value = "select * from order_detail where date_off is null and status = 1 and book_id = :book_id and order_id  = :order_id", nativeQuery = true)
     Optional<OrderDetail> findOrderDetaiByBookAndPerson(Long book_id, Long order_id);
     @Query(value = "select * from order_detail where id = (select max(id) from order_detail)", nativeQuery = true)
-    Optional<Person> getLastestOrderDetail();
+    Optional<OrderDetail> getLastestOrderDetail();
 }

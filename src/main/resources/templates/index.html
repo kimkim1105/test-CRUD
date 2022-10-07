@@ -20,6 +20,27 @@
 </head>
 <body>
 <th:block th:replace="share/header :: header"></th:block>
+<p th:utext="${totalBook}"></p>
+<p th:utext="${totalPerson}"></p>
+<p th:utext="${borrowingBook}"></p>
+<p th:utext="${borrowingPerson}"></p>
+<p th:utext="${borrowingOverDate}"></p>
+<table>
+    <tr>
+        <th>#</th>
+        <th>Book code</th>
+        <th>Book name</th>
+        <th>Category</th>
+        <th>Count of borrowing</th>
+    </tr>
+<tr th:each="b, s : ${top5}">
+    <td  th:utext="${s.index +1}"></td>
+    <td  th:utext="${b.bookCode}"></td>
+    <td  th:utext="${b.bookName}"></td>
+    <td  th:utext="${b.category}"></td>
+    <td  th:utext="${b.countTurn}"></td>
+</tr>
+</table>
 
 <th:block th:replace="share/footer :: footer"></th:block>
 

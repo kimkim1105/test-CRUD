@@ -20,7 +20,6 @@ import java.time.LocalDate;
                 procedureName = "PERSON_CRUD_PKG.addNewPerson",
                 parameters = {
                         @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_address", type = String.class),
-                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_avatar", type = String.class),
                         @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_dob", type = LocalDate.class),
                         @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_gender", type = Boolean.class),
                         @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_name", type = String.class),
@@ -32,7 +31,6 @@ import java.time.LocalDate;
                 procedureName = "PERSON_CRUD_PKG.updatePerson",
                 parameters = {
                         @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_address", type = String.class),
-                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_avatar", type = String.class),
                         @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_dob", type = LocalDate.class),
                         @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_gender", type = Boolean.class),
                         @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_name", type = String.class),
@@ -73,8 +71,8 @@ public class Person {
     private String phone;
     @NotNull
     private LocalDate dateOfBirth;
-    @Lob
-    private String avatar;
+//    @Lob
+//    private String avatar;
 //    private boolean typeAction;
     @ManyToOne
     @NotNull
@@ -147,13 +145,13 @@ public class Person {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
+//    public String getAvatar() {
+//        return avatar;
+//    }
+//
+//    public void setAvatar(String avatar) {
+//        this.avatar = avatar;
+//    }
 
 //    public boolean isTypeAction() {
 //        return typeAction;

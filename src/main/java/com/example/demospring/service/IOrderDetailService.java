@@ -12,9 +12,9 @@ import java.util.Optional;
 public interface IOrderDetailService extends IGeneralService<OrderDetail> {
     Iterable<OrderDetail> findAllInBorrowing(Long orderId);
     Optional<OrderDetail> findOrderDetaiByBookAndPerson(Long book_id, Long order_id);
-    Page<OrderDetail> findAllByOrderCompleted(Long orderId, Pageable pageable, String key, String from, String to);
+    Page<OrderDetail> findAllByOrderCompleted(Long orderId, Pageable pageable, String key, String fromDate, String toDate);
     String addNewOrderDetail(OrderDetailDTO orderDetailDTO);
     String returnOrderDetail(Long id);
     String deleteOrderDetail(Long id);
-    Optional<Person> getLastestOrderDetail();
+    Optional<OrderDetail> getLastestOrderDetail();
 }
