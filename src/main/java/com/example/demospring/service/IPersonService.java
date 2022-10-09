@@ -2,6 +2,7 @@ package com.example.demospring.service;
 
 import com.example.demospring.model.Person;
 import com.example.demospring.model.dto.PersonDTO;
+import com.example.demospring.model.view.PersonHistory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,4 +22,5 @@ public interface IPersonService extends IGeneralService<Person> {
     String addNewPerson(PersonDTO personDTO);
     String updatePerson(Long id, PersonDTO personDTO);
     String deletPerson(Long id);
+    Page<PersonHistory> findPersonHistoryWithKey(String key, Pageable pageable);
 }

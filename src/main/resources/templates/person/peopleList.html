@@ -29,11 +29,76 @@
             box-shadow: 0 0 11px rgba(33, 33, 33, .2);
             background-color: darkgray;
         }
+        .admin-sidebar {
+            max-width: 13%;
+        }
+
+        #sidebar-admin {
+            position: fixed;
+        }
+
+        .admin-sidebar-item {
+            padding: 1em;
+            border-bottom: 1px solid white;
+        }
+
+        .admin-nav {
+            background: #49C2B3;
+        }
+
+        .admin-nav-item {
+            color: white;
+            font-weight: bold;
+        }
+
+        .admin-nav-item:hover {
+            color: white;
+            background: #41aea1;
+        }
+
+        .admin-nav-item.active {
+            background: #53FFE7 !important;
+            color: white !important;
+        }
+
+        .admin-header-block {
+            background: #434449;
+            color: white !important;
+            text-align: left;
+            padding: 20px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            border-color: #ddd;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .admin-filter-button {
+            background: #78B404;
+            color: white !important;
+            font-weight: bold;
+        }
+
+        .admin-user-card {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
 <th:block th:replace="share/header :: header"></th:block>
+<div class="row">
+    <div class="col-sm-2 admin-sidebar">
+        <div class="nav flex-column nav-pills text-center text-uppercase admin-nav" id="sidebar-admin" role="tablist"
+             aria-orientation="vertical">
+            <a class="nav-link  admin-nav-item admin-sidebar-item"
+               role="tab" th:href="@{/persons/}"
+               aria-selected="false">Student list</a>
+            <a class="nav-link admin-nav-item admin-sidebar-item" role="tab"
+               aria-selected="false" th:href="@{/persons/person-history}" >History</a>
+        </div>
+    </div>
 
+</div>
 <div class="container" th:fragment="content">
     <div>
         <h1 style="text-align: center; margin: 0">Manage Person Information</h1>

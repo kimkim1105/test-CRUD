@@ -2,6 +2,8 @@ package com.example.demospring.service.impl;
 
 import com.example.demospring.model.Person;
 import com.example.demospring.model.dto.PersonDTO;
+import com.example.demospring.model.view.PersonHistory;
+import com.example.demospring.repository.IPersonHistoryRepository;
 import com.example.demospring.repository.IPersonRepository;
 import com.example.demospring.service.IPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import java.util.Optional;
 public class PersonServiceImpl implements IPersonService {
     @Autowired
     IPersonRepository iPersonRepository;
+    @Autowired
+    IPersonHistoryRepository personHistoryRepository;
 
     @Override
     public Page<Person> findAll(Pageable pageable) {
@@ -46,6 +50,16 @@ public class PersonServiceImpl implements IPersonService {
             return iPersonRepository.findPersonWithKey(key,from,to);
         }catch (Exception e){
             return iPersonRepository.findAllByStatusIsTrueOrderByIdDesc();
+        }
+    }
+
+    @Override
+    public Page<PersonHistory> findPersonHistoryWithKey(String key, Pageable pageable) {
+        try {
+            key = "%"+key+"%";
+            return personHistoryRepository.finPersonHistoryWithKey(key,pageable);
+        }catch (Exception e){
+            return personHistoryRepository.finPersonHistoryWithKey("%%", pageable);
         }
     }
 

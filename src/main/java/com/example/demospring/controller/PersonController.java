@@ -1,10 +1,7 @@
 package com.example.demospring.controller;
 
-import com.example.demospring.model.Classify;
-import com.example.demospring.model.Order;
-import com.example.demospring.model.Person;
 import com.example.demospring.model.dto.PersonDTO;
-import com.example.demospring.model.dto.Validation;
+import com.example.demospring.repository.IPersonHistoryRepository;
 import com.example.demospring.service.IClassifyService;
 import com.example.demospring.service.IOrderService;
 import com.example.demospring.service.IPersonService;
@@ -15,15 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/persons")
@@ -34,16 +23,26 @@ public class PersonController {
     IClassifyService iClassifyService;
     @Autowired
     IOrderService iOrderService;
+    @Autowired
+    IPersonHistoryRepository personHistoryRepository;
 
-    @GetMapping("/test")
-    public String getListPersontest(@RequestParam(required = false, name = "key") String key, Model model,
-             @RequestParam(required = false, name = "from") String from,
-                                    @RequestParam(required = false, name = "to") String to,
+    @GetMapping("/person-history")
+    public String getListPersonHistory(@RequestParam(required = false, name = "key") String key, Model model,
                                     @PageableDefault(value = 5) Pageable pageable){
-        model.addAttribute("classifies", iClassifyService.findAll());
-
-        model.addAttribute("persons", iPersonService.findAllWithKey(key, from, to, pageable));
-        return "test";
+        if (key==null){
+            key="";
+        }
+        model.addAttribute("persons", personHistoryRepository.findAll());
+        return "person/person-history";
+    }
+    @GetMapping("/person-history-detail")
+    public String getListPersonHistoryDetail(@RequestParam(required = false, name = "key") String key, Model model,
+                                       @PageableDefault(value = 5) Pageable pageable){
+        if (key==null){
+            key="";
+        }
+        model.addAttribute("persons", iPersonService.findPersonHistoryWithKey(key, pageable));
+        return "person/person-history-detail";
     }
     @GetMapping
     public String getListPerson(@RequestParam(required = false, name = "key") String key, Model model,
