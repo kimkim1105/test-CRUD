@@ -116,6 +116,7 @@
         <table class="table">
             <div class="row">
                 <form class="form-inline">
+                    <input type="number" th:value="${id}" name="id" hidden >
                     <input class="form-control col-md-8 mr-sm-2" th:value="${key}" type="search" name="key"
                            placeholder="Search by name, person id or phone number" aria-label="Search"><br><br>
                     <br>
@@ -167,7 +168,7 @@
             <ul class="nav nav-pills">
                 <li class="nav-item" th:if="${persons.content.size()>0}"
                     th:each="i:${#numbers.sequence(0,persons.totalPages-1)}">
-                    <a th:href="@{'/persons/person-history-detail/'+${id}+'&key='+${key}(page=${i})}" th:text="${i+1}"
+                    <a th:href="@{'/persons/person-history-detail/?id='+${id}+'&key='+${key}(page=${i})}" th:text="${i+1}"
                        class="nav-link" th:classappend="${persons.number}==${i}?'active':''"></a>
                 </li>
             </ul>
@@ -181,7 +182,7 @@
 $('#selectOrther').select2({
     placeholder: 'keyword',
     ajax: {
-        url: "http://localhost:8080/persons/person-history-list?key="+[[${key}]],
+        url: "http://localhost:8080/persons/person-history-list",
         dataType: "json",
         processResults: function (data){
             return{

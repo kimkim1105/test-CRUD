@@ -42,11 +42,11 @@ public class PersonController {
         return "person/person-history";
     }
     @GetMapping("/person-history-list")
-    public ResponseEntity<?> getListHistoryPerson(@RequestParam(required = false, name = "person_key") String key){
-        if (key==null){
-            key="";
+    public ResponseEntity<?> getListHistoryPerson(@RequestParam(required = false) String q){
+        if (q==null){
+            q="";
         }
-        personHistoryRepository.paramSetKeyPerson('%'+key+'%');
+        personHistoryRepository.paramSetKeyPerson('%'+q+'%');
         Iterable<PersonHistory> personHistories = personHistoryRepository.findAll();
         return new ResponseEntity<>(personHistoryRepository.findAll(),HttpStatus.OK);
     }
