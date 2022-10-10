@@ -145,20 +145,20 @@
                 <td th:utext="${person.completed}"></td>
                 <td th:utext="${person.borrowing}"></td>
                 <td th:utext="${person.overDate}"></td>
-                <td><a th:href="@{/persons/person-history-detail}" class="btn btn-primary">Detail</a></td>
+                <td><a th:href="@{/persons/person-history-detail/(id=${person.personId})}" class="btn btn-primary">Detail</a></td>
             </tr>
             </tbody>
         </table>
-<!--        <div>-->
-<!--            <p th:if="${persons.content.size()<=0}">No Result, Incorrect information or not existed</p>-->
-<!--            <ul class="nav nav-pills">-->
-<!--                <li class="nav-item" th:if="${persons.content.size()>0}"-->
-<!--                    th:each="i:${#numbers.sequence(0,persons.totalPages-1)}">-->
-<!--                    <a th:href="@{'/persons/person-history?key='+${key}(page=${i})}" th:text="${i+1}"-->
-<!--                       class="nav-link" th:classappend="${persons.number}==${i}?'active':''"></a>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </div>-->
+        <div>
+            <p th:if="${persons.content.size()<=0}">No Result, Incorrect information or not existed</p>
+            <ul class="nav nav-pills">
+                <li class="nav-item" th:if="${persons.content.size()>0}"
+                    th:each="i:${#numbers.sequence(0,persons.totalPages-1)}">
+                    <a th:href="@{'/persons/person-history?key='+${key}(page=${i})}" th:text="${i+1}"
+                       class="nav-link" th:classappend="${persons.number}==${i}?'active':''"></a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 

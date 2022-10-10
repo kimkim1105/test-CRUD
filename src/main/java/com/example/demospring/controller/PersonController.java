@@ -1,6 +1,8 @@
 package com.example.demospring.controller;
 
 import com.example.demospring.model.dto.PersonDTO;
+import com.example.demospring.model.view.PersonHistory;
+import com.example.demospring.repository.IPersonHistoryDetailRepository;
 import com.example.demospring.repository.IPersonHistoryRepository;
 import com.example.demospring.service.IClassifyService;
 import com.example.demospring.service.IOrderService;
@@ -25,6 +27,8 @@ public class PersonController {
     IOrderService iOrderService;
     @Autowired
     IPersonHistoryRepository personHistoryRepository;
+    @Autowired
+    IPersonHistoryDetailRepository iPersonHistoryDetailRepository;
 
     @GetMapping("/person-history")
     public String getListPersonHistory(@RequestParam(required = false, name = "key") String key, Model model,
@@ -32,18 +36,36 @@ public class PersonController {
         if (key==null){
             key="";
         }
-        model.addAttribute("persons", personHistoryRepository.findAll());
+        model.addAttribute("key", key);
+        personHistoryRepository.paramSetKeyPerson('%'+key+'%');
+        model.addAttribute("persons", iPersonService.findAllPage(pageable));
         return "person/person-history";
     }
-    @GetMapping("/person-history-detail")
-    public String getListPersonHistoryDetail(@RequestParam(required = false, name = "key") String key, Model model,
+    @GetMapping("/person-history-list")
+    public ResponseEntity<?> getListHistoryPerson(@RequestParam(required = false, name = "person_key") String key){
+        if (key==null){
+            key="";
+        }
+        personHistoryRepository.paramSetKeyPerson('%'+key+'%');
+        Iterable<PersonHistory> personHistories = personHistoryRepository.findAll();
+        return new ResponseEntity<>(personHistoryRepository.findAll(),HttpStatus.OK);
+    }
+    @GetMapping("/person-history-detail/")
+    public String getListPersonHistoryDetail(@RequestParam Long id, @RequestParam(required = false, name = "key") String key,
+                                             Model model,
                                        @PageableDefault(value = 5) Pageable pageable){
         if (key==null){
             key="";
         }
-        model.addAttribute("persons", iPersonService.findPersonHistoryWithKey(key, pageable));
+        model.addAttribute("key", key);
+        model.addAttribute("id", id);
+        iPersonHistoryDetailRepository.paramSetKeyBook('%'+key+'%');
+        iPersonHistoryDetailRepository.paramSetOrderId(id);
+        model.addAttribute("person", iPersonService.findById(id).get());
+        model.addAttribute("persons", iPersonService.findAllPageDetail(pageable));
         return "person/person-history-detail";
     }
+
     @GetMapping
     public String getListPerson(@RequestParam(required = false, name = "key") String key, Model model,
                                 @RequestParam(required = false, name = "from") String from,

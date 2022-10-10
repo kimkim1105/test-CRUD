@@ -3,15 +3,21 @@ package com.example.demospring.model.view;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @Entity
 @Immutable
 @Table(name = "`person_borrow_history`")
 @Subselect("select sys_guid() as id, hs.* from person_borrow_history hs")
+@NamedStoredProcedureQueries({
+        @NamedStoredProcedureQuery(name = "set_key_person_history",
+                procedureName = "PARAMS_PKG.set_key_person_history",
+                parameters = {
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_key_param", type = String.class),
+                }),
+})
 public class PersonHistory  implements Serializable {
     @Id
     private String id;

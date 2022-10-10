@@ -3,11 +3,13 @@ package com.example.demospring.service;
 import com.example.demospring.model.Person;
 import com.example.demospring.model.dto.PersonDTO;
 import com.example.demospring.model.view.PersonHistory;
+import com.example.demospring.model.view.PersonHistoryDetail;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public interface IPersonService extends IGeneralService<Person> {
@@ -22,5 +24,7 @@ public interface IPersonService extends IGeneralService<Person> {
     String addNewPerson(PersonDTO personDTO);
     String updatePerson(Long id, PersonDTO personDTO);
     String deletPerson(Long id);
-    Page<PersonHistory> findPersonHistoryWithKey(String key, Pageable pageable);
+    Page<PersonHistory> findAllPage(Pageable pageable);
+    Page<PersonHistoryDetail> findAllPageDetail(Pageable pageable);
+    List<PersonHistory> findAllForSuggest();
 }

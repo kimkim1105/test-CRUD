@@ -3,6 +3,8 @@ package com.example.demospring.service.impl;
 import com.example.demospring.model.Person;
 import com.example.demospring.model.dto.PersonDTO;
 import com.example.demospring.model.view.PersonHistory;
+import com.example.demospring.model.view.PersonHistoryDetail;
+import com.example.demospring.repository.IPersonHistoryDetailRepository;
 import com.example.demospring.repository.IPersonHistoryRepository;
 import com.example.demospring.repository.IPersonRepository;
 import com.example.demospring.service.IPersonService;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,6 +24,8 @@ public class PersonServiceImpl implements IPersonService {
     IPersonRepository iPersonRepository;
     @Autowired
     IPersonHistoryRepository personHistoryRepository;
+    @Autowired
+    IPersonHistoryDetailRepository iPersonHistoryDetailRepository;
 
     @Override
     public Page<Person> findAll(Pageable pageable) {
@@ -54,13 +59,18 @@ public class PersonServiceImpl implements IPersonService {
     }
 
     @Override
-    public Page<PersonHistory> findPersonHistoryWithKey(String key, Pageable pageable) {
-        try {
-            key = "%"+key+"%";
-            return personHistoryRepository.finPersonHistoryWithKey(key,pageable);
-        }catch (Exception e){
-            return personHistoryRepository.finPersonHistoryWithKey("%%", pageable);
-        }
+    public Page<PersonHistory> findAllPage(Pageable pageable) {
+            return personHistoryRepository.findAllBy(pageable);
+    }
+
+    @Override
+    public Page<PersonHistoryDetail> findAllPageDetail(Pageable pageable) {
+        return iPersonHistoryDetailRepository.findAllBy(pageable);
+    }
+
+    @Override
+    public List<PersonHistory> findAllForSuggest() {
+        return personHistoryRepository.findAll();
     }
 
     @Override
