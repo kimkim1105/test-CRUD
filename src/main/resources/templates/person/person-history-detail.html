@@ -108,9 +108,37 @@
     <hr>
     <span style="color: red; margin-top:5px" id="validate"></span>
     <br>
-    <p th:utext="${person.code}"></p>
-    <p th:utext="${person.name}"></p>
-    <p th:utext="${person.phone}"></p>
+    <div class="row">
+        <div class="col-sm-6">
+            <table border="1">
+                <tr>
+                    <td>Person code</td>
+                    <td th:utext="${person.code}"></td>
+                </tr>
+                <tr>
+                    <td>Person name</td>
+                    <td th:utext="${person.name}"></td>
+                </tr>
+                <tr>
+                    <td>Person phone</td>
+                    <td th:utext="${person.phone}"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-sm-6">
+            <div class="row">
+                <form action="/persons/person-history-detail/"  onsubmit="checkSubmit(event)">
+                    <div class="form-group">
+                        <label>View another person borrow book history</label>
+                        <select style="width: 400px"  type="search" name="id" id="selectOrther"></select>
+                    </div>
+
+                    <button class="btn btn-primary" type="submit">View other</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <br>
     <div id="person-content">
         <table class="table">
@@ -122,18 +150,6 @@
                     <br>
                     <input type="submit" class="btn btn-danger col-md-8" value="search">
                 </form>
-            </div>
-            <div class="row">
-                <div class="col-md-4 mt-5">
-                    <form action="/persons/person-history-detail/">
-                        <div class="form-group">
-                            <label>Enter key</label>
-                            <select style="width: 400px" type="search" name="id" id="selectOrther"></select>
-                        </div>
-
-                        <button class="btn btn-primary" type="submit">Submit form</button>
-                    </form>
-                </div>
             </div>
             <br>
             <thead>
@@ -178,7 +194,12 @@
 
 <th:block th:replace="share/footer :: footer"></th:block>
 <script th:inline="javascript">
-    let id;
+    function checkSubmit(e) {
+        const personId = document.querySelector("#selectOrther").value;
+        if (!personId) {
+            e.preventDefault();
+        }
+    }
 $('#selectOrther').select2({
     placeholder: 'keyword',
     ajax: {
@@ -187,10 +208,9 @@ $('#selectOrther').select2({
         processResults: function (data){
             return{
                 results: $.map(data,function (item){
-                    id = item.personId;
                     return {
                         text: item.personName +'---'+ item.personCode,
-                        id:item.personId
+                        id: item.personId
                     }
                 })
             }

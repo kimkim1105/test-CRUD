@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/persons")
 public class PersonController {
+    private Long id_default;
     @Autowired
     IPersonService iPersonService;
     @Autowired
@@ -57,6 +58,7 @@ public class PersonController {
         if (key==null){
             key="";
         }
+        id_default = id;
         model.addAttribute("key", key);
         model.addAttribute("id", id);
         iPersonHistoryDetailRepository.paramSetKeyBook('%'+key+'%');
