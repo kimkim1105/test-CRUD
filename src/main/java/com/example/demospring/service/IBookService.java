@@ -2,9 +2,14 @@ package com.example.demospring.service;
 
 import com.example.demospring.model.Book;
 import com.example.demospring.model.dto.BookDTO;
+import com.example.demospring.model.view.BookHistory;
+import com.example.demospring.model.view.BookHistoryDetail;
+import com.example.demospring.model.view.PersonHistory;
+import com.example.demospring.model.view.PersonHistoryDetail;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface IBookService extends IGeneralService<Book> {
@@ -20,4 +25,7 @@ public interface IBookService extends IGeneralService<Book> {
     String addNewBook(BookDTO bookDTO);
     String updateBook(Long id, BookDTO bookDTO);
     String deleteBook(Long id);
+    Page<BookHistory> findAllPage(Pageable pageable);
+    Page<BookHistoryDetail> findAllPageDetail(Pageable pageable);
+    List<BookHistory> findAllForSuggest();
 }

@@ -9,6 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 public class StatisticCotroller {
     @Autowired
@@ -22,6 +25,11 @@ public class StatisticCotroller {
         model.addAttribute("borrowingBook", iTop5BookRepository.getBorrowingBook());
         model.addAttribute("borrowingPerson", iTop5BookRepository.getBorrowingPerson());
         model.addAttribute("borrowingOverDate", iTop5BookRepository.getBorrowingOverDate());
+        model.addAttribute("HOR", iTop5BookRepository.countBookByCategory(1L));
+        model.addAttribute("NOV", iTop5BookRepository.countBookByCategory(2L));
+        model.addAttribute("SIE", iTop5BookRepository.countBookByCategory(3L));
+        model.addAttribute("NAT", iTop5BookRepository.countBookByCategory(4L));
+        model.addAttribute("TRN", iTop5BookRepository.countBookByCategory(5L));
         return "index";
     }
 }

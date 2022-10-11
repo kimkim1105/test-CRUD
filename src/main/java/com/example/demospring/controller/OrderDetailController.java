@@ -4,6 +4,7 @@ import com.example.demospring.model.Book;
 import com.example.demospring.model.Order;
 import com.example.demospring.model.OrderDetail;
 import com.example.demospring.model.dto.OrderDetailDTO;
+import com.example.demospring.repository.IOrderSearchDetailRepository;
 import com.example.demospring.service.IBookService;
 import com.example.demospring.service.IOrderDetailService;
 import com.example.demospring.service.IOrderService;
@@ -29,12 +30,20 @@ public class OrderDetailController {
     IBookService iBookService;
     @Autowired
     IOrderService iOrderService;
+    @Autowired
+    IOrderSearchDetailRepository iOrderSearchDetailRepository;
+
     @GetMapping("/borrowing/{id}")
     public ResponseEntity<?> getListBorrowingByPerson(@PathVariable Long id){
-        if (!iOrderDetailService.findAllInBorrowing(id).iterator().hasNext()){
+//        if (!iOrderDetailService.findAllInBorrowing(id).iterator().hasNext()){
+//            return new ResponseEntity<>("not found", HttpStatus.NOT_FOUND);
+//        }
+//        return new ResponseEntity<>(iOrderDetailService.findAllInBorrowing(id),HttpStatus.OK);
+        iOrderSearchDetailRepository.paramSetOrderIdSearch(id);
+        if (!iOrderSearchDetailRepository.findAll().iterator().hasNext()){
             return new ResponseEntity<>("not found", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(iOrderDetailService.findAllInBorrowing(id),HttpStatus.OK);
+        return new ResponseEntity<>(iOrderSearchDetailRepository.findAll(),HttpStatus.OK);
     }
     @GetMapping("/{id}")
     public  ResponseEntity<?> findOrderDetailById(@PathVariable Long id){

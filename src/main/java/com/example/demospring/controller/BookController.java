@@ -5,10 +5,15 @@ import com.example.demospring.model.BookCategory;
 import com.example.demospring.model.Person;
 import com.example.demospring.model.dto.BookDTO;
 import com.example.demospring.model.dto.Validation;
+import com.example.demospring.model.view.BookHistory;
+import com.example.demospring.model.view.PersonHistory;
+import com.example.demospring.repository.IBookHistoryDetailRepository;
+import com.example.demospring.repository.IBookHistoryRepository;
 import com.example.demospring.repository.IBookRepository;
 import com.example.demospring.service.IBookCategoryService;
 import com.example.demospring.service.IBookService;
 import com.example.demospring.service.IOrderService;
+import org.hibernate.annotations.NaturalId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -37,6 +42,45 @@ public class BookController {
     IOrderService iOrderService;
     @Autowired
     IBookRepository bookRepository;
+    @Autowired
+    IBookHistoryRepository bookHistoryRepository;
+    @Autowired
+    IBookHistoryDetailRepository iBookHistoryDetailRepository;
+    @GetMapping("/book-history")
+    public String getListBookHistory(@RequestParam(required = false, name = "key") String key, Model model,
+                                       @PageableDefault(value = 5) Pageable pageable){
+        if (key==null){
+            key="";
+        }
+        model.addAttribute("key", key);
+        bookHistoryRepository.paramSetKeyBook('%'+key+'%');
+        model.addAttribute("books", iBookService.findAllPage(pageable));
+        return "book/book-history";
+    }
+    @GetMapping("/book-history-list")
+    public ResponseEntity<?> getListHistoryBook(@RequestParam(required = false) String q){
+        if (q==null){
+            q="";
+        }
+        bookHistoryRepository.paramSetKeyBook('%'+q+'%');
+        Iterable<BookHistory> bookHistories = bookHistoryRepository.findAll();
+        return new ResponseEntity<>(bookHistoryRepository.findAll(),HttpStatus.OK);
+    }
+    @GetMapping("/book-history-detail/")
+    public String getListBookHistoryDetail(@RequestParam Long id, @RequestParam(required = false, name = "key") String key,
+                                             Model model,
+                                             @PageableDefault(value = 5) Pageable pageable){
+        if (key==null){
+            key="";
+        }
+        model.addAttribute("key", key);
+        model.addAttribute("id", id);
+        iBookHistoryDetailRepository.paramSetKeyPersonBorrowBook('%'+key+'%');
+        iBookHistoryDetailRepository.paramSetBookId(id);
+        model.addAttribute("book", iBookService.findById(id).get());
+        model.addAttribute("books", iBookService.findAllPageDetail(pageable));
+        return "book/book-history-detail";
+    }
 //    @PostMapping("/addnew")
 //    public ResponseEntity<?> testAddNew(@RequestBody BookDTO bookDTO){
 ////        System.out.println(bookDTO.toString());

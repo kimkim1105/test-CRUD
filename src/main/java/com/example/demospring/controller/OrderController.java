@@ -29,6 +29,11 @@ public class OrderController {
     IOrderDetailService iOrderDetailService;
 
 
+    @GetMapping("/order-detail")
+    public String getDetailOrder(@RequestParam Long id, Model model){
+        model.addAttribute("order", iOrderService.findById(id).get());
+        return "order/return-order";
+    }
     @GetMapping
     public String getListOrder(@RequestParam(required = false, name = "key") String key, Model model, @PageableDefault(value = 5) Pageable pageable) {
         if (key==null){

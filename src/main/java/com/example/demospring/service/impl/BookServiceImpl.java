@@ -2,6 +2,11 @@ package com.example.demospring.service.impl;
 
 import com.example.demospring.model.Book;
 import com.example.demospring.model.dto.BookDTO;
+import com.example.demospring.model.view.BookHistory;
+import com.example.demospring.model.view.BookHistoryDetail;
+import com.example.demospring.model.view.PersonHistoryDetail;
+import com.example.demospring.repository.IBookHistoryDetailRepository;
+import com.example.demospring.repository.IBookHistoryRepository;
 import com.example.demospring.repository.IBookRepository;
 import com.example.demospring.service.IBookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +14,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class BookServiceImpl implements IBookService {
     @Autowired
     IBookRepository iBookRepository;
+    @Autowired
+    IBookHistoryRepository iBookHistoryRepository;
+    @Autowired
+    IBookHistoryDetailRepository iBookHistoryDetailRepository;
     @Override
     public Iterable<Book> findAll() {
         return iBookRepository.findAllByStatusIsTrueOrderByIdDesc();
@@ -119,5 +129,20 @@ iBookRepository.findById(id).get().setStatus(false);
     @Override
     public String deleteBook(Long id) {
         return iBookRepository.deletBook(id);
+    }
+
+    @Override
+    public Page<BookHistory> findAllPage(Pageable pageable) {
+        return iBookHistoryRepository.findAllBy(pageable);
+    }
+
+    @Override
+    public Page<BookHistoryDetail> findAllPageDetail(Pageable pageable) {
+        return iBookHistoryDetailRepository.findAllBy(pageable);
+    }
+
+    @Override
+    public List<BookHistory> findAllForSuggest() {
+        return iBookHistoryRepository.findAll();
     }
 }

@@ -23,6 +23,7 @@
     <!--    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>-->
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.js"></script>
     <style>
         .scrollbar-deep-purple::-webkit-scrollbar-track {
             -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
@@ -176,14 +177,16 @@
                 <th scope="col">Person Code</th>
                 <th scope="col">Person Name</th>
                 <th scope="col">Book Quantity</th>
+<!--                <th scope="col">Action</th>-->
             </tr>
             </thead>
             <tbody>
-            <tr class="record-hover" th:each="b, s : ${orders}" th:onclick="'showDetail('+${b.id}+')'">
+            <tr class="record-hover" th:each="b, s : ${orders}"  th:onclick="'showDetail('+${b.id}+')'">
                 <td th:utext="${s.index +1}"></td>
                 <td th:utext="${b.person.code}"></td>
                 <td th:utext="${b.person.name}"></td>
                 <td th:utext="${b.bookSize}"></td>
+<!--                <td><a th:href="@{/orders/order-detail/(id=${b.id})}" class="btn btn-primary">Detail</a></td>-->
             </tr>
             </tbody>
         </table>
@@ -618,6 +621,7 @@
                     '        <td>Book name</td>\n' +
                     '        <td>Date on</td>\n' +
                     '        <td>Date off</td>\n' +
+                    '        <td>Date over</td>\n' +
                     '    </tr>\n'
                 $.ajax({
                     async: false,
@@ -628,11 +632,12 @@
                         let listBook = detail.slice();
                         $.each(listBook, function (index, items) {
                             str +=     '    <tr>\n' +
-                                '        <td><input onclick="getlistBookReturnOrDelete()" id="order-detail-id-'+items.id+'" type="checkbox" value="'+items.id+'" class="check"></td>\n' +
-                                '        <td>'+items.book.code+'</td>\n' +
-                                '        <td>'+items.book.name+'</td>\n' +
+                                '        <td><input onclick="getlistBookReturnOrDelete()" id="order-detail-id-'+items.orderDetailId+'" type="checkbox" value="'+items.orderDetailId+'" class="check"></td>\n' +
+                                '        <td>'+items.bookCode+'</td>\n' +
+                                '        <td>'+items.bookName+'</td>\n' +
                                 '        <td>'+items.dateOn+'</td>\n'
-                                str += '<td>--</td>\n'
+                                str += '<td>--</td>\n'+
+                                    '        <td>'+items.overDate+'</td>\n'
                             str +=    '</tr>\n'
                         })
                     }
@@ -765,11 +770,11 @@
                     success: function (detail) {
                         let listBook = detail.slice();
                         $.each(listBook, function (index, items) {
-                            if (document.getElementById('order-detail-id-'+items.id).checked){
+                            if (document.getElementById('order-detail-id-'+items.orderDetailId).checked){
                                 returnBookList.push(items)
                                 str +=     '    <tr>\n' +
-                                    '        <td>'+items.book.code+'</td>\n' +
-                                    '        <td>'+items.book.name+'</td>\n'
+                                    '        <td>'+items.bookCode+'</td>\n' +
+                                    '        <td>'+items.bookName+'</td>\n'
                                 str +=    '</tr>\n'
                             }
                         })
@@ -824,11 +829,11 @@
                     success: function (detail) {
                         let listBook = detail.slice();
                         $.each(listBook, function (index, items) {
-                            if (document.getElementById('order-detail-id-'+items.id).checked){
+                            if (document.getElementById('order-detail-id-'+items.orderDetailId).checked){
                                 returnBookList.push(items)
                                 str +=     '    <tr>\n' +
-                                    '        <td>'+items.book.code+'</td>\n' +
-                                    '        <td>'+items.book.name+'</td>\n'
+                                    '        <td>'+items.bookCode+'</td>\n' +
+                                    '        <td>'+items.bookName+'</td>\n'
                                 str +=    '</tr>\n'
                             }
                         })
@@ -921,7 +926,7 @@
             success: function (detail) {
                 let listBook = detail.slice();
                 $.each(listBook, function (index, items) {
-                    if (document.getElementById('order-detail-id-'+items.id).checked){
+                    if (document.getElementById('order-detail-id-'+items.orderDetailId).checked){
                         returnBookList.push(items)
                     }
                 })
@@ -934,7 +939,7 @@
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                url: "http://localhost:8080/orderdetails/returnbook/"+returnBookList[i].id,
+                url: "http://localhost:8080/orderdetails/returnbook/"+returnBookList[i].orderDetailId,
                 type: 'PUT',
                 success: function (data) {
                     // console.log("sau khi update", data)
@@ -964,7 +969,7 @@
             success: function (detail) {
                 let listBook = detail.slice();
                 $.each(listBook, function (index, items) {
-                    if (document.getElementById('order-detail-id-'+items.id).checked){
+                    if (document.getElementById('order-detail-id-'+items.orderDetailId).checked){
                         returnBookList.push(items)
                     }
                 })
@@ -977,7 +982,7 @@
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                url: "http://localhost:8080/orderdetails/deleteOrderdetail/"+returnBookList[i].id,
+                url: "http://localhost:8080/orderdetails/deleteOrderdetail/"+returnBookList[i].orderDetailId,
                 type: 'PUT',
                 success: function (data) {
                     // console.log("sau khi update", data)
