@@ -71,7 +71,7 @@
              aria-orientation="vertical">
             <a class="nav-link  admin-nav-item admin-sidebar-item"
                role="tab" th:href="@{/persons/}"
-               aria-selected="false">Student list</a>
+               aria-selected="false">Person list</a>
             <a class="nav-link admin-nav-item admin-sidebar-item" role="tab"
                aria-selected="false" th:href="@{/persons/person-history}" >History</a>
         </div>
@@ -855,7 +855,7 @@
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            url: "http://localhost:8080/persons",
+            url: "http://localhost:8080/persons/",
             type: 'POST',
             data: data,
             success: function (data) {

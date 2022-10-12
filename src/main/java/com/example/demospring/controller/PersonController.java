@@ -1,9 +1,11 @@
 package com.example.demospring.controller;
 
+import com.example.demospring.model.Person;
 import com.example.demospring.model.dto.PersonDTO;
 import com.example.demospring.model.view.PersonHistory;
 import com.example.demospring.repository.IPersonHistoryDetailRepository;
 import com.example.demospring.repository.IPersonHistoryRepository;
+import com.example.demospring.repository.IPersonRepository;
 import com.example.demospring.service.IClassifyService;
 import com.example.demospring.service.IOrderService;
 import com.example.demospring.service.IPersonService;
@@ -22,6 +24,8 @@ public class PersonController {
     private Long id_default;
     @Autowired
     IPersonService iPersonService;
+    @Autowired
+    IPersonRepository iPersonRepository;
     @Autowired
     IClassifyService iClassifyService;
     @Autowired
@@ -188,6 +192,18 @@ public class PersonController {
         }
         return new ResponseEntity<>(rs,HttpStatus.OK);
     }
+
+//    @PostMapping("/merge")
+//    public ResponseEntity<?> mergePerson(@RequestBody PersonDTO personDTO){
+//        Person p = iPersonService.getLastestPerson().get();
+//        Long id = p.getId() + 1;
+//        String rs = iPersonRepository.mergePerson(id, personDTO.getAddress(), personDTO.getDateOfBirth(),
+//                personDTO.isGender(),personDTO.getName(),personDTO.getPhone(), personDTO.getClassify().getId());
+//        if (rs.equalsIgnoreCase("success")){
+//            return new ResponseEntity<>(iPersonService.findById(id),HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>(rs,HttpStatus.OK);
+//    }
 
     @PutMapping
     public ResponseEntity<?> editPerson(@RequestParam Long id, @RequestBody PersonDTO personDTO){

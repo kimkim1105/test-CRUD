@@ -94,7 +94,7 @@
              aria-orientation="vertical">
             <a class="nav-link  admin-nav-item admin-sidebar-item"
                role="tab" th:href="@{/persons/}"
-               aria-selected="false">Student list</a>
+               aria-selected="false">Person list</a>
             <a class="nav-link admin-nav-item admin-sidebar-item" role="tab"
                aria-selected="false" th:href="@{/persons/person-history}" >History</a>
         </div>
@@ -146,21 +146,21 @@
                 <form class="form-inline">
                     <input type="number" th:value="${id}" name="id" hidden >
                     <input class="form-control col-md-8 mr-sm-2" th:value="${key}" type="search" name="key"
-                           placeholder="Search by name, person id or phone number" aria-label="Search"><br><br>
-                    <div class="form-label-group col-md-8 md-form md-outline input-with-post-icon datepicker">
-                        <label class="text-secondary">Search by date of birth</label>
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Start Date</label>
-                            <div class="col-sm-9">
-                                <input type="date" class="form-control datepicker" name="from" id="date-search-from"
-                                       oninput="getFromDate()" max="" th:value="${from}">
-                            </div>
-                            <label class="col-sm-3 col-form-label">End Date</label>
-                            <div class="col-sm-9">
-                                <input type="date" class="form-control datepicker" id="date-search-to" max="" min=""
-                                       th:value="${to}" name="to">
-                            </div>
-                        </div>
+                           placeholder="Search by name or code" aria-label="Search"><br><br>
+<!--                    <div class="form-label-group col-md-8 md-form md-outline input-with-post-icon datepicker">-->
+<!--                        <label class="text-secondary">Search by date of birth</label>-->
+<!--                        <div class="form-group row">-->
+<!--                            <label class="col-sm-3 col-form-label">Start Date</label>-->
+<!--                            <div class="col-sm-9">-->
+<!--                                <input type="date" class="form-control datepicker" name="from" id="date-search-from"-->
+<!--                                       oninput="getFromDate()" max="" th:value="${from}">-->
+<!--                            </div>-->
+<!--                            <label class="col-sm-3 col-form-label">End Date</label>-->
+<!--                            <div class="col-sm-9">-->
+<!--                                <input type="date" class="form-control datepicker" id="date-search-to" max="" min=""-->
+<!--                                       th:value="${to}" name="to">-->
+<!--                            </div>-->
+<!--                        </div>-->
                     <br>
                     <input type="submit" class="btn btn-danger col-md-8" value="search">
                 </form>

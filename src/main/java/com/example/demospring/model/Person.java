@@ -39,6 +39,18 @@ import java.time.LocalDate;
                         @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_person_id", type = Long.class),
                         @StoredProcedureParameter(mode = ParameterMode.OUT, name = "v_result", type = String.class),
                 }),
+//        @NamedStoredProcedureQuery(name = "mergePerson",
+//                procedureName = "PERSON_CRUD_PKG.mergePerson",
+//                parameters = {
+//                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_id", type = Long.class),
+//                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_address", type = String.class),
+//                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_dob", type = LocalDate.class),
+//                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_gender", type = Boolean.class),
+//                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_name", type = String.class),
+//                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_phone", type = String.class),
+//                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "v_classify_id", type = Long.class),
+//                        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "v_result", type = String.class),
+//                }),
         @NamedStoredProcedureQuery(name = "deletePerson",
                 procedureName = "PERSON_CRUD_PKG.deletePerson",
                 parameters = {

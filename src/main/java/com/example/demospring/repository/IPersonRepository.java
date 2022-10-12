@@ -16,6 +16,11 @@ import java.util.Optional;
 
 @Repository
 public interface IPersonRepository extends JpaRepository<Person, Long> {
+//    @Procedure(name = "mergePerson")
+//    String mergePerson(@Param("v_id") Long v_id,@Param("v_address") String v_address,@Param("v_dob") LocalDate v_dob,
+//                        @Param("v_gender") Boolean v_gender, @Param("v_name") String v_name,
+//                        @Param("v_phone") String v_phone, @Param("v_classify_id") Long v_classify_id);
+
     @Procedure(name = "addNewPerson")
     String addNewPerson(@Param("v_address") String v_address,@Param("v_dob") LocalDate v_dob,
                       @Param("v_gender") Boolean v_gender, @Param("v_name") String v_name,
